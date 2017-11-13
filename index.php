@@ -1,13 +1,15 @@
 <?php
 /*
 Plugin Name: MF Media
-Plugin URI: 
+Plugin URI: https://github.com/frostkom/mf_media
 Description: 
 Version: 5.3.1
 Author: Martin Fors
 Author URI: http://frostkom.se
 Text Domain: lang_media
 Domain Path: /lang
+
+GitHub Plugin URI: frostkom/mf_media
 */
 
 include_once("include/classes.php");
