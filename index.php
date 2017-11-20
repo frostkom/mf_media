@@ -3,7 +3,7 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description: 
-Version: 5.3.1
+Version: 5.3.3
 Author: Martin Fors
 Author URI: http://frostkom.se
 Text Domain: lang_media
@@ -37,6 +37,8 @@ if(is_admin())
 	add_action('wp_handle_upload_prefilter', array($obj_media, 'upload_filter'));
 
 	add_action('rwmb_meta_boxes', 'meta_boxes_media');
+
+	add_action('admin_footer', array($obj_media, 'print_media_templates'), 0);
 
 	add_filter('manage_mf_media_allowed_posts_columns', 'column_header_media_allowed', 5);
 	add_action('manage_mf_media_allowed_posts_custom_column', 'column_cell_media_allowed', 5, 2);

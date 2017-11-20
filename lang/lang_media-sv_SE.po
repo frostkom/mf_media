@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-13 12:58+0100\n"
+"POT-Creation-Date: 2017-11-20 15:05+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -15,83 +15,139 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-#: ../include/classes.php:51
+#: ../include/classes.php:28
+msgid "The file has got no alt text. Please add this to improve your SEO."
+msgstr "Filen har ingen alt-text. Det bör åtgärdas för att förbättra din SEO."
+
+#: ../include/classes.php:31
+msgid "aring"
+msgstr "å"
+
+#: ../include/classes.php:31
+msgid "auml"
+msgstr "ä"
+
+#: ../include/classes.php:31
+msgid "ouml"
+msgstr "ö"
+
+#: ../include/classes.php:31
+msgid "Aring"
+msgstr "Å"
+
+#: ../include/classes.php:31
+msgid "Auml"
+msgstr "Ä"
+
+#: ../include/classes.php:31
+msgid "Ouml"
+msgstr "Ö"
+
+#: ../include/classes.php:33
+msgid "The file has got special characters in the filename. Please change this."
+msgstr "Filen har specialtecken i filnamnet. Detta bör åtgärdas."
+
+#: ../include/classes.php:53
+msgid "Remove"
+msgstr "Radera"
+
+#: ../include/classes.php:57
+msgid "Deselect"
+msgstr "Avmarkera"
+
+#: ../include/classes.php:64
+msgid "Caption this image&hellip;"
+msgstr ""
+
+#: ../include/classes.php:68
+msgid "Describe this video&hellip;"
+msgstr ""
+
+#: ../include/classes.php:70
+msgid "Describe this audio file&hellip;"
+msgstr ""
+
+#: ../include/classes.php:72
+msgid "Describe this media file&hellip;"
+msgstr ""
+
+#: ../include/classes.php:111
 msgid "Allow"
 msgstr "Tillåt"
 
-#: ../include/classes.php:52
+#: ../include/classes.php:112
 msgid "Allow only these"
 msgstr "Tillåt endast dessa"
 
-#: ../include/classes.php:53
+#: ../include/classes.php:113
 msgid "Disallow"
 msgstr "Tillåt inte"
 
-#: ../include/classes.php:60
+#: ../include/classes.php:120
 msgid "Font"
 msgstr "Font"
 
-#: ../include/classes.php:61
+#: ../include/classes.php:121
 msgid "Image"
 msgstr "Bild"
 
-#: ../include/classes.php:62
+#: ../include/classes.php:122
 msgid "Audio"
 msgstr "Ljud"
 
-#: ../include/classes.php:63
+#: ../include/classes.php:123
 msgid "Video"
 msgstr "Video"
 
-#: ../include/classes.php:64
+#: ../include/classes.php:124
 msgid "Compressed"
 msgstr "Komprimerad"
 
-#: ../include/classes.php:65
+#: ../include/classes.php:125
 msgid "Document"
 msgstr "Dokument"
 
-#: ../include/classes.php:66
+#: ../include/classes.php:126
 msgid "Presentation"
 msgstr "Presentation"
 
-#: ../include/classes.php:67
+#: ../include/classes.php:127
 msgid "Spreadsheet"
 msgstr "Kalkylark"
 
-#: ../include/classes.php:74
+#: ../include/classes.php:134
 msgid "Program"
 msgstr "Program"
 
-#: ../include/classes.php:75
+#: ../include/classes.php:135
 msgid "APK"
 msgstr ""
 
-#: ../include/classes.php:77
+#: ../include/classes.php:137
 msgid "Icon"
 msgstr "Ikon"
 
-#: ../include/classes.php:78
+#: ../include/classes.php:138
 msgid "SVG"
 msgstr ""
 
-#: ../include/classes.php:85
+#: ../include/classes.php:145
 msgid "Stylesheet"
 msgstr "Stilmall"
 
-#: ../include/classes.php:86
+#: ../include/classes.php:146
 msgid "Javascript"
 msgstr ""
 
-#: ../include/classes.php:87
+#: ../include/classes.php:147
 msgid "HTML"
 msgstr ""
 
-#: ../include/classes.php:112
+#: ../include/classes.php:172
 msgid "PDF"
 msgstr ""
 
-#: ../include/classes.php:337
+#: ../include/classes.php:423
 msgid "There are no categories to show here"
 msgstr "Det finns inga kategorier att visa här"
 

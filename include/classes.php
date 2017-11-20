@@ -10,6 +10,73 @@ class mf_media
 		$this->meta_prefix = "mf_media_";
 	}
 
+	function print_media_templates()
+	{
+?>
+		<script type="text/html" id="tmpl-attachment">
+			<div class="attachment-preview js--select-attachment type-{{ data.type }} subtype-{{ data.subtype }} {{ data.orientation }}">
+				<div class="thumbnail">
+					<# if ( data.uploading ) { #>
+						<div class="media-progress-bar"><div style="width: {{ data.percent }}%"></div></div>
+					<# } else if ( 'image' === data.type && data.sizes ) { #>
+						<div class="centered">
+							<img src="{{ data.size.url }}" draggable="false" alt="" />
+						</div>
+
+						<# if(data.alt == '')
+						{ #>
+							<i class='fa fa-warning yellow fa-2x' title='<?php _e("The file has got no alt text. Please add this to improve your SEO.", 'lang_media'); ?>'></i>
+						<# }
+
+						else if(data.size.url.match(/[<?php echo __("aring", 'lang_media'). __("auml", 'lang_media').__("ouml", 'lang_media').__("Aring", 'lang_media').__("Auml", 'lang_media').__("Ouml", 'lang_media'); ?>]+/))
+						{ #>
+							<i class='fa fa-ban red fa-2x' title='<?php _e("The file has got special characters in the filename. Please change this.", 'lang_media'); ?>'></i>
+						<# } #>
+					<# }
+						
+					else { #>
+						<div class="centered">
+							<# if ( data.image && data.image.src && data.image.src !== data.icon ) { #>
+								<img src="{{ data.image.src }}" class="thumbnail" draggable="false" alt="" />
+							<# } else if ( data.sizes && data.sizes.medium ) { #>
+								<img src="{{ data.sizes.medium.url }}" class="thumbnail" draggable="false" alt="" />
+							<# } else { #>
+								<img src="{{ data.icon }}" class="icon" draggable="false" alt="" />
+							<# } #>
+						</div>
+						<div class="filename">
+							<div>{{ data.filename }}</div>
+						</div>
+					<# } #>
+				</div>
+				<# if ( data.buttons.close ) { #>
+					<button type="button" class="button-link attachment-close media-modal-icon"><span class="screen-reader-text"><?php _e( 'Remove' ); ?></span></button>
+				<# } #>
+			</div>
+			<# if ( data.buttons.check ) { #>
+				<button type="button" class="check" tabindex="-1"><span class="media-modal-icon"></span><span class="screen-reader-text"><?php _e( 'Deselect' ); ?></span></button>
+			<# } #>
+			<#
+			var maybeReadOnly = data.can.save || data.allowLocalEdits ? '' : 'readonly';
+			if ( data.describe ) {
+				if ( 'image' === data.type ) { #>
+					<input type="text" value="{{ data.caption }}" class="describe" data-setting="caption"
+						placeholder="<?php esc_attr_e('Caption this image&hellip;'); ?>" {{ maybeReadOnly }} />
+				<# } else { #>
+					<input type="text" value="{{ data.title }}" class="describe" data-setting="title"
+						<# if ( 'video' === data.type ) { #>
+							placeholder="<?php esc_attr_e('Describe this video&hellip;'); ?>"
+						<# } else if ( 'audio' === data.type ) { #>
+							placeholder="<?php esc_attr_e('Describe this audio file&hellip;'); ?>"
+						<# } else { #>
+							placeholder="<?php esc_attr_e('Describe this media file&hellip;'); ?>"
+						<# } #> {{ maybeReadOnly }} />
+				<# }
+			} #>
+		</script>
+<?php
+	}
+
 	//Clean filenames
 	##########################
 	function upload_filter($file)
@@ -211,13 +278,33 @@ class mf_media
 
 		$out = array();
 
-		$query = $wpdb->prepare("SELECT fileID FROM ".$wpdb->base_prefix."media2category INNER JOIN ".$wpdb->base_prefix."media2role USING (fileID) WHERE categoryID = '%d' AND roleKey = %s", $cat_id, $role_id);
-
-		$result = $wpdb->get_results($query);
+		//$result = $wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->base_prefix."media2category INNER JOIN ".$wpdb->base_prefix."media2role USING (fileID) WHERE categoryID = '%d' AND roleKey = %s", $cat_id, $role_id));
+		$result = $wpdb->get_results($wpdb->prepare("SELECT fileID, roleKey FROM ".$wpdb->base_prefix."media2category LEFT JOIN ".$wpdb->base_prefix."media2role USING (fileID) WHERE categoryID = '%d'", $cat_id));
 
 		foreach($result as $r)
 		{
 			$intFileID = $r->fileID;
+			$strRoleKey = $r->roleKey;
+
+			if($strRoleKey == $role_id)
+			{
+
+			}
+
+			else if($strRoleKey == '')
+			{
+
+			}
+
+			else
+			{
+				$wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->base_prefix."media2role WHERE roleKey = %s", $role_id));
+
+				if($wpdb->num_rows == 0)
+				{
+					continue;
+				}
+			}
 
 			$out[] = $intFileID;
 		}
