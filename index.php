@@ -3,7 +3,7 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description: 
-Version: 5.3.3
+Version: 5.3.4
 Author: Martin Fors
 Author URI: http://frostkom.se
 Text Domain: lang_media
@@ -100,7 +100,7 @@ function activate_media()
 
 			foreach($arr_categories as $key => $value)
 			{
-				$wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->base_prefix."media2category WHERE fileID = '%d' AND categoryID = '%d'", $r->ID, $value));
+				$wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->base_prefix."media2category WHERE fileID = '%d' AND categoryID = '%d' LIMIT 0, 1", $r->ID, $value));
 
 				if($wpdb->num_rows == 0)
 				{

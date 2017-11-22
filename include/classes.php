@@ -298,7 +298,7 @@ class mf_media
 
 			else
 			{
-				$wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->base_prefix."media2role WHERE roleKey = %s", $role_id));
+				$wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->base_prefix."media2role WHERE roleKey = %s LIMIT 0, 1", $role_id));
 
 				if($wpdb->num_rows == 0)
 				{
