@@ -3,7 +3,7 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description: 
-Version: 5.3.5
+Version: 5.4.0
 Author: Martin Fors
 Author URI: http://frostkom.se
 Text Domain: lang_media
@@ -89,8 +89,39 @@ function activate_media()
 
 	add_index($arr_add_index);
 
+	$arr_data = array();
+	get_post_children(array('post_type' => 'mf_media_allowed'), $arr_data);
+
+	if(count($arr_data) == 0)
+	{
+		$obj_media = new mf_media();
+
+		$post_data = array(
+			'post_type' => 'mf_media_allowed',
+			'post_status' => 'publish',
+			'post_title' => __("Default", 'lang_media'),
+		);
+
+		$post_id = wp_insert_post($post_data);
+
+		if($post_id > 0)
+		{
+			update_post_meta($post_id, $obj_media->meta_prefix.'action', 'allow');
+
+			$arr_mimes = array('svg', 'eot', 'ttf', 'woff');
+
+			foreach($arr_mimes as $mime)
+			{
+				//update_post_meta() the Meta Box way
+				$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->postmeta." SET post_id = '%d', meta_key = %s, meta_value = %s", $post_id, $obj_media->meta_prefix.'types', $mime));
+
+				//add_post_meta($post_id, $obj_meta->meta_prefix.'types', $mime);
+			}
+		}
+	}
+
 	//Migrate from option to DB
-	if(IS_ADMIN)
+	/*if(IS_ADMIN)
 	{
 		$result = $wpdb->get_results("SELECT ID FROM ".$wpdb->posts." WHERE post_type = 'attachment'");
 
@@ -108,7 +139,7 @@ function activate_media()
 				}
 			}
 		}
-	}
+	}*/
 }
 
 function uninstall_media()

@@ -254,9 +254,17 @@ function column_cell_media_allowed($col, $id)
 
 			foreach($arr_post_meta as $post_meta)
 			{
-				echo ($i > 0 ? ", " : "").$arr_types[$post_meta];
+				if(isset($arr_types[$post_meta]))
+				{
+					echo ($i > 0 ? ", " : "").$arr_types[$post_meta];
 
-				$i++;
+					$i++;
+				}
+
+				else
+				{
+					do_log(sprintf(__("The mime type '%s' does not exist", 'lang_media'), $post_meta));
+				}
 			}
 		break;
 	}

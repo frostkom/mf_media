@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-20 15:05+0100\n"
+"POT-Creation-Date: 2017-11-28 12:08+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -14,6 +14,10 @@ msgstr ""
 "X-Poedit-KeywordsList: esc_html__;esc_html_e;esc_attr__;esc_attr_e;__;_e\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: ..\n"
+
+#: ../index.php:102
+msgid "Default"
+msgstr "Standard"
 
 #: ../include/classes.php:28
 msgid "The file has got no alt text. Please add this to improve your SEO."
@@ -147,7 +151,7 @@ msgstr ""
 msgid "PDF"
 msgstr ""
 
-#: ../include/classes.php:423
+#: ../include/classes.php:417
 msgid "There are no categories to show here"
 msgstr "Det finns inga kategorier att visa här"
 
@@ -197,17 +201,22 @@ msgstr "Åtgärd"
 msgid "Role"
 msgstr "Roll"
 
-#: ../include/functions.php:380
+#: ../include/functions.php:266
+#, php-format
+msgid "The mime type '%s' does not exist"
+msgstr "Filtypen '%s' finns inte"
+
+#: ../include/functions.php:388
 msgid "View all categories"
 msgstr "Visa alla kategorier"
 
-#: ../include/functions.php:465
-#: ../include/functions.php:534
+#: ../include/functions.php:473
+#: ../include/functions.php:542
 msgid "Categories"
 msgstr "Kategorier"
 
-#: ../include/functions.php:487
-#: ../include/functions.php:535
+#: ../include/functions.php:495
+#: ../include/functions.php:543
 msgid "Roles"
 msgstr "Roller"
 
