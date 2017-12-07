@@ -33,7 +33,7 @@ class mf_media
 							<i class='fa fa-ban red fa-2x' title='<?php _e("The file has got special characters in the filename. Please change this.", 'lang_media'); ?>'></i>
 						<# } #>
 					<# }
-						
+
 					else { #>
 						<div class="centered">
 							<# if ( data.image && data.image.src && data.image.src !== data.icon ) { #>
