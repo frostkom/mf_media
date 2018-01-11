@@ -61,15 +61,15 @@ class mf_media
 			if ( data.describe ) {
 				if ( 'image' === data.type ) { #>
 					<input type="text" value="{{ data.caption }}" class="describe" data-setting="caption"
-						placeholder="<?php esc_attr_e('Caption this image&hellip;'); ?>" {{ maybeReadOnly }} />
+						placeholder="<?php echo __("Caption this image", 'lang_media')."&hellip;"; ?>" {{ maybeReadOnly }} />
 				<# } else { #>
 					<input type="text" value="{{ data.title }}" class="describe" data-setting="title"
 						<# if ( 'video' === data.type ) { #>
-							placeholder="<?php esc_attr_e('Describe this video&hellip;'); ?>"
+							placeholder="<?php echo __("Describe this video", 'lang_media')."&hellip;"; ?>"
 						<# } else if ( 'audio' === data.type ) { #>
-							placeholder="<?php esc_attr_e('Describe this audio file&hellip;'); ?>"
+							placeholder="<?php echo __("Describe this audio file", 'lang_media')."&hellip;"; ?>"
 						<# } else { #>
-							placeholder="<?php esc_attr_e('Describe this media file&hellip;'); ?>"
+							placeholder="<?php echo __("Describe this media file", 'lang_media')."&hellip;"; ?>"
 						<# } #> {{ maybeReadOnly }} />
 				<# }
 			} #>
@@ -81,10 +81,8 @@ class mf_media
 	##########################
 	function upload_filter($file)
 	{
-		if(get_option('setting_media_sanitize_files') == 'yes')
+		if(get_site_option('setting_media_sanitize_files') == 'yes')
 		{
-			//$path = pathinfo($file['name']);
-			//$file_suffix = $path['extension'];
 			$file_suffix = get_file_suffix($file['name']);
 
 			$file['name'] = sanitize_title(preg_replace("/.".$file_suffix."$/", '', $file['name'])).".".$file_suffix;

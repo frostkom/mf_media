@@ -6,10 +6,14 @@ function settings_media()
 
 	add_settings_section($options_area, "", $options_area."_callback", BASE_OPTIONS_PAGE);
 
-	$arr_settings = array(
-		'setting_media_sanitize_files' => __("Sanitize Filenames", 'lang_media'),
-		'setting_show_admin_menu' => __("Show admin menu with categories and files", 'lang_media'),
-	);
+	$arr_settings = array();
+
+	if(IS_SUPER_ADMIN)
+	{
+		$arr_settings['setting_media_sanitize_files'] = __("Sanitize Filenames", 'lang_media');
+	}
+
+	$arr_settings['setting_show_admin_menu'] = __("Show admin menu with categories and files", 'lang_media');
 
 	show_settings_fields(array('area' => $options_area, 'settings' => $arr_settings));
 }
@@ -24,7 +28,8 @@ function settings_media_callback()
 function setting_media_sanitize_files_callback()
 {
 	$setting_key = get_setting_key(__FUNCTION__);
-	$option = get_option($setting_key, 'yes');
+	settings_save_site_wide($setting_key);
+	$option = get_site_option($setting_key, 'yes');
 
 	echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
 }
@@ -263,7 +268,7 @@ function column_cell_media_allowed($col, $id)
 
 				else
 				{
-					do_log(sprintf(__("The mime type '%s' does not exist", 'lang_media'), $post_meta));
+					error_log(sprintf(__("The mime type '%s' does not exist", 'lang_media'), $post_meta));
 				}
 			}
 		break;
@@ -388,7 +393,7 @@ function enqueue_scripts_media()
 		mf_enqueue_script('script_media', $plugin_include_url."script.js", array('taxonomy' => $taxonomy, 'list_title' => "-- ".__("View all categories", 'lang_media')." --", 'term_list' => "[".$attachment_terms."]", 'current_media_category' => $current_media_category), $plugin_version);
 	}
 
-	mf_enqueue_style('style_media', $plugin_include_url."style_wp.css", $plugin_version); //, '1.5.2'
+	mf_enqueue_style('style_media', $plugin_include_url."style_wp.css", $plugin_version);
 }
 
 function get_media_categories($post_id)

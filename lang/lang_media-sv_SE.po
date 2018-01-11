@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-28 12:08+0100\n"
+"POT-Creation-Date: 2018-01-11 10:39+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -60,163 +60,163 @@ msgid "Deselect"
 msgstr "Avmarkera"
 
 #: ../include/classes.php:64
-msgid "Caption this image&hellip;"
-msgstr ""
+msgid "Caption this image"
+msgstr "Beskriv denna bild"
 
 #: ../include/classes.php:68
-msgid "Describe this video&hellip;"
-msgstr ""
+msgid "Describe this video"
+msgstr "Beskriv denna video"
 
 #: ../include/classes.php:70
-msgid "Describe this audio file&hellip;"
-msgstr ""
+msgid "Describe this audio file"
+msgstr "Beskriv denna ljudfil"
 
 #: ../include/classes.php:72
-msgid "Describe this media file&hellip;"
-msgstr ""
+msgid "Describe this media file"
+msgstr "Beskriv denna mediafil"
 
-#: ../include/classes.php:111
+#: ../include/classes.php:109
 msgid "Allow"
 msgstr "Tillåt"
 
-#: ../include/classes.php:112
+#: ../include/classes.php:110
 msgid "Allow only these"
 msgstr "Tillåt endast dessa"
 
-#: ../include/classes.php:113
+#: ../include/classes.php:111
 msgid "Disallow"
 msgstr "Tillåt inte"
 
-#: ../include/classes.php:120
+#: ../include/classes.php:118
 msgid "Font"
 msgstr "Font"
 
-#: ../include/classes.php:121
+#: ../include/classes.php:119
 msgid "Image"
 msgstr "Bild"
 
-#: ../include/classes.php:122
+#: ../include/classes.php:120
 msgid "Audio"
 msgstr "Ljud"
 
-#: ../include/classes.php:123
+#: ../include/classes.php:121
 msgid "Video"
 msgstr "Video"
 
-#: ../include/classes.php:124
+#: ../include/classes.php:122
 msgid "Compressed"
 msgstr "Komprimerad"
 
-#: ../include/classes.php:125
+#: ../include/classes.php:123
 msgid "Document"
 msgstr "Dokument"
 
-#: ../include/classes.php:126
+#: ../include/classes.php:124
 msgid "Presentation"
 msgstr "Presentation"
 
-#: ../include/classes.php:127
+#: ../include/classes.php:125
 msgid "Spreadsheet"
 msgstr "Kalkylark"
 
-#: ../include/classes.php:134
+#: ../include/classes.php:132
 msgid "Program"
 msgstr "Program"
 
-#: ../include/classes.php:135
+#: ../include/classes.php:133
 msgid "APK"
 msgstr ""
 
-#: ../include/classes.php:137
+#: ../include/classes.php:135
 msgid "Icon"
 msgstr "Ikon"
 
-#: ../include/classes.php:138
+#: ../include/classes.php:136
 msgid "SVG"
 msgstr ""
 
-#: ../include/classes.php:145
+#: ../include/classes.php:143
 msgid "Stylesheet"
 msgstr "Stilmall"
 
-#: ../include/classes.php:146
+#: ../include/classes.php:144
 msgid "Javascript"
 msgstr ""
 
-#: ../include/classes.php:147
+#: ../include/classes.php:145
 msgid "HTML"
 msgstr ""
 
-#: ../include/classes.php:172
+#: ../include/classes.php:170
 msgid "PDF"
 msgstr ""
 
-#: ../include/classes.php:417
+#: ../include/classes.php:415
 msgid "There are no categories to show here"
 msgstr "Det finns inga kategorier att visa här"
 
-#: ../include/functions.php:10
+#: ../include/functions.php:13
 msgid "Sanitize Filenames"
 msgstr "Rengör filnamn"
 
-#: ../include/functions.php:11
+#: ../include/functions.php:16
 msgid "Show admin menu with categories and files"
-msgstr "Visa adminmenyn med kategorier och filer"
+msgstr "Visa adminmeny med kategorier och filer"
 
-#: ../include/functions.php:21
+#: ../include/functions.php:25
 msgid "Media"
 msgstr "Media"
 
-#: ../include/functions.php:48
+#: ../include/functions.php:53
 #: ../list/index.php:7
 msgid "Files"
 msgstr "Filer"
 
-#: ../include/functions.php:55
-#: ../include/functions.php:144
+#: ../include/functions.php:60
+#: ../include/functions.php:149
 msgid "Allowed Types"
 msgstr "Tillåtna typer"
 
-#: ../include/functions.php:142
-#: ../include/functions.php:214
+#: ../include/functions.php:147
+#: ../include/functions.php:219
 msgid "Types"
 msgstr "Typ"
 
-#: ../include/functions.php:143
-#: ../include/functions.php:196
+#: ../include/functions.php:148
+#: ../include/functions.php:201
 msgid "Type"
 msgstr "Typ"
 
-#: ../include/functions.php:177
+#: ../include/functions.php:182
 msgid "Settings"
 msgstr "Inställningar"
 
-#: ../include/functions.php:183
-#: ../include/functions.php:212
+#: ../include/functions.php:188
+#: ../include/functions.php:217
 msgid "Action"
 msgstr "Åtgärd"
 
-#: ../include/functions.php:189
-#: ../include/functions.php:213
+#: ../include/functions.php:194
+#: ../include/functions.php:218
 msgid "Role"
 msgstr "Roll"
 
-#: ../include/functions.php:266
+#: ../include/functions.php:271
 #, php-format
 msgid "The mime type '%s' does not exist"
 msgstr "Filtypen '%s' finns inte"
 
-#: ../include/functions.php:388
+#: ../include/functions.php:393
 msgid "View all categories"
 msgstr "Visa alla kategorier"
 
-#: ../include/functions.php:473
-#: ../include/functions.php:542
+#: ../include/functions.php:478
+#: ../include/functions.php:547
 msgid "Categories"
 msgstr "Kategorier"
 
-#: ../include/functions.php:495
-#: ../include/functions.php:543
+#: ../include/functions.php:500
+#: ../include/functions.php:548
 msgid "Roles"
 msgstr "Roller"
 
