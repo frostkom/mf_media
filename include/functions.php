@@ -29,7 +29,7 @@ function setting_media_sanitize_files_callback()
 {
 	$setting_key = get_setting_key(__FUNCTION__);
 	settings_save_site_wide($setting_key);
-	$option = get_site_option($setting_key, 'yes');
+	$option = get_site_option($setting_key, get_option($setting_key, 'yes'));
 
 	echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
 }
