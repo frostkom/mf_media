@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-01-11 10:39+0100\n"
+"POT-Creation-Date: 2018-01-15 09:40+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-#: ../index.php:102
+#: ../index.php:112
 msgid "Default"
 msgstr "Standard"
 
@@ -151,7 +151,7 @@ msgstr ""
 msgid "PDF"
 msgstr ""
 
-#: ../include/classes.php:415
+#: ../include/classes.php:407
 msgid "There are no categories to show here"
 msgstr "Det finns inga kategorier att visa här"
 
@@ -160,63 +160,71 @@ msgid "Sanitize Filenames"
 msgstr "Rengör filnamn"
 
 #: ../include/functions.php:16
+msgid "Activate Categories"
+msgstr "Aktivera kategorier"
+
+#: ../include/functions.php:20
 msgid "Show admin menu with categories and files"
 msgstr "Visa adminmeny med kategorier och filer"
 
-#: ../include/functions.php:25
+#: ../include/functions.php:30
 msgid "Media"
 msgstr "Media"
 
-#: ../include/functions.php:53
+#: ../include/functions.php:47
+msgid "This will add the possibility to connect categories and restrict roles to every file in the Media Library"
+msgstr "Detta lägger till möjligheten att koppla kategorier och begränsa roller till varje fil i Mediabiblioteket"
+
+#: ../include/functions.php:66
 #: ../list/index.php:7
 msgid "Files"
 msgstr "Filer"
 
-#: ../include/functions.php:60
-#: ../include/functions.php:149
+#: ../include/functions.php:73
+#: ../include/functions.php:162
 msgid "Allowed Types"
 msgstr "Tillåtna typer"
 
-#: ../include/functions.php:147
-#: ../include/functions.php:219
+#: ../include/functions.php:160
+#: ../include/functions.php:232
 msgid "Types"
 msgstr "Typ"
 
-#: ../include/functions.php:148
-#: ../include/functions.php:201
+#: ../include/functions.php:161
+#: ../include/functions.php:214
 msgid "Type"
 msgstr "Typ"
 
-#: ../include/functions.php:182
+#: ../include/functions.php:195
 msgid "Settings"
 msgstr "Inställningar"
 
-#: ../include/functions.php:188
-#: ../include/functions.php:217
+#: ../include/functions.php:201
+#: ../include/functions.php:230
 msgid "Action"
 msgstr "Åtgärd"
 
-#: ../include/functions.php:194
-#: ../include/functions.php:218
+#: ../include/functions.php:207
+#: ../include/functions.php:231
 msgid "Role"
 msgstr "Roll"
 
-#: ../include/functions.php:271
+#: ../include/functions.php:284
 #, php-format
 msgid "The mime type '%s' does not exist"
 msgstr "Filtypen '%s' finns inte"
 
-#: ../include/functions.php:393
+#: ../include/functions.php:406
 msgid "View all categories"
 msgstr "Visa alla kategorier"
 
-#: ../include/functions.php:478
-#: ../include/functions.php:547
+#: ../include/functions.php:491
+#: ../include/functions.php:560
 msgid "Categories"
 msgstr "Kategorier"
 
-#: ../include/functions.php:500
-#: ../include/functions.php:548
+#: ../include/functions.php:513
+#: ../include/functions.php:561
 msgid "Roles"
 msgstr "Roller"
 

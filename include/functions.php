@@ -13,7 +13,12 @@ function settings_media()
 		$arr_settings['setting_media_sanitize_files'] = __("Sanitize Filenames", 'lang_media');
 	}
 
-	$arr_settings['setting_show_admin_menu'] = __("Show admin menu with categories and files", 'lang_media');
+	$arr_settings['setting_media_activate_categories'] = __("Activate Categories", 'lang_media');
+
+	if(get_option('setting_media_activate_categories') == 'yes')
+	{
+		$arr_settings['setting_show_admin_menu'] = __("Show admin menu with categories and files", 'lang_media');
+	}
 
 	show_settings_fields(array('area' => $options_area, 'settings' => $arr_settings));
 }
@@ -32,6 +37,14 @@ function setting_media_sanitize_files_callback()
 	$option = get_site_option($setting_key, get_option($setting_key, 'yes'));
 
 	echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
+}
+
+function setting_media_activate_categories_callback()
+{
+	$setting_key = get_setting_key(__FUNCTION__);
+	$option = get_option($setting_key, 'no');
+
+	echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option, 'description' => __("This will add the possibility to connect categories and restrict roles to every file in the Media Library", 'lang_media')));
 }
 
 function setting_show_admin_menu_callback()
@@ -134,7 +147,7 @@ function update_count_callback_media_category_media() //$terms = array(), $taxon
 	{
 		$intCategoryID = $r->term_taxonomy_id;
 
-		$tax_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(categoryID) FROM ".$wpdb->base_prefix."media2category WHERE categoryID = '%d'", $intCategoryID));
+		$tax_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(categoryID) FROM ".$wpdb->prefix."media2category WHERE categoryID = '%d'", $intCategoryID));
 		$tax_count += $r->total;
 
 		$wpdb->update($wpdb->term_taxonomy, array('count' => $tax_count), array('term_taxonomy_id' => $intCategoryID));
@@ -300,7 +313,7 @@ function filter_on_category_media($query)
 	{
 		$arr_file_ids = array();
 
-		$result = $wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->base_prefix."media2category WHERE categoryID = '%d'", $intCategoryID));
+		$result = $wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2category WHERE categoryID = '%d'", $intCategoryID));
 
 		if($wpdb->num_rows > 0)
 		{
@@ -402,7 +415,7 @@ function get_media_categories($post_id)
 
 	$array = array();
 
-	$result = $wpdb->get_results($wpdb->prepare("SELECT categoryID FROM ".$wpdb->base_prefix."media2category WHERE fileID = '%d'", $post_id));
+	$result = $wpdb->get_results($wpdb->prepare("SELECT categoryID FROM ".$wpdb->prefix."media2category WHERE fileID = '%d'", $post_id));
 
 	foreach($result as $r)
 	{
@@ -418,7 +431,7 @@ function get_media_roles($post_id)
 
 	$array = array();
 
-	$result = $wpdb->get_results($wpdb->prepare("SELECT roleKey FROM ".$wpdb->base_prefix."media2role WHERE fileID = '%d'", $post_id));
+	$result = $wpdb->get_results($wpdb->prepare("SELECT roleKey FROM ".$wpdb->prefix."media2role WHERE fileID = '%d'", $post_id));
 
 	foreach($result as $r)
 	{
@@ -511,7 +524,7 @@ function attachment_save_media($post, $attachment)
 {
 	global $wpdb;
 
-	$wpdb->query($wpdb->prepare("DELETE FROM ".$wpdb->base_prefix."media2category WHERE fileID = '%d'", $post['ID']));
+	$wpdb->query($wpdb->prepare("DELETE FROM ".$wpdb->prefix."media2category WHERE fileID = '%d'", $post['ID']));
 
 	if(isset($attachment['mf_mc_category']))
 	{
@@ -519,11 +532,11 @@ function attachment_save_media($post, $attachment)
 
 		foreach($array as $key => $value)
 		{
-			$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."media2category SET fileID = '%d', categoryID = '%d'", $post['ID'], $value));
+			$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->prefix."media2category SET fileID = '%d', categoryID = '%d'", $post['ID'], $value));
 		}
     }
 
-	$wpdb->query($wpdb->prepare("DELETE FROM ".$wpdb->base_prefix."media2role WHERE fileID = '%d'", $post['ID']));
+	$wpdb->query($wpdb->prepare("DELETE FROM ".$wpdb->prefix."media2role WHERE fileID = '%d'", $post['ID']));
 
 	if(isset($attachment['mf_mc_roles']))
 	{
@@ -531,7 +544,7 @@ function attachment_save_media($post, $attachment)
 
 		foreach($array as $key => $value)
 		{
-			$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->base_prefix."media2role SET fileID = '%d', roleKey = %s", $post['ID'], $value));
+			$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->prefix."media2role SET fileID = '%d', roleKey = %s", $post['ID'], $value));
 		}
     }
 }

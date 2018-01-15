@@ -276,27 +276,19 @@ class mf_media
 
 		$out = array();
 
-		//$result = $wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->base_prefix."media2category INNER JOIN ".$wpdb->base_prefix."media2role USING (fileID) WHERE categoryID = '%d' AND roleKey = %s", $cat_id, $role_id));
-		$result = $wpdb->get_results($wpdb->prepare("SELECT fileID, roleKey FROM ".$wpdb->base_prefix."media2category LEFT JOIN ".$wpdb->base_prefix."media2role USING (fileID) WHERE categoryID = '%d'", $cat_id));
+		$result = $wpdb->get_results($wpdb->prepare("SELECT fileID, roleKey FROM ".$wpdb->prefix."media2category LEFT JOIN ".$wpdb->prefix."media2role USING (fileID) WHERE categoryID = '%d'", $cat_id));
 
 		foreach($result as $r)
 		{
 			$intFileID = $r->fileID;
 			$strRoleKey = $r->roleKey;
 
-			if($strRoleKey == $role_id)
-			{
-
-			}
-
-			else if($strRoleKey == '')
-			{
-
-			}
+			if($strRoleKey == $role_id){}
+			else if($strRoleKey == ''){}
 
 			else
 			{
-				$wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->base_prefix."media2role WHERE roleKey = %s LIMIT 0, 1", $role_id));
+				$wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2role WHERE roleKey = %s LIMIT 0, 1", $role_id));
 
 				if($wpdb->num_rows == 0)
 				{
