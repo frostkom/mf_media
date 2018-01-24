@@ -20,7 +20,7 @@ class mf_media
 						<div class="media-progress-bar"><div style="width: {{ data.percent }}%"></div></div>
 					<# } else if ( 'image' === data.type && data.sizes ) { #>
 						<div class="centered">
-							<img src="{{ data.size.url }}" draggable="false" alt="" />
+							<img src="{{ data.size.url }}" draggable="false">
 						</div>
 
 						<# if(data.alt == '')
@@ -37,11 +37,11 @@ class mf_media
 					else { #>
 						<div class="centered">
 							<# if ( data.image && data.image.src && data.image.src !== data.icon ) { #>
-								<img src="{{ data.image.src }}" class="thumbnail" draggable="false" alt="" />
+								<img src="{{ data.image.src }}" class="thumbnail" draggable="false">
 							<# } else if ( data.sizes && data.sizes.medium ) { #>
-								<img src="{{ data.sizes.medium.url }}" class="thumbnail" draggable="false" alt="" />
+								<img src="{{ data.sizes.medium.url }}" class="thumbnail" draggable="false">
 							<# } else { #>
-								<img src="{{ data.icon }}" class="icon" draggable="false" alt="" />
+								<img src="{{ data.icon }}" class="icon" draggable="false">
 							<# } #>
 						</div>
 						<div class="filename">
@@ -85,7 +85,14 @@ class mf_media
 		{
 			$file_suffix = get_file_suffix($file['name']);
 
-			$file['name'] = sanitize_title(preg_replace("/.".$file_suffix."$/", '', $file['name'])).".".$file_suffix;
+			$file['name'] = sanitize_title(preg_replace("/.".$file_suffix."$/", '', $file['name']));
+
+			if(strlen($file['name']) > 95)
+			{
+				$file['name'] = substr($file['name'], 0, 95);
+			}
+			
+			$file['name'] .= ".".$file_suffix;
 		}
 
 	    return $file;
