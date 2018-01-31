@@ -3,13 +3,14 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description: 
-Version: 5.5.1
+Version: 5.5.3
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: http://frostkom.se
 Text Domain: lang_media
 Domain Path: /lang
 
+Depends: Meta Box, MF Base
 GitHub Plugin URI: frostkom/mf_media
 */
 
@@ -69,7 +70,10 @@ function activate_media()
 {
 	global $wpdb;
 
-	//require_plugin("meta-box/meta-box.php", "Meta Box");
+	if(is_admin())
+	{
+		require_plugin("meta-box/meta-box.php", "Meta Box");
+	}
 
 	$default_charset = DB_CHARSET != '' ? DB_CHARSET : "utf8";
 
@@ -148,12 +152,15 @@ function activate_media()
 			}
 		}
 	}*/
+
+	replace_user_meta(array('old' => 'mf_mc_current_media_category', 'new' => 'meta_current_media_category'));
 }
 
 function uninstall_media()
 {
 	mf_uninstall_plugin(array(
 		'options' => array('setting_show_admin_menu'),
+		'meta' => array('meta_current_media_category'),
 		'post_types' => array('mf_media_allowed'),
 		'tables' => array('media2category', 'media2role'),
 	));

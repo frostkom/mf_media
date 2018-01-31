@@ -325,13 +325,13 @@ function filter_on_category_media($query)
 			$query['post__in'] = $arr_file_ids;
 		}
 
-		update_user_meta(get_current_user_id(), 'mf_mc_current_media_category', $intCategoryID);
+		update_user_meta(get_current_user_id(), 'meta_current_media_category', $intCategoryID);
 	}
 
 	//Is never executed since the default value has "all" as value
 	/*else
 	{
-		delete_user_meta(get_current_user_id(), 'mf_mc_current_media_category');
+		delete_user_meta(get_current_user_id(), 'meta_current_media_category');
 	}*/
 
 	return $query;
@@ -401,7 +401,7 @@ function enqueue_scripts_media()
 
 		$attachment_terms = $obj_media->get_categories_options();
 
-		$current_media_category = get_user_meta(get_current_user_id(), 'mf_mc_current_media_category', true);
+		$current_media_category = get_user_meta(get_current_user_id(), 'meta_current_media_category', true);
 
 		mf_enqueue_script('script_media', $plugin_include_url."script.js", array('taxonomy' => $taxonomy, 'list_title' => "-- ".__("View all categories", 'lang_media')." --", 'term_list' => "[".$attachment_terms."]", 'current_media_category' => $current_media_category), $plugin_version);
 	}
