@@ -90,8 +90,9 @@ function upload_mimes_media($existing_mimes = array())
 		$post_id = $r->ID;
 
 		$post_role = get_post_meta($post_id, $obj_media->meta_prefix.'role', false);
+		$post_role_count = count($post_role);
 
-		if(count($post_role) == 0 || in_array(get_current_user_role(), $post_role))
+		if($post_role_count == 0 || in_array(get_current_user_role(), $post_role))
 		{
 			$post_action = get_post_meta($post_id, $obj_media->meta_prefix.'action', true);
 			$post_types = get_post_meta($post_id, $obj_media->meta_prefix.'types', false);
@@ -99,9 +100,17 @@ function upload_mimes_media($existing_mimes = array())
 			switch($post_action)
 			{
 				case 'allow':
-					foreach($post_types as $post_type)
+					if(count($post_types) > 0)
 					{
-						$existing_mimes[$post_type] = $arr_types[$post_type];
+						foreach($post_types as $post_type)
+						{
+							$existing_mimes[$post_type] = $arr_types[$post_type];
+						}
+					}
+
+					else if($post_role_count == 1 && in_array('administrator', $post_role))
+					{
+						define('ALLOW_UNFILTERED_UPLOADS', true);
 					}
 				break;
 
@@ -268,20 +277,38 @@ function column_cell_media_allowed($col, $id)
 
 			$arr_post_meta = get_post_meta($id, $obj_media->meta_prefix.$col, false);
 
-			$i = 0;
-
-			foreach($arr_post_meta as $post_meta)
+			if(count($arr_post_meta) == 0)
 			{
-				if(isset($arr_types[$post_meta]))
-				{
-					echo ($i > 0 ? ", " : "").$arr_types[$post_meta];
+				$post_role = get_post_meta($id, $obj_media->meta_prefix.'role', false);
 
-					$i++;
+				if(count($post_role) == 1 && in_array('administrator', $post_role))
+				{
+					echo __("All", 'lang_media');
 				}
 
 				else
 				{
-					error_log(sprintf(__("The mime type '%s' does not exist", 'lang_media'), $post_meta));
+					echo __("None", 'lang_media')." (".__("Only administrators can have unfiltered uploads", 'lang_media').")";
+				}
+			}
+
+			else
+			{
+				$i = 0;
+
+				foreach($arr_post_meta as $post_meta)
+				{
+					if(isset($arr_types[$post_meta]))
+					{
+						echo ($i > 0 ? ", " : "").$arr_types[$post_meta];
+
+						$i++;
+					}
+
+					else
+					{
+						error_log(sprintf(__("The mime type '%s' does not exist", 'lang_media'), $post_meta));
+					}
 				}
 			}
 		break;
