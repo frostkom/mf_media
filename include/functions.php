@@ -110,7 +110,10 @@ function upload_mimes_media($existing_mimes = array())
 
 					else if($post_role_count == 1 && in_array('administrator', $post_role))
 					{
-						define('ALLOW_UNFILTERED_UPLOADS', true);
+						if(!defined('ALLOW_UNFILTERED_UPLOADS'))
+						{
+							define('ALLOW_UNFILTERED_UPLOADS', true);
+						}
 					}
 				break;
 
