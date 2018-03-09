@@ -3,7 +3,7 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description: 
-Version: 5.5.5
+Version: 5.5.6
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: http://frostkom.se
@@ -70,10 +70,7 @@ function activate_media()
 {
 	global $wpdb;
 
-	if(is_admin())
-	{
-		require_plugin("meta-box/meta-box.php", "Meta Box");
-	}
+	require_plugin("meta-box/meta-box.php", "Meta Box");
 
 	$default_charset = DB_CHARSET != '' ? DB_CHARSET : "utf8";
 
