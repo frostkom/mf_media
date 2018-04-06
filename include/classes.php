@@ -91,7 +91,7 @@ class mf_media
 			{
 				$file['name'] = substr($file['name'], 0, 95);
 			}
-			
+
 			$file['name'] .= ".".$file_suffix;
 		}
 
@@ -192,7 +192,7 @@ class mf_media
 			'odp' =>				array($presentation_name." (Open)", "application/vnd.oasis.opendocument.presentation"),
 			//'xla' =>				array($spreadsheet_name." (Excel - XLA)", "application/vnd.ms-excel"),
 			'xls' =>				array($spreadsheet_name." (Excel - XLS)", "application/vnd.ms-excel"),
-			//'xls' =>				array($spreadsheet_name." (Excel - XLS)", array("application/excel", "application/vnd.ms-excel", "application/x-excel", "application/x-msexcel")),	
+			//'xls' =>				array($spreadsheet_name." (Excel - XLS)", array("application/excel", "application/vnd.ms-excel", "application/x-excel", "application/x-msexcel")),
 			//'xlt' =>				array($spreadsheet_name." (Excel - XLT)", "application/vnd.ms-excel"),
 			//'xlw' =>				array($spreadsheet_name." (Excel - XLW)", "application/vnd.ms-excel"),
 			'xlsx' =>				array($spreadsheet_name." (Excel - XLSX)", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
