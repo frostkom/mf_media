@@ -187,9 +187,7 @@ function init_media()
 
 	register_post_type('mf_media_allowed', $args);
 
-	$taxonomy = 'category';
-
-	register_taxonomy_for_object_type($taxonomy, 'attachment');
+	register_taxonomy_for_object_type('category', 'attachment');
 }
 
 function meta_boxes_media($meta_boxes)
