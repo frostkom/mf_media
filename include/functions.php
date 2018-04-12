@@ -65,7 +65,7 @@ function menu_media()
 	{
 		$menu_title = __("Files", 'lang_media');
 
-		add_menu_page($menu_title, $menu_title, $menu_capability, $menu_start, '', 'dashicons-media-default');
+		add_menu_page($menu_title, $menu_title, $menu_capability, $menu_start, '', 'dashicons-media-default', 11);
 	}
 
 	if(IS_ADMIN)
