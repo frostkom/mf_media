@@ -308,7 +308,7 @@ function column_cell_media_allowed($col, $id)
 
 					else
 					{
-						error_log(sprintf(__("The mime type '%s' does not exist", 'lang_media'), $post_meta));
+						do_log(sprintf(__("The mime type '%s' does not exist", 'lang_media'), $post_meta));
 					}
 				}
 			}
@@ -335,107 +335,102 @@ function filter_on_category_media($query)
 {
 	global $wpdb;
 
-	$intCategoryID = isset($_REQUEST['query']['category']) ? check_var($_REQUEST['query']['category'], 'int', false) : 0;
-
-	if($intCategoryID > 0)
+	if(get_option('setting_media_activate_categories') == 'yes')
 	{
-		$arr_file_ids = array();
+		$intCategoryID = isset($_REQUEST['query']['category']) ? check_var($_REQUEST['query']['category'], 'int', false) : 0;
 
-		$result = $wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2category WHERE categoryID = '%d'", $intCategoryID));
-
-		if($wpdb->num_rows > 0)
+		if($intCategoryID > 0)
 		{
-			foreach($result as $r)
+			$arr_file_ids = array();
+
+			$result = $wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2category WHERE categoryID = '%d'", $intCategoryID));
+
+			if($wpdb->num_rows > 0)
 			{
-				$arr_file_ids[] = $r->fileID;
+				foreach($result as $r)
+				{
+					$arr_file_ids[] = $r->fileID;
+				}
+
+				$query['post__in'] = $arr_file_ids;
 			}
 
-			$query['post__in'] = $arr_file_ids;
+			update_user_meta(get_current_user_id(), 'meta_current_media_category', $intCategoryID);
 		}
 
-		update_user_meta(get_current_user_id(), 'meta_current_media_category', $intCategoryID);
+		//Is never executed since the default value has "all" as value
+		/*else
+		{
+			delete_user_meta(get_current_user_id(), 'meta_current_media_category');
+		}*/
 	}
-
-	//Is never executed since the default value has "all" as value
-	/*else
-	{
-		delete_user_meta(get_current_user_id(), 'meta_current_media_category');
-	}*/
-
+	
 	return $query;
 }
 
 function ajax_attachments_media()
 {
-	if(!current_user_can('upload_files'))
+	if(get_option('setting_media_activate_categories') == 'yes')
 	{
-		wp_send_json_error();
+		if(!current_user_can('upload_files'))
+		{
+			wp_send_json_error();
+		}
+
+		$taxonomies = get_object_taxonomies('attachment', 'names');
+
+		$query = isset($_REQUEST['query']) ? (array)$_REQUEST['query'] : array();
+
+		$defaults = array('s', 'order', 'orderby', 'posts_per_page', 'paged', 'post_mime_type', 'post_parent', 'post__in', 'post__not_in');
+
+		$query = array_intersect_key($query, array_flip(array_merge($defaults, $taxonomies)));
+
+		$query['post_type'] = 'attachment';
+		$query['post_status'] = 'inherit';
+
+		if(current_user_can(get_post_type_object('attachment')->cap->read_private_posts))
+		{
+			$query['post_status'] .= ',private';
+		}
+
+		$query = apply_filters('filter_on_category', $query);
+
+		$query = apply_filters('ajax_query_attachments_args', $query);
+		$query = new WP_Query($query);
+
+		$posts = array_map('wp_prepare_attachment_for_js', $query->posts);
+		$posts = array_filter($posts);
+
+		wp_send_json_success($posts);
 	}
-
-	$taxonomies = get_object_taxonomies('attachment', 'names');
-
-	$query = isset($_REQUEST['query']) ? (array)$_REQUEST['query'] : array();
-
-	$defaults = array('s', 'order', 'orderby', 'posts_per_page', 'paged', 'post_mime_type', 'post_parent', 'post__in', 'post__not_in');
-
-	$query = array_intersect_key($query, array_flip(array_merge($defaults, $taxonomies)));
-
-	$query['post_type'] = 'attachment';
-	$query['post_status'] = 'inherit';
-
-	if(current_user_can(get_post_type_object('attachment')->cap->read_private_posts))
-	{
-		$query['post_status'] .= ',private';
-	}
-
-	$query = apply_filters('filter_on_category', $query);
-
-	$query = apply_filters('ajax_query_attachments_args', $query);
-	$query = new WP_Query($query);
-
-	$posts = array_map('wp_prepare_attachment_for_js', $query->posts);
-	$posts = array_filter($posts);
-
-	wp_send_json_success($posts);
 }
 
-function enqueue_scripts_media()
+/*function enqueue_scripts_media()
 {
 	global $pagenow;
 
-	$plugin_include_url = plugin_dir_url(__FILE__);
-	$plugin_version = get_plugin_version(__FILE__);
-
-	if(wp_script_is('media-editor') && 'upload.php' == $pagenow)
+	if(get_option('setting_media_activate_categories') == 'yes')
 	{
-		$taxonomy = 'category';
+		$plugin_include_url = plugin_dir_url(__FILE__);
+		$plugin_version = get_plugin_version(__FILE__);
 
-		/*$dropdown_options = array(
-			'taxonomy'        => $taxonomy,
-			'hide_empty'      => false,
-			'hierarchical'    => true,
-			'orderby'         => 'name',
-			'show_count'      => false,
-			'walker'          => new walker_media_category(),
-			'value'           => 'id',
-			'echo'            => false
-		);
+		if(wp_script_is('media-editor') && 'upload.php' == $pagenow)
+		{
+			$taxonomy = 'category';
 
-		$attachment_terms = wp_dropdown_categories($dropdown_options);
-		$attachment_terms = substr(preg_replace(array("/<select([^>]*)>/", "/<\/select>/"), "", $attachment_terms), 2);*/
+			$obj_media = new mf_media();
+			$obj_media->get_categories();
 
-		$obj_media = new mf_media();
-		$obj_media->get_categories();
+			$attachment_terms = $obj_media->get_categories_options();
 
-		$attachment_terms = $obj_media->get_categories_options();
+			$current_media_category = get_user_meta(get_current_user_id(), 'meta_current_media_category', true);
 
-		$current_media_category = get_user_meta(get_current_user_id(), 'meta_current_media_category', true);
+			mf_enqueue_script('script_media', $plugin_include_url."script.js", array('taxonomy' => $taxonomy, 'list_title' => "-- ".__("View all categories", 'lang_media')." --", 'term_list' => "[".$attachment_terms."]", 'current_media_category' => $current_media_category), $plugin_version);
+		}
 
-		mf_enqueue_script('script_media', $plugin_include_url."script.js", array('taxonomy' => $taxonomy, 'list_title' => "-- ".__("View all categories", 'lang_media')." --", 'term_list' => "[".$attachment_terms."]", 'current_media_category' => $current_media_category), $plugin_version);
+		mf_enqueue_style('style_media', $plugin_include_url."style_wp.css", $plugin_version);
 	}
-
-	mf_enqueue_style('style_media', $plugin_include_url."style_wp.css", $plugin_version);
-}
+}*/
 
 function get_media_categories($post_id)
 {
@@ -473,7 +468,7 @@ function attachment_edit_media($form_fields, $post)
 {
 	global $wpdb;
 
-	if(IS_ADMIN)
+	if(IS_ADMIN && get_option('setting_media_activate_categories') == 'yes')
 	{
 		$html = "<ul class='term-list'>";
 
@@ -552,34 +547,37 @@ function attachment_save_media($post, $attachment)
 {
 	global $wpdb;
 
-	$wpdb->query($wpdb->prepare("DELETE FROM ".$wpdb->prefix."media2category WHERE fileID = '%d'", $post['ID']));
-
-	if(isset($attachment['mf_mc_category']))
+	if(get_option('setting_media_activate_categories') == 'yes')
 	{
-		$array = $attachment['mf_mc_category'];
+		$wpdb->query($wpdb->prepare("DELETE FROM ".$wpdb->prefix."media2category WHERE fileID = '%d'", $post['ID']));
 
-		foreach($array as $key => $value)
+		if(isset($attachment['mf_mc_category']))
 		{
-			$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->prefix."media2category SET fileID = '%d', categoryID = '%d'", $post['ID'], $value));
+			$array = $attachment['mf_mc_category'];
+
+			foreach($array as $key => $value)
+			{
+				$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->prefix."media2category SET fileID = '%d', categoryID = '%d'", $post['ID'], $value));
+			}
 		}
-    }
 
-	$wpdb->query($wpdb->prepare("DELETE FROM ".$wpdb->prefix."media2role WHERE fileID = '%d'", $post['ID']));
+		$wpdb->query($wpdb->prepare("DELETE FROM ".$wpdb->prefix."media2role WHERE fileID = '%d'", $post['ID']));
 
-	if(isset($attachment['mf_mc_roles']))
-	{
-		$array = $attachment['mf_mc_roles'];
-
-		foreach($array as $key => $value)
+		if(isset($attachment['mf_mc_roles']))
 		{
-			$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->prefix."media2role SET fileID = '%d', roleKey = %s", $post['ID'], $value));
+			$array = $attachment['mf_mc_roles'];
+
+			foreach($array as $key => $value)
+			{
+				$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->prefix."media2role SET fileID = '%d', roleKey = %s", $post['ID'], $value));
+			}
 		}
-    }
+	}
 }
 
 function column_header_media($cols)
 {
-	if(IS_ADMIN)
+	if(IS_ADMIN && get_option('setting_media_activate_categories') == 'yes')
 	{
 		unset($cols['categories']);
 		unset($cols['parent']);
@@ -594,47 +592,50 @@ function column_header_media($cols)
 
 function column_cell_media($col, $id)
 {
-	switch($col)
+	if(IS_ADMIN && get_option('setting_media_activate_categories') == 'yes')
 	{
-		case 'media_categories':
-			$field_value = get_media_categories($id);
+		switch($col)
+		{
+			case 'media_categories':
+				$field_value = get_media_categories($id);
 
-			$taxonomy = 'category';
-			$obj_media = new mf_media();
-			$arr_categories = $obj_media->get_taxonomy(array('taxonomy' => $taxonomy));
+				$taxonomy = 'category';
+				$obj_media = new mf_media();
+				$arr_categories = $obj_media->get_taxonomy(array('taxonomy' => $taxonomy));
 
-			$i = 0;
+				$i = 0;
 
-			foreach($arr_categories as $r)
-			{
-				$key = $r->term_id;
-				$value = $r->name;
-
-				if(in_array($key, $field_value))
+				foreach($arr_categories as $r)
 				{
-					echo ($i > 0 ? ", " : "").$value;
+					$key = $r->term_id;
+					$value = $r->name;
 
-					$i++;
+					if(in_array($key, $field_value))
+					{
+						echo ($i > 0 ? ", " : "").$value;
+
+						$i++;
+					}
 				}
-			}
-		break;
+			break;
 
-		case 'media_roles':
-			$field_value = get_media_roles($id);
+			case 'media_roles':
+				$field_value = get_media_roles($id);
 
-			$arr_data = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
+				$arr_data = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
 
-			$i = 0;
+				$i = 0;
 
-			foreach($arr_data as $key => $value)
-			{
-				if(in_array($key, $field_value))
+				foreach($arr_data as $key => $value)
 				{
-					echo ($i > 0 ? ", " : "").$value;
+					if(in_array($key, $field_value))
+					{
+						echo ($i > 0 ? ", " : "").$value;
 
-					$i++;
+						$i++;
+					}
 				}
-			}
-		break;
+			break;
+		}
 	}
 }

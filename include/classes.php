@@ -10,8 +10,51 @@ class mf_media
 		$this->meta_prefix = "mf_media_";
 	}
 
+	function admin_init()
+	{
+		global $pagenow;
+
+		if(get_option('setting_media_activate_categories') == 'yes')
+		{
+			$plugin_include_url = plugin_dir_url(__FILE__);
+			$plugin_version = get_plugin_version(__FILE__);
+
+			if(wp_script_is('media-editor') && 'upload.php' == $pagenow)
+			{
+				$taxonomy = 'category';
+
+				/*$dropdown_options = array(
+					'taxonomy'        => $taxonomy,
+					'hide_empty'      => false,
+					'hierarchical'    => true,
+					'orderby'         => 'name',
+					'show_count'      => false,
+					'walker'          => new walker_media_category(),
+					'value'           => 'id',
+					'echo'            => false
+				);
+
+				$attachment_terms = wp_dropdown_categories($dropdown_options);
+				$attachment_terms = substr(preg_replace(array("/<select([^>]*)>/", "/<\/select>/"), "", $attachment_terms), 2);*/
+
+				$obj_media = new mf_media();
+				$obj_media->get_categories();
+
+				$attachment_terms = $obj_media->get_categories_options();
+
+				$current_media_category = get_user_meta(get_current_user_id(), 'meta_current_media_category', true);
+
+				mf_enqueue_script('script_media', $plugin_include_url."script.js", array('taxonomy' => $taxonomy, 'list_title' => "-- ".__("View all categories", 'lang_media')." --", 'term_list' => "[".$attachment_terms."]", 'current_media_category' => $current_media_category), $plugin_version);
+			}
+
+			mf_enqueue_style('style_media', $plugin_include_url."style_wp.css", $plugin_version);
+		}
+	}
+
 	function print_media_templates()
 	{
+		if(get_option('setting_media_activate_categories') == 'yes')
+		{
 ?>
 		<script type="text/html" id="tmpl-attachment">
 			<div class="attachment-preview js--select-attachment type-{{ data.type }} subtype-{{ data.subtype }} {{ data.orientation }}">
@@ -75,6 +118,7 @@ class mf_media
 			} #>
 		</script>
 <?php
+		}
 	}
 
 	//Clean filenames
@@ -425,7 +469,7 @@ class mf_media
 
 	function show_files()
 	{
-		mf_enqueue_script('script_base_settings', plugins_url()."/mf_base/include/script_settings.js", array('default_tab' => $this->default_tab, 'settings_page' => false), get_plugin_version(__FILE__));
+		mf_enqueue_script('script_base_settings', plugins_url()."/mf_base/include/script_settings.js", array('default_tab' => $this->default_tab, 'settings_page' => false), get_plugin_version(__FILE__)); //Should be placed in admin_init
 
 		$out = "";
 
