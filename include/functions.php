@@ -364,7 +364,7 @@ function filter_on_category_media($query)
 			delete_user_meta(get_current_user_id(), 'meta_current_media_category');
 		}*/
 	}
-	
+
 	return $query;
 }
 

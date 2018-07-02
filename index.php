@@ -3,7 +3,7 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description: 
-Version: 5.6.0
+Version: 5.6.1
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: http://frostkom.se
@@ -94,7 +94,8 @@ function activate_media()
 
 		add_index($arr_add_index);
 
-		$arr_data = array();
+		/* This is not needed anymore since Theme Core handles this */
+		/*$arr_data = array();
 		get_post_children(array('post_type' => 'mf_media_allowed'), $arr_data);
 
 		if(count($arr_data) == 0)
@@ -121,7 +122,7 @@ function activate_media()
 					$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->postmeta." SET post_id = '%d', meta_key = %s, meta_value = %s", $post_id, $obj_media->meta_prefix.'types', $mime));
 				}
 			}
-		}
+		}*/
 
 		//Migrate from option to DB
 		/*if(IS_ADMIN)
