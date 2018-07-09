@@ -246,11 +246,11 @@ function column_header_media_allowed($cols)
 
 function column_cell_media_allowed($col, $id)
 {
-	$obj_media = new mf_media();
-
 	switch($col)
 	{
 		case 'action':
+			$obj_media = new mf_media();
+
 			$arr_actions = $obj_media->get_media_actions();
 
 			$post_meta = get_post_meta($id, $obj_media->meta_prefix.$col, true);
@@ -259,6 +259,8 @@ function column_cell_media_allowed($col, $id)
 		break;
 
 		case 'role':
+			$obj_media = new mf_media();
+
 			$arr_roles = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
 
 			$arr_post_meta = get_post_meta($id, $obj_media->meta_prefix.$col, false);
@@ -274,6 +276,8 @@ function column_cell_media_allowed($col, $id)
 		break;
 
 		case 'types':
+			$obj_media = new mf_media();
+
 			$arr_types = $obj_media->get_media_types(array('type' => 'name'));
 
 			$arr_post_meta = get_post_meta($id, $obj_media->meta_prefix.$col, false);
