@@ -71,7 +71,7 @@ class mf_media
 							<i class='fa fa-warning yellow fa-2x' title='<?php _e("The file has got no alt text. Please add this to improve your SEO.", 'lang_media'); ?>'></i>
 						<# }
 
-						else if(data.size.url.match(/[<?php echo __("aring", 'lang_media'). __("auml", 'lang_media').__("ouml", 'lang_media').__("Aring", 'lang_media').__("Auml", 'lang_media').__("Ouml", 'lang_media'); ?>]+/))
+						else if(data.size.url.match(/[<?php echo "aring"."auml"."ouml"."Aring"."Auml"."Ouml"; ?>]+/))
 						{ #>
 							<i class='fa fa-ban red fa-2x' title='<?php _e("The file has got special characters in the filename. Please change this.", 'lang_media'); ?>'></i>
 						<# } #>
