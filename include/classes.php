@@ -68,7 +68,7 @@ class mf_media
 
 						<# if(data.alt == '')
 						{ #>
-							<i class='fa fa-warning yellow fa-2x' title='<?php _e("The file has got no alt text. Please add this to improve your SEO.", 'lang_media'); ?>'></i>
+							<i class='fas fa-exclamation-triangle yellow fa-2x' title='<?php _e("The file has got no alt text. Please add this to improve your SEO.", 'lang_media'); ?>'></i>
 						<# }
 
 						else if(data.size.url.match(/[<?php echo "aring"."auml"."ouml"."Aring"."Auml"."Ouml"; ?>]+/))
