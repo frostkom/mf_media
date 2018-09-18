@@ -42,6 +42,17 @@ class mf_media
 		return $array;
 	}
 
+	function get_taxonomy($data)
+	{
+		global $wpdb;
+
+		if(!isset($data['parent'])){	$data['parent'] = 0;}
+
+		$result = $wpdb->get_results($wpdb->prepare("SELECT term_id, name FROM ".$wpdb->terms." INNER JOIN ".$wpdb->term_taxonomy." USING (term_id) WHERE taxonomy = %s AND parent = '%d' ORDER BY name ASC", $data['taxonomy'], $data['parent']));
+
+		return $result;
+	}
+
 	function update_count_callback_media_category_media() //$terms = array(), $taxonomy = 'category'
 	{
 		global $wpdb;
@@ -169,26 +180,14 @@ class mf_media
 
 		if(get_option('setting_media_activate_categories') == 'yes')
 		{
-			$plugin_include_url = plugin_dir_url(__FILE__);
-			$plugin_version = get_plugin_version(__FILE__);
-
-			if(wp_script_is('media-editor') && 'upload.php' == $pagenow)
+			if($pagenow == 'upload.php') //wp_script_is('media-editor') && 
 			{
+				$plugin_include_url = plugin_dir_url(__FILE__);
+				$plugin_version = get_plugin_version(__FILE__);
+
+				mf_enqueue_style('style_media', $plugin_include_url."style_wp.css", $plugin_version);
+
 				$taxonomy = 'category';
-
-				/*$dropdown_options = array(
-					'taxonomy'        => $taxonomy,
-					'hide_empty'      => false,
-					'hierarchical'    => true,
-					'orderby'         => 'name',
-					'show_count'      => false,
-					'walker'          => new walker_media_category(),
-					'value'           => 'id',
-					'echo'            => false
-				);
-
-				$attachment_terms = wp_dropdown_categories($dropdown_options);
-				$attachment_terms = substr(preg_replace(array("/<select([^>]*)>/", "/<\/select>/"), "", $attachment_terms), 2);*/
 
 				//$obj_media = new mf_media();
 				$this->get_categories();
@@ -197,10 +196,14 @@ class mf_media
 
 				$current_media_category = get_user_meta(get_current_user_id(), 'meta_current_media_category', true);
 
-				mf_enqueue_script('script_media', $plugin_include_url."script.js", array('taxonomy' => $taxonomy, 'list_title' => "-- ".__("View all categories", 'lang_media')." --", 'term_list' => "[".$attachment_terms."]", 'current_media_category' => $current_media_category), $plugin_version);
+				mf_enqueue_script('script_media', $plugin_include_url."script_wp.js", array(
+					'taxonomy' => $taxonomy,
+					'list_title' => "-- ".__("View all categories", 'lang_media')." --",
+					'term_list' => "[".$attachment_terms."]",
+					'terms_test' => get_terms($taxonomy, array('hide_empty' => false)),
+					'current_media_category' => $current_media_category
+				), $plugin_version);
 			}
-
-			mf_enqueue_style('style_media', $plugin_include_url."style_wp.css", $plugin_version);
 		}
 	}
 
@@ -288,7 +291,7 @@ class mf_media
 		return $existing_mimes;
 	}
 	
-	function upload_filter($file)
+	function wp_handle_upload_prefilter($file)
 	{
 		if(get_site_option('setting_media_sanitize_files') == 'yes')
 		{
@@ -544,67 +547,67 @@ class mf_media
 		if(get_option('setting_media_activate_categories') == 'yes')
 		{
 ?>
-		<script type="text/html" id="tmpl-attachment">
-			<div class="attachment-preview js--select-attachment type-{{ data.type }} subtype-{{ data.subtype }} {{ data.orientation }}">
-				<div class="thumbnail">
-					<# if ( data.uploading ) { #>
-						<div class="media-progress-bar"><div style="width: {{ data.percent }}%"></div></div>
-					<# } else if ( 'image' === data.type && data.sizes ) { #>
-						<div class="centered">
-							<img src="{{ data.size.url }}" draggable="false">
-						</div>
+			<script type="text/html" id="tmpl-attachment">
+				<div class="attachment-preview js--select-attachment type-{{ data.type }} subtype-{{ data.subtype }} {{ data.orientation }}">
+					<div class="thumbnail">
+						<# if ( data.uploading ) { #>
+							<div class="media-progress-bar"><div style="width: {{ data.percent }}%"></div></div>
+						<# } else if ( 'image' === data.type && data.sizes ) { #>
+							<div class="centered">
+								<img src="{{ data.size.url }}" draggable="false">
+							</div>
 
-						<# if(data.alt == '')
-						{ #>
-							<i class='fa fa-exclamation-triangle yellow fa-2x' title='<?php _e("The file has got no alt text. Please add this to improve your SEO.", 'lang_media'); ?>'></i>
+							<# if(data.alt == '')
+							{ #>
+								<i class='fa fa-exclamation-triangle yellow fa-2x' title='<?php echo __("The file has got no alt text. Please add this to improve your SEO.", 'lang_media'); ?>'></i>
+							<# }
+
+							else if(data.size.url.match(/[aring|auml|ouml|Aring|Auml|Ouml]+/))
+							{ #>
+								<i class='fa fa-ban red fa-2x' title='<?php echo __("The file has got special characters in the filename. Please change this.", 'lang_media'); ?>'></i>
+							<# } #>
 						<# }
 
-						else if(data.size.url.match(/[<?php echo "aring"."auml"."ouml"."Aring"."Auml"."Ouml"; ?>]+/))
-						{ #>
-							<i class='fa fa-ban red fa-2x' title='<?php _e("The file has got special characters in the filename. Please change this.", 'lang_media'); ?>'></i>
+						else { #>
+							<div class="centered">
+								<# if ( data.image && data.image.src && data.image.src !== data.icon ) { #>
+									<img src="{{ data.image.src }}" class="thumbnail" draggable="false">
+								<# } else if ( data.sizes && data.sizes.medium ) { #>
+									<img src="{{ data.sizes.medium.url }}" class="thumbnail" draggable="false">
+								<# } else { #>
+									<img src="{{ data.icon }}" class="icon" draggable="false">
+								<# } #>
+							</div>
+							<div class="filename">
+								<div>{{ data.filename }}</div>
+							</div>
 						<# } #>
-					<# }
-
-					else { #>
-						<div class="centered">
-							<# if ( data.image && data.image.src && data.image.src !== data.icon ) { #>
-								<img src="{{ data.image.src }}" class="thumbnail" draggable="false">
-							<# } else if ( data.sizes && data.sizes.medium ) { #>
-								<img src="{{ data.sizes.medium.url }}" class="thumbnail" draggable="false">
-							<# } else { #>
-								<img src="{{ data.icon }}" class="icon" draggable="false">
-							<# } #>
-						</div>
-						<div class="filename">
-							<div>{{ data.filename }}</div>
-						</div>
+					</div>
+					<# if ( data.buttons.close ) { #>
+						<button type="button" class="button-link attachment-close media-modal-icon"><span class="screen-reader-text"><?php echo __("Remove", 'lang_media'); ?></span></button>
 					<# } #>
 				</div>
-				<# if ( data.buttons.close ) { #>
-					<button type="button" class="button-link attachment-close media-modal-icon"><span class="screen-reader-text"><?php _e( 'Remove' ); ?></span></button>
+				<# if ( data.buttons.check ) { #>
+					<button type="button" class="check" tabindex="-1"><span class="media-modal-icon"></span><span class="screen-reader-text"><?php echo __("Deselect", 'lang_media'); ?></span></button>
 				<# } #>
-			</div>
-			<# if ( data.buttons.check ) { #>
-				<button type="button" class="check" tabindex="-1"><span class="media-modal-icon"></span><span class="screen-reader-text"><?php _e( 'Deselect' ); ?></span></button>
-			<# } #>
-			<#
-			var maybeReadOnly = data.can.save || data.allowLocalEdits ? '' : 'readonly';
-			if ( data.describe ) {
-				if ( 'image' === data.type ) { #>
-					<input type="text" value="{{ data.caption }}" class="describe" data-setting="caption"
-						placeholder="<?php echo __("Caption this image", 'lang_media')."&hellip;"; ?>" {{ maybeReadOnly }} />
-				<# } else { #>
-					<input type="text" value="{{ data.title }}" class="describe" data-setting="title"
-						<# if ( 'video' === data.type ) { #>
-							placeholder="<?php echo __("Describe this video", 'lang_media')."&hellip;"; ?>"
-						<# } else if ( 'audio' === data.type ) { #>
-							placeholder="<?php echo __("Describe this audio file", 'lang_media')."&hellip;"; ?>"
-						<# } else { #>
-							placeholder="<?php echo __("Describe this media file", 'lang_media')."&hellip;"; ?>"
-						<# } #> {{ maybeReadOnly }} />
-				<# }
-			} #>
-		</script>
+				<#
+				var maybeReadOnly = data.can.save || data.allowLocalEdits ? '' : 'readonly';
+				if ( data.describe ) {
+					if ( 'image' === data.type ) { #>
+						<input type="text" value="{{ data.caption }}" class="describe" data-setting="caption"
+							placeholder="<?php echo __("Caption this image", 'lang_media')."&hellip;"; ?>" {{ maybeReadOnly }} />
+					<# } else { #>
+						<input type="text" value="{{ data.title }}" class="describe" data-setting="title"
+							<# if ( 'video' === data.type ) { #>
+								placeholder="<?php echo __("Describe this video", 'lang_media')."&hellip;"; ?>"
+							<# } else if ( 'audio' === data.type ) { #>
+								placeholder="<?php echo __("Describe this audio file", 'lang_media')."&hellip;"; ?>"
+							<# } else { #>
+								placeholder="<?php echo __("Describe this media file", 'lang_media')."&hellip;"; ?>"
+							<# } #> {{ maybeReadOnly }} />
+					<# }
+				} #>
+			</script>
 <?php
 		}
 	}
@@ -625,7 +628,6 @@ class mf_media
 			$defaults = array('s', 'order', 'orderby', 'posts_per_page', 'paged', 'post_mime_type', 'post_parent', 'post__in', 'post__not_in');
 
 			$query = array_intersect_key($query, array_flip(array_merge($defaults, $taxonomies)));
-
 			$query['post_type'] = 'attachment';
 			$query['post_status'] = 'inherit';
 
@@ -635,43 +637,14 @@ class mf_media
 			}
 
 			$query = apply_filters('filter_on_category', $query);
-
 			$query = apply_filters('ajax_query_attachments_args', $query);
 			$query = new WP_Query($query);
 
 			$posts = array_map('wp_prepare_attachment_for_js', $query->posts);
 			$posts = array_filter($posts);
-
 			wp_send_json_success($posts);
 		}
 	}
-
-	/*function admin_enqueue_scripts()
-	{
-		global $pagenow;
-
-		if(get_option('setting_media_activate_categories') == 'yes')
-		{
-			$plugin_include_url = plugin_dir_url(__FILE__);
-			$plugin_version = get_plugin_version(__FILE__);
-
-			if(wp_script_is('media-editor') && 'upload.php' == $pagenow)
-			{
-				$taxonomy = 'category';
-
-				//$obj_media = new mf_media();
-				$this->get_categories();
-
-				$attachment_terms = $this->get_categories_options();
-
-				$current_media_category = get_user_meta(get_current_user_id(), 'meta_current_media_category', true);
-
-				mf_enqueue_script('script_media', $plugin_include_url."script.js", array('taxonomy' => $taxonomy, 'list_title' => "-- ".__("View all categories", 'lang_media')." --", 'term_list' => "[".$attachment_terms."]", 'current_media_category' => $current_media_category), $plugin_version);
-			}
-
-			mf_enqueue_style('style_media', $plugin_include_url."style_wp.css", $plugin_version);
-		}
-	}*/
 
 	function attachment_fields_to_edit($form_fields, $post)
 	{
@@ -784,15 +757,78 @@ class mf_media
 		}
 	}
 
-	function get_taxonomy($data)
+	function count_shortcode_button($count)
+	{
+		if($count == 0 && get_option('setting_media_activate_categories') == 'yes')
+		{
+			$this->get_categories();
+
+			if(count($this->categories) > 0)
+			{
+				$count++;
+			}
+		}
+
+		return $count;
+	}
+
+	function get_shortcode_output($out)
+	{
+		if(get_option('setting_media_activate_categories') == 'yes')
+		{
+			$arr_data = get_categories_for_select(array('add_choose_here' => true));
+
+			if(count($arr_data) > 1)
+			{
+				$out .= "<h3>".__("Choose a Category", 'lang_media')."</h3>"
+				.show_select(array('data' => $arr_data, 'xtra' => "rel='mf_media_category'"));
+			}
+		}
+
+		return $out;
+	}
+
+	function add_shortcode($atts)
 	{
 		global $wpdb;
 
-		if(!isset($data['parent'])){	$data['parent'] = 0;}
+		extract(shortcode_atts(array(
+			'id' => ''
+		), $atts));
 
-		$result = $wpdb->get_results($wpdb->prepare("SELECT term_id, name FROM ".$wpdb->terms." INNER JOIN ".$wpdb->term_taxonomy." USING (term_id) WHERE taxonomy = %s AND parent = '%d' ORDER BY name ASC", $data['taxonomy'], $data['parent']));
+		$out = "";
 
-		return $result;
+		$current_user_role = get_current_user_role();
+
+		$result = $wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2category WHERE categoryID = '%d'", $id));
+
+		foreach($result as $r)
+		{
+			$file_id = $r->fileID;
+
+			$display = true;
+
+			$wpdb->get_var($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2role WHERE fileID = '%d' LIMIT 0, 1", $file_id));
+
+			if($wpdb->num_rows > 0)
+			{
+				$wpdb->get_var($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2role WHERE fileID = '%d' AND roleKey = %s LIMIT 0, 1", $file_id, $current_user_role));
+
+				if($wpdb->num_rows == 0)
+				{
+					$display = false;
+				}
+			}
+
+			$display = apply_filters('display_category_file', $display, $file_id);
+
+			if($display == true)
+			{
+				$out .= wp_get_attachment_link($file_id)."<br>";
+			}
+		}
+
+		return $out;
 	}
 
 	function get_media_actions()
@@ -934,38 +970,41 @@ class mf_media
 	{
 		global $wpdb;
 
-		$role_id = get_current_user_role();
-
-		$taxonomy = 'category';
-
-		$arr_categories = $this->get_taxonomy(array('taxonomy' => $taxonomy));
-
-		foreach($arr_categories as $r)
+		if(count($this->categories) == 0)
 		{
-			$cat_id = $r->term_id;
-			$cat_name = $r->name;
+			$role_id = get_current_user_role();
 
-			$cat_files = $this->get_files($cat_id, $role_id);
+			$taxonomy = 'category';
 
-			$this->categories[$cat_id] = array('name' => $cat_name, 'files' => $cat_files, 'sub' => array());
+			$arr_categories = $this->get_taxonomy(array('taxonomy' => $taxonomy));
 
-			$arr_categories2 = $this->get_taxonomy(array('taxonomy' => $taxonomy, 'parent' => $cat_id));
-
-			foreach($arr_categories2 as $r)
+			foreach($arr_categories as $r)
 			{
-				$cat_id2 = $r->term_id;
-				$cat_name2 = $r->name;
+				$cat_id = $r->term_id;
+				$cat_name = $r->name;
 
-				$cat_files2 = $this->get_files($cat_id2, $role_id);
+				$cat_files = $this->get_files($cat_id, $role_id);
 
-				if(count($cat_files2) > 0)
+				$this->categories[$cat_id] = array('name' => $cat_name, 'files' => $cat_files, 'sub' => array());
+
+				$arr_categories2 = $this->get_taxonomy(array('taxonomy' => $taxonomy, 'parent' => $cat_id));
+
+				foreach($arr_categories2 as $r)
 				{
-					$this->categories[$cat_id]['sub'][$cat_id2] = array('name' => $cat_name2, 'files' => $cat_files2);
+					$cat_id2 = $r->term_id;
+					$cat_name2 = $r->name;
+
+					$cat_files2 = $this->get_files($cat_id2, $role_id);
+
+					if(count($cat_files2) > 0)
+					{
+						$this->categories[$cat_id]['sub'][$cat_id2] = array('name' => $cat_name2, 'files' => $cat_files2);
+					}
 				}
 			}
-		}
 
-		$this->filter_categories();
+			$this->filter_categories();
+		}
 	}
 
 	function get_files($cat_id, $role_id)

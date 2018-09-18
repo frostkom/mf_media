@@ -3,7 +3,7 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description: 
-Version: 5.6.8
+Version: 5.6.11
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -34,7 +34,7 @@ if(is_admin())
 	add_action('admin_menu', array($obj_media, 'admin_menu'));
 	add_filter('upload_mimes', array($obj_media, 'upload_mimes'));
 
-	add_action('wp_handle_upload_prefilter', array($obj_media, 'upload_filter'));
+	add_action('wp_handle_upload_prefilter', array($obj_media, 'wp_handle_upload_prefilter'));
 
 	add_action('rwmb_meta_boxes', array($obj_media, 'rwmb_meta_boxes'));
 
@@ -48,14 +48,18 @@ if(is_admin())
 	add_action('admin_footer', array($obj_media, 'print_media_templates'), 0);
 
 	add_action('wp_ajax_query-attachments', array($obj_media, 'ajax_attachments'), 0);
-	//add_action('admin_enqueue_scripts', array($obj_media, 'admin_enqueue_scripts'));
 
 	add_filter('attachment_fields_to_edit', array($obj_media, 'attachment_fields_to_edit'), 10, 2);
 	add_action('attachment_fields_to_save', array($obj_media, 'attachment_fields_to_save'), null, 2);
 
-
-	load_plugin_textdomain('lang_media', false, dirname(plugin_basename(__FILE__)).'/lang/');
+	add_filter('count_shortcode_button', array($obj_media, 'count_shortcode_button'));
+	add_filter('get_shortcode_output', array($obj_media, 'get_shortcode_output'));
+	//add_filter('get_shortcode_list', array($obj_media, 'get_shortcode_list'));
 }
+
+add_shortcode('mf_media_category', array($obj_media, 'add_shortcode'));
+
+load_plugin_textdomain('lang_media', false, dirname(plugin_basename(__FILE__)).'/lang/');
 
 function activate_media()
 {

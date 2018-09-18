@@ -1,7 +1,7 @@
 window.wp = window.wp || {};
 
 (function($)
-{
+{	
 	$(document).ready(function() /* Has to be here, otherwise it does not work */
 	{
 		function change_selected()
@@ -16,17 +16,27 @@ window.wp = window.wp || {};
 			curAttachmentsBrowser = media.view.AttachmentsBrowser,
 			term_list = eval(script_media.term_list);
 
-		/*media.view.Attachment = media.view.Attachment.extend(
+		if(term_list.length > 0)
 		{
-			template: wp.template('mf-attachment'),
-			render: function()
-			{
-				console.log("Render" , this.$el);
-			}
-		});*/
+			/* New version */
+			/*var html = "";
 
-		if(term_list.length > 1)
-		{
+			html += "<select name='category' class='" + script_media.taxonomy + '-filter attachment-' + script_media.taxonomy + '-filter' + "'>"
+				+ "<option value=''>" + script_media.list_title + "</option>";
+
+				$.each(term_list, function(key, value)
+				{
+					console.log(key , value);
+
+					html += "<option value='" + value.term_id + "'>" + value.term_name + "</option>";
+				});
+
+			
+			html += "</select>";
+
+			$("#media-attachment-date-filters").after(html);*/
+
+			/* Old version */
 			media.view.AttachmentFilters.Taxonomy = media.view.AttachmentFilters.extend(
 			{
 				tagName: 'select',
