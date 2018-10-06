@@ -290,7 +290,7 @@ class mf_media
 
 		return $existing_mimes;
 	}
-	
+
 	function wp_handle_upload_prefilter($file)
 	{
 		if(get_site_option('setting_media_sanitize_files') == 'yes')

@@ -1,7 +1,7 @@
 window.wp = window.wp || {};
 
 (function($)
-{	
+{
 	$(document).ready(function() /* Has to be here, otherwise it does not work */
 	{
 		function change_selected()
@@ -31,7 +31,6 @@ window.wp = window.wp || {};
 					html += "<option value='" + value.term_id + "'>" + value.term_name + "</option>";
 				});
 
-			
 			html += "</select>";
 
 			$("#media-attachment-date-filters").after(html);*/
