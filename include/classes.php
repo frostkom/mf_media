@@ -180,7 +180,7 @@ class mf_media
 
 		if(get_option('setting_media_activate_categories') == 'yes')
 		{
-			if($pagenow == 'upload.php') //wp_script_is('media-editor') && 
+			if($pagenow == 'upload.php' || $pagenow == 'admin.php' && substr(check_var('page'), 0, 9) == 'int_page_') //wp_script_is('media-editor') && 
 			{
 				$plugin_include_url = plugin_dir_url(__FILE__);
 				$plugin_version = get_plugin_version(__FILE__);
@@ -820,15 +820,37 @@ class mf_media
 				}
 			}
 
-			$display = apply_filters('display_category_file', $display, $file_id);
-
-			if($display == true)
+			if($display == true && apply_filters('display_category_file', $display, $file_id) == true)
 			{
-				$out .= wp_get_attachment_link($file_id)."<br>";
+				$file_url = wp_get_attachment_url($file_id);
+				$file_thumb = wp_get_attachment_thumb_url($file_id);
+				$file_name = get_post_title($file_id);
+
+				$out .= "<li>";
+
+					if($file_thumb != '')
+					{
+						$out .= "<img src='".$file_thumb."'>";
+					}
+
+					else
+					{
+						$out .= get_file_icon(array('file' => $file_url, 'size' => "fa-3x"));
+					}
+
+					$out .= "<a href='".$file_url."'>".$file_name."</a>
+				</li>";
 			}
 		}
 
-		return $out;
+		$out = apply_filters('media_categories_displayed', $out, $id);
+
+		if($out != '')
+		{
+			return "<ul class='media_categories'>"
+				.$out
+			."</ul>";
+		}
 	}
 
 	function get_media_actions()
@@ -1072,7 +1094,7 @@ class mf_media
 						list($file_name, $file_url) = get_attachment_data_by_id($file_id);
 
 						$out .= "<tr>
-							<td>".get_file_icon($file_url)."</td>
+							<td>".get_file_icon(array('file' => $file_url))."</td>
 							<td><a href='".$file_url."'>".$file_name."</a></td>
 						</tr>";
 					}
@@ -1171,109 +1193,3 @@ class mf_media
 		return $out;
 	}
 }
-
-/** Custom walker for wp_dropdown_categories, based on https://gist.github.com/stephenh1988/2902509 */
-/*class walker_category_filter extends Walker_CategoryDropdown
-{
-	function start_el(&$output, $category, $depth = 0, $args = array(), $id = 0)
-	{
-		$pad = str_repeat('&nbsp;', $depth * 3);
-		$cat_name = apply_filters('list_cats', $category->name, $category);
-
-		if(!isset($args['value']))
-		{
-			//$args['value'] = $category->taxonomy != 'category' ? 'slug' : 'id';
-			$args['value'] = 'id';
-		}
-
-		$value = $args['value'] == 'slug' ? $category->slug : $category->term_id;
-
-		if(0 == $args['selected'] && isset($_GET['category_media']) && '' != $_GET['category_media'])
-		{
-			$args['selected'] = $_GET['category_media'];
-		}
-
-		$output .= "<option class='level-".$depth."' value='".$value."'";
-
-			if($value === (string) $args['selected'])
-			{
-				$output .= " selected";
-			}
-
-		$output .= ">"
-			.$pad.$cat_name;
-
-			if($args['show_count'])
-			{
-				$output .= "&nbsp;&nbsp;(".$category->count.")";
-			}
-
-		$output .= "</option>";
-	}
-}*/
-
-/** Custom walker for wp_dropdown_categories for media grid view filter */
-/*class walker_media_category extends Walker_CategoryDropdown
-{
-	function start_el(&$output, $category, $depth = 0, $args = array(), $id = 0)
-	{
-		$pad = str_repeat('&nbsp;', $depth * 3);
-
-		$cat_name = apply_filters('list_cats', $category->name, $category);
-
-		$output .= ", {'term_id': '".$category->term_id."', 'term_name': '".$pad.esc_attr($cat_name);
-
-		if($args['show_count'])
-		{
-			$output .= "&nbsp;&nbsp;(".$category->count.")";
-		}
-
-		$output .= "'}";
-	}
-}*/
-
-/** Custom walker for wp_dropdown_categories for media grid view filter */
-/*class walker_media_taxonomy extends Walker
-{
-	var $tree_type = 'category';
-
-	var $db_fields = array(
-		'parent' => 'parent',
-		'id'     => 'term_id'
-	);
-
-	function start_lvl(&$output, $depth = 0, $args = array())
-	{
-		$output .= str_repeat("\t", $depth)."<ul class='children'>";
-	}
-
-	function end_lvl(&$output, $depth = 0, $args = array())
-	{
-		$output .= str_repeat("\t", $depth)."</ul>";
-	}
-
-	function start_el(&$output, $category, $depth = 0, $args = array(), $id = 0)
-	{
-		extract($args);
-
-		$taxonomy = 'category';
-		//$taxonomy = apply_filters('mf_mc_taxonomy', $taxonomy);
-
-		$name = 'tax_input['.$taxonomy.']';
-
-		$class = in_array($category->term_id, $popular_cats) ? " class='popular-category'" : "";
-
-		$output .= "<li id='".$taxonomy."-".$category->term_id."'".$class.">
-			<label class='selectit'>
-				<input type='checkbox' name='".$name."[".$category->slug."]' value='".$category->slug."' id='in-".$taxonomy."-".$category->term_id."'"
-					.checked(in_array($category->term_id, $selected_cats), true, false)
-					//.disabled(empty($args['disabled']), false, false)
-				."> ".esc_html(apply_filters('the_category', $category->name))
-			."</label>";
-	}
-
-	function end_el(&$output, $category, $depth = 0, $args = array())
-	{
-		$output .= "</li>";
-	}
-}*/

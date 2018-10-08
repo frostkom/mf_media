@@ -60,4 +60,36 @@
 		{
 			margin: 5px 0 0 20px;
 		}
+
+	.media_categories
+	{
+		list-style: none;
+	}
+
+		.media_categories > li
+		{
+			clear: both;
+			overflow: hidden;
+		}
+
+			.media_categories > li + li
+			{
+				margin-top: .5em;
+			}
+
+			.media_categories > li > img, .media_categories > li > i, .media_categories > li > a
+			{
+				float: left;
+			}
+
+			.media_categories > li > img
+			{
+				max-width: 2.6em;
+			}
+
+			.media_categories > li > a
+			{
+				line-height: 3;
+				margin-left: .5em;
+			}
 }
