@@ -339,6 +339,9 @@ class mf_media
 					'type' => 'select',
 					'options' => $arr_roles,
 					'multiple' => true,
+					'attributes' => array(
+						'size' => get_select_size(array('count' => count($arr_roles))),
+					),
 				),
 				array(
 					'name' => __("Type", 'lang_media'),
@@ -346,6 +349,9 @@ class mf_media
 					'type' => 'select',
 					'options' => $arr_types,
 					'multiple' => true,
+					'attributes' => array(
+						'size' => get_select_size(array('count' => count($arr_types))),
+					),
 				),
 			)
 		);
