@@ -794,7 +794,7 @@ class mf_media
 		return $out;
 	}
 
-	function add_shortcode($atts)
+	function shortcode_media_category($atts)
 	{
 		global $wpdb;
 
