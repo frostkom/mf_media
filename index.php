@@ -3,7 +3,7 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description: 
-Version: 5.6.15
+Version: 5.7.2
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -40,10 +40,14 @@ if(is_admin())
 
 	add_filter('manage_media_columns', array($obj_media, 'column_header'), 5);
 	add_action('manage_media_custom_column', array($obj_media, 'column_cell'), 5, 2);
+
+	add_action('restrict_manage_posts', array($obj_media, 'restrict_manage_posts'));
+	add_action('pre_get_posts', array($obj_media, 'pre_get_posts'));
+
 	add_filter('manage_mf_media_allowed_posts_columns', array($obj_media, 'column_header_allowed'), 5);
 	add_action('manage_mf_media_allowed_posts_custom_column', array($obj_media, 'column_cell_allowed'), 5, 2);
 
-	add_filter('filter_on_category', array($obj_media, 'filter_on_category'));
+	add_filter('filter_on_category', array($obj_media, 'filter_on_category'), 10, 2);
 
 	add_action('admin_footer', array($obj_media, 'print_media_templates'), 0);
 
@@ -54,7 +58,6 @@ if(is_admin())
 
 	add_filter('count_shortcode_button', array($obj_media, 'count_shortcode_button'));
 	add_filter('get_shortcode_output', array($obj_media, 'get_shortcode_output'));
-	//add_filter('get_shortcode_list', array($obj_media, 'get_shortcode_list'));
 }
 
 add_shortcode('mf_media_category', array($obj_media, 'shortcode_media_category'));

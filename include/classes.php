@@ -336,7 +336,7 @@ class mf_media
 				array(
 					'name' => __("Role", 'lang_media'),
 					'id' => $this->meta_prefix.'role',
-					'type' => 'select',
+					'type' => 'select3',
 					'options' => $arr_roles,
 					'multiple' => true,
 					'attributes' => array(
@@ -346,7 +346,7 @@ class mf_media
 				array(
 					'name' => __("Type", 'lang_media'),
 					'id' => $this->meta_prefix.'types',
-					'type' => 'select',
+					'type' => 'select3',
 					'options' => $arr_types,
 					'multiple' => true,
 					'attributes' => array(
@@ -363,6 +363,8 @@ class mf_media
 	{
 		if(IS_ADMIN && get_option('setting_media_activate_categories') == 'yes')
 		{
+			unset($cols['author']);
+			unset($cols['date']);
 			unset($cols['categories']);
 			unset($cols['parent']);
 			unset($cols['comments']);
@@ -376,50 +378,86 @@ class mf_media
 
 	function column_cell($col, $id)
 	{
-		if(IS_ADMIN && get_option('setting_media_activate_categories') == 'yes')
+		switch($col)
 		{
-			switch($col)
+			case 'media_categories':
+				$field_value = $this->get_media_categories($id);
+
+				$arr_categories = $this->get_taxonomy(array('taxonomy' => 'category'));
+
+				$i = 0;
+
+				foreach($arr_categories as $r)
+				{
+					$key = $r->term_id;
+					$value = $r->name;
+
+					if(in_array($key, $field_value))
+					{
+						echo ($i > 0 ? ", " : "").$value;
+
+						$i++;
+					}
+				}
+			break;
+
+			case 'media_roles':
+				$field_value = $this->get_media_roles($id);
+
+				$arr_data = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
+
+				$i = 0;
+
+				foreach($arr_data as $key => $value)
+				{
+					if(in_array($key, $field_value))
+					{
+						echo ($i > 0 ? ", " : "").$value;
+
+						$i++;
+					}
+				}
+			break;
+		}
+	}
+
+	function restrict_manage_posts()
+	{
+		global $post_type, $wpdb;
+
+		if($post_type == 'attachment')
+		{
+			//$strFilterAttachmentCategory = get_or_set_table_filter(array('key' => 'strFilterAttachmentCategory', 'save' => true));
+			$strFilterAttachmentCategory = check_var('strFilterAttachmentCategory');
+
+			$arr_data = $this->get_categories_for_select(array('only_used' => true, 'add_choose_here' => true));
+
+			if(count($arr_data) > 1)
 			{
-				case 'media_categories':
-					$field_value = $this->get_media_categories($id);
+				echo show_select(array('data' => $arr_data, 'name' => 'strFilterAttachmentCategory', 'value' => $strFilterAttachmentCategory));
+			}
+		}
+	}
 
-					$taxonomy = 'category';
-					//$obj_media = new mf_media();
-					$arr_categories = $this->get_taxonomy(array('taxonomy' => $taxonomy));
+	function pre_get_posts($wp_query)
+	{
+		global $post_type, $pagenow;
 
-					$i = 0;
+		if($pagenow == 'upload.php') // && $post_type == ''a
+		{
+			//$strFilterAttachmentCategory = get_or_set_table_filter(array('key' => 'strFilterAttachmentCategory'));
+			$strFilterAttachmentCategory = check_var('strFilterAttachmentCategory');
 
-					foreach($arr_categories as $r)
-					{
-						$key = $r->term_id;
-						$value = $r->name;
-
-						if(in_array($key, $field_value))
-						{
-							echo ($i > 0 ? ", " : "").$value;
-
-							$i++;
-						}
-					}
-				break;
-
-				case 'media_roles':
-					$field_value = $this->get_media_roles($id);
-
-					$arr_data = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
-
-					$i = 0;
-
-					foreach($arr_data as $key => $value)
-					{
-						if(in_array($key, $field_value))
-						{
-							echo ($i > 0 ? ", " : "").$value;
-
-							$i++;
-						}
-					}
-				break;
+			if($strFilterAttachmentCategory != '')
+			{
+				$wp_query = apply_filters('filter_on_category', $wp_query, $strFilterAttachmentCategory);
+				/*$wp_query->query_vars['meta_query'] = array(
+					array(
+						'key' => $this->meta_prefix.'calendar',
+						'value' => $strFilterAttachmentCategory,
+						'compare' => '=',
+					),
+				);*/
 			}
 		}
 	}
@@ -511,13 +549,23 @@ class mf_media
 		}
 	}
 
-	function filter_on_category($query)
+	function filter_on_category($query, $category = 0)
 	{
 		global $wpdb;
 
+		//error_log("Filter - Before: ".str_replace(array("\n", "\r"), "", var_export($query, true)).", ".$category);
+
 		if(get_option('setting_media_activate_categories') == 'yes')
 		{
-			$intCategoryID = isset($_REQUEST['query']['category']) ? check_var($_REQUEST['query']['category'], 'int', false) : 0;
+			if($category > 0)
+			{
+				$intCategoryID = $category;
+			}
+
+			else
+			{
+				$intCategoryID = isset($_REQUEST['query']['category']) ? check_var($_REQUEST['query']['category'], 'int', false) : 0;
+			}
 
 			if($intCategoryID > 0)
 			{
@@ -531,8 +579,27 @@ class mf_media
 					{
 						$arr_file_ids[] = $r->fileID;
 					}
+				}
 
+				else
+				{
+					$arr_file_ids = array(0 => 0);
+
+					//error_log("No rows");
+				}
+
+				if($category > 0)
+				{
+					$query->query_vars['post__in'] = $arr_file_ids;
+
+					//error_log("Cats: ".var_export($arr_file_ids, true));
+				}
+
+				else
+				{
 					$query['post__in'] = $arr_file_ids;
+
+					//error_log("No cat");
 				}
 
 				update_user_meta(get_current_user_id(), 'meta_current_media_category', $intCategoryID);
@@ -544,6 +611,8 @@ class mf_media
 				delete_user_meta(get_current_user_id(), 'meta_current_media_category');
 			}*/
 		}
+
+		//error_log("Filter - After: ".str_replace(array("\n", "\r"), "", var_export($query, true)).", ".$category);
 
 		return $query;
 	}
@@ -663,7 +732,6 @@ class mf_media
 				$field_value = $this->get_media_categories($post->ID);
 
 				$taxonomy = 'category';
-				//$obj_media = new mf_media();
 				$arr_categories = $this->get_taxonomy(array('taxonomy' => $taxonomy));
 
 				foreach($arr_categories as $r)
@@ -992,6 +1060,47 @@ class mf_media
 				unset($this->categories[$cat_id]);
 			}
 		}
+	}
+
+	function get_categories_for_select($data = array())
+	{
+		global $wpdb;
+
+		if(!isset($data['only_used'])){			$data['only_used'] = false;}
+		if(!isset($data['add_choose_here'])){	$data['add_choose_here'] = true;}
+
+		$arr_data = array();
+
+		if($data['add_choose_here'] == true)
+		{
+			$arr_data[''] = "-- ".__("Choose Here", 'lang_media')." --";
+		}
+
+		$arr_categories = $this->get_taxonomy(array('taxonomy' => 'category'));
+
+		foreach($arr_categories as $r)
+		{
+			$cat_id = $r->term_id;
+			$cat_name = $r->name;
+
+			if($data['only_used'] == true)
+			{
+				$wpdb->get_results($wpdb->prepare("SELECT categoryID FROM ".$wpdb->prefix."media2category WHERE categoryID = '%d'", $cat_id));
+				$rows = $wpdb->num_rows;
+
+				if($rows > 0)
+				{
+					$arr_data[$cat_id] = $cat_name." (".$rows.")";
+				}
+			}
+
+			else
+			{
+				$arr_data[$cat_id] = $cat_name;
+			}
+		}
+
+		return $arr_data;
 	}
 
 	function get_categories()
