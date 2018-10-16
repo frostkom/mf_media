@@ -61,6 +61,14 @@
 			margin: 5px 0 0 20px;
 		}
 
+	/*  */
+	.actions .form_select.filter_attachment_category
+	{
+		display: inline-block;
+		margin-right: .5em;
+	}
+
+	/* Page List */
 	.media_categories
 	{
 		list-style: none;

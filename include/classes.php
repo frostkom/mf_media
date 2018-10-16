@@ -434,7 +434,7 @@ class mf_media
 
 			if(count($arr_data) > 1)
 			{
-				echo show_select(array('data' => $arr_data, 'name' => 'strFilterAttachmentCategory', 'value' => $strFilterAttachmentCategory));
+				echo show_select(array('data' => $arr_data, 'name' => 'strFilterAttachmentCategory', 'value' => $strFilterAttachmentCategory, 'class' => "filter_attachment_category"));
 			}
 		}
 	}
