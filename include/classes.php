@@ -635,12 +635,13 @@ class mf_media
 							<# if(data.alt == '')
 							{ #>
 								<i class='fa fa-exclamation-triangle yellow fa-2x' title='<?php echo __("The file has got no alt text. Please add this to improve your SEO.", 'lang_media'); ?>'></i>
-							<# }
-
-							else if(data.size.url.match(/[aring|auml|ouml|Aring|Auml|Ouml]+/))
+							<# } #>
+<?php
+							/*<# else if(data.size.url.match(/[aring|auml|ouml|Aring|Auml|Ouml]+/))
 							{ #>
 								<i class='fa fa-ban red fa-2x' title='<?php echo __("The file has got special characters in the filename. Please change this.", 'lang_media'); ?>'></i>
-							<# } #>
+							<# } #>*/
+?>
 						<# }
 
 						else { #>
