@@ -926,6 +926,11 @@ class mf_media
 				.$out
 			."</ul>";
 		}
+
+		else
+		{
+			return "<p>".__("I could not find any information to show you", 'lang_media')."</p>";
+		}
 	}
 
 	function get_media_actions()
