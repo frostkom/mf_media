@@ -217,7 +217,7 @@ class mf_media
 		{
 			$menu_title = __("Files", 'lang_media');
 
-			add_menu_page($menu_title, $menu_title, $menu_capability, $menu_start, '', 'dashicons-media-default', 11);
+			add_menu_page($menu_title, $menu_title, $menu_capability, $menu_start, '', 'dashicons-admin-media', 11);
 		}
 
 		if(IS_ADMIN)
@@ -851,7 +851,7 @@ class mf_media
 	{
 		if(get_option('setting_media_activate_categories') == 'yes')
 		{
-			$arr_data = get_categories_for_select(array('add_choose_here' => true));
+			$arr_data = $this->get_categories_for_select(array('add_choose_here' => true));
 
 			if(count($arr_data) > 1)
 			{
@@ -1099,6 +1099,40 @@ class mf_media
 			{
 				$arr_data[$cat_id] = $cat_name;
 			}
+
+			//Children
+			#######################
+			$arr_categories_children = $this->get_taxonomy(array('taxonomy' => 'category', 'parent' => $cat_id));
+
+			if(count($arr_categories_children) > 0)
+			{
+				$arr_data["opt_start_".$cat_id] = $cat_name;
+
+				foreach($arr_categories_children as $r)
+				{
+					$cat_id = $r->term_id;
+					$cat_name = $r->name;
+
+					if($data['only_used'] == true)
+					{
+						$wpdb->get_results($wpdb->prepare("SELECT categoryID FROM ".$wpdb->prefix."media2category WHERE categoryID = '%d'", $cat_id));
+						$rows = $wpdb->num_rows;
+
+						if($rows > 0)
+						{
+							$arr_data[$cat_id] = $cat_name." (".$rows.")";
+						}
+					}
+
+					else
+					{
+						$arr_data[$cat_id] = $cat_name;
+					}
+				}
+
+				$arr_data["opt_end_".$cat_id] = "";
+			}
+			#######################
 		}
 
 		return $arr_data;
