@@ -187,9 +187,8 @@ class mf_media
 
 				mf_enqueue_style('style_media', $plugin_include_url."style_wp.css", $plugin_version);
 
-				$taxonomy = 'category';
+				/*$taxonomy = 'category';
 
-				//$obj_media = new mf_media();
 				$this->get_categories();
 
 				$attachment_terms = $this->get_categories_options();
@@ -202,7 +201,7 @@ class mf_media
 					'term_list' => "[".$attachment_terms."]",
 					'terms_test' => get_terms($taxonomy, array('hide_empty' => false)),
 					'current_media_category' => $current_media_category
-				), $plugin_version);
+				), $plugin_version);*/
 			}
 		}
 	}
@@ -310,10 +309,18 @@ class mf_media
 	    return $file;
 	}
 
+	function hidden_meta_boxes($hidden, $screen)
+	{
+		if($screen->id == 'attachment')
+		{
+			$hidden = array_merge($hidden, array('categorydiv'));
+		}
+
+		return $hidden;
+	}
+
 	function rwmb_meta_boxes($meta_boxes)
 	{
-		//$obj_media = new mf_media();
-
 		$arr_actions = $this->get_media_actions();
 
 		$arr_roles = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
@@ -383,21 +390,13 @@ class mf_media
 			case 'media_categories':
 				$field_value = $this->get_media_categories($id);
 
-				$arr_categories = $this->get_taxonomy(array('taxonomy' => 'category'));
-
 				$i = 0;
 
-				foreach($arr_categories as $r)
+				foreach($field_value as $category_id)
 				{
-					$key = $r->term_id;
-					$value = $r->name;
+					echo ($i > 0 ? ", " : "").get_cat_name($category_id);
 
-					if(in_array($key, $field_value))
-					{
-						echo ($i > 0 ? ", " : "").$value;
-
-						$i++;
-					}
+					$i++;
 				}
 			break;
 
@@ -895,26 +894,31 @@ class mf_media
 				}
 			}
 
+			//do_log("File Media: ".$file_id.", ".get_post_title($file_id).", ".$display.", ".apply_filters('display_category_file', $display, $file_id));
+
 			if($display == true && apply_filters('display_category_file', $display, $file_id) == true)
 			{
 				$file_url = wp_get_attachment_url($file_id);
 				$file_thumb = wp_get_attachment_thumb_url($file_id);
 				$file_name = get_post_title($file_id);
 
-				$out .= "<li>";
+				if($file_name != '' && $file_url != '')
+				{
+					$out .= "<li>";
 
-					if($file_thumb != '')
-					{
-						$out .= "<img src='".$file_thumb."'>";
-					}
+						if($file_thumb != '')
+						{
+							$out .= "<img src='".$file_thumb."'>";
+						}
 
-					else
-					{
-						$out .= get_file_icon(array('file' => $file_url, 'size' => "fa-3x"));
-					}
+						else
+						{
+							$out .= get_file_icon(array('file' => $file_url, 'size' => "fa-3x"));
+						}
 
-					$out .= "<a href='".$file_url."'>".$file_name."</a>
-				</li>";
+						$out .= "<a href='".$file_url."'>".$file_name."</a>
+					</li>";
+				}
 			}
 		}
 

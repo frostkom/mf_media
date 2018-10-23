@@ -2,7 +2,8 @@ window.wp = window.wp || {};
 
 (function($)
 {
-	$(document).ready(function() /* Has to be here, otherwise it does not work */
+	/* Has to be here, otherwise it does not work */
+	$(document).ready(function()
 	{
 		function change_selected()
 		{
