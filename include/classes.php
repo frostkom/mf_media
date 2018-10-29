@@ -1243,7 +1243,7 @@ class mf_media
 	{
 		$out = "";
 
-		$out .= "<table id='category_".$cat_id."' class='nav-target mf_media_category widefat striped'>
+		$out .= "<table id='category_".$cat_id."' class='nav-target mf_media_category widefat striped".($this->default_tab == "category_".$cat_id ? "" : " hide")."'>
 			<tbody>";
 
 				if(is_array($cat_files))
