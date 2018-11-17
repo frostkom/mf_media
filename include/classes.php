@@ -53,28 +53,29 @@ class mf_media
 		return $result;
 	}
 
-	function update_count_callback_media_category_media() //$terms = array(), $taxonomy = 'category'
+	function update_count_callback_media_category_media()
 	{
 		global $wpdb;
 
 		$taxonomy = 'category';
 
-		// select id & count from taxonomy
-		$query = "SELECT term_taxonomy_id, MAX(total) AS total FROM ((
+		$result = $wpdb->get_results($wpdb->prepare("SELECT term_taxonomy_id, MAX(total) AS total FROM ((
 			SELECT tt.term_taxonomy_id, COUNT(*) AS total FROM ".$wpdb->term_relationships." tr, ".$wpdb->term_taxonomy." tt WHERE tr.term_taxonomy_id = tt.term_taxonomy_id AND tt.taxonomy = %s GROUP BY tt.term_taxonomy_id
 		) UNION ALL (
 			SELECT term_taxonomy_id, 0 AS total FROM ".$wpdb->term_taxonomy." WHERE taxonomy = %s
-		)) AS unioncount GROUP BY term_taxonomy_id";
-
-		$result = $wpdb->get_results($wpdb->prepare($query, $taxonomy, $taxonomy));
+		)) AS unioncount GROUP BY term_taxonomy_id", $taxonomy, $taxonomy));
 
 		// update all count values from taxonomy
 		foreach($result as $r)
 		{
 			$intCategoryID = $r->term_taxonomy_id;
 
-			$tax_count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(categoryID) FROM ".$wpdb->prefix."media2category WHERE categoryID = '%d'", $intCategoryID));
-			$tax_count += $r->total;
+			$tax_count = $r->total;
+
+			if(get_option('setting_media_activate_categories') == 'yes')
+			{
+				$tax_count += $wpdb->get_var($wpdb->prepare("SELECT COUNT(categoryID) FROM ".$wpdb->prefix."media2category WHERE categoryID = '%d'", $intCategoryID));
+			}
 
 			$wpdb->update($wpdb->term_taxonomy, array('count' => $tax_count), array('term_taxonomy_id' => $intCategoryID));
 		}
