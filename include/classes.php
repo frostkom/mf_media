@@ -181,7 +181,7 @@ class mf_media
 
 		if(get_option('setting_media_activate_categories') == 'yes')
 		{
-			if($pagenow == 'upload.php' || $pagenow == 'admin.php' && substr(check_var('page'), 0, 9) == 'int_page_') //wp_script_is('media-editor') && 
+			if($pagenow == 'upload.php' || $pagenow == 'admin.php' && substr(check_var('page'), 0, 9) == 'int_page_') //wp_script_is('media-editor') &&
 			{
 				$plugin_include_url = plugin_dir_url(__FILE__);
 				$plugin_version = get_plugin_version(__FILE__);
@@ -232,7 +232,6 @@ class mf_media
 	{
 		global $wpdb;
 
-		//$obj_media = new mf_media();
 		$arr_types = $this->get_media_types(array('type' => 'mime'));
 
 		$result = $wpdb->get_results("SELECT ID FROM ".$wpdb->posts." WHERE post_type = 'mf_media_allowed' AND post_status = 'publish'");
@@ -478,8 +477,6 @@ class mf_media
 		switch($col)
 		{
 			case 'action':
-				//$obj_media = new mf_media();
-
 				$arr_actions = $this->get_media_actions();
 
 				$post_meta = get_post_meta($id, $this->meta_prefix.$col, true);
@@ -488,8 +485,6 @@ class mf_media
 			break;
 
 			case 'role':
-				//$obj_media = new mf_media();
-
 				$arr_roles = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
 
 				$arr_post_meta = get_post_meta($id, $this->meta_prefix.$col, false);
@@ -505,8 +500,6 @@ class mf_media
 			break;
 
 			case 'types':
-				//$obj_media = new mf_media();
-
 				$arr_types = $this->get_media_types(array('type' => 'name'));
 
 				$arr_post_meta = get_post_meta($id, $this->meta_prefix.$col, false);
@@ -1242,9 +1235,7 @@ class mf_media
 
 	function get_file_container($cat_id, $cat_name, $cat_files)
 	{
-		$out = "";
-
-		$out .= "<table id='category_".$cat_id."' class='nav-target mf_media_category widefat striped".($this->default_tab == "category_".$cat_id ? "" : " hide")."'>
+		$out = "<table id='category_".$cat_id."' class='nav-target mf_media_category widefat striped".($this->default_tab == "category_".$cat_id ? "" : " hide")."'>
 			<tbody>";
 
 				if(is_array($cat_files))
