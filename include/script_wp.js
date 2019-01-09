@@ -27,8 +27,6 @@ window.wp = window.wp || {};
 
 				$.each(term_list, function(key, value)
 				{
-					console.log(key , value);
-
 					html += "<option value='" + value.term_id + "'>" + value.term_name + "</option>";
 				});
 
