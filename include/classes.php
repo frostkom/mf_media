@@ -450,13 +450,6 @@ class mf_media
 			if($strFilterAttachmentCategory != '')
 			{
 				$wp_query = apply_filters('filter_on_category', $wp_query, $strFilterAttachmentCategory);
-				/*$wp_query->query_vars['meta_query'] = array(
-					array(
-						'key' => $this->meta_prefix.'calendar',
-						'value' => $strFilterAttachmentCategory,
-						'compare' => '=',
-					),
-				);*/
 			}
 		}
 	}
