@@ -422,7 +422,7 @@ class mf_media
 
 	function restrict_manage_posts()
 	{
-		global $post_type, $wpdb;
+		global $post_type;
 
 		if($post_type == 'attachment')
 		{
@@ -621,14 +621,8 @@ class mf_media
 							<# if(data.alt == '')
 							{ #>
 								<i class='fa fa-exclamation-triangle yellow fa-2x' title='<?php echo __("The file has got no alt text. Please add this to improve your SEO.", 'lang_media'); ?>'></i>
-							<# } #>
-<?php
-							/*<# else if(data.size.url.match(/[aring|auml|ouml|Aring|Auml|Ouml]+/))
-							{ #>
-								<i class='fa fa-ban red fa-2x' title='<?php echo __("The file has got special characters in the filename. Please change this.", 'lang_media'); ?>'></i>
-							<# } #>*/
-?>
-						<# }
+							<# }
+						}
 
 						else { #>
 							<div class="centered">
@@ -710,8 +704,6 @@ class mf_media
 
 	function attachment_fields_to_edit($form_fields, $post)
 	{
-		global $wpdb;
-
 		if(IS_ADMIN && get_option('setting_media_activate_categories') == 'yes')
 		{
 			$html = "<ul class='term-list'>";
@@ -756,7 +748,7 @@ class mf_media
 			$form_fields['mf_mc_category'] = array(
 				'label' => __("Categories", 'lang_media'),
 				'input' => 'html',
-				//'helps' => __("", 'lang_media'),
+				//'helps' => "",
 				'html' => $html,
 			);
 
@@ -778,7 +770,7 @@ class mf_media
 			$form_fields['mf_mc_roles'] = array(
 				'label' => __("Roles", 'lang_media'),
 				'input' => 'html',
-				//'helps' => __("", 'lang_media'),
+				//'helps' => "",
 				'html' => $html,
 			);
 		}
@@ -1012,15 +1004,15 @@ class mf_media
 			'xlsx' =>				array($spreadsheet_name." (Excel - XLSX)", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
 			'ods' =>				array($spreadsheet_name." (Open)", "application/vnd.oasis.opendocument.spreadsheet"),
 
-			//'txt|asc|c|cc|h|srt' => __("Plain text", 'lang_media'), "text/plain
-			//'csv' => __("CSV", 'lang_media'), "text/csv
-			//'tsv' => __("", 'lang_media'), "text/tab-separated-values
-			//'rtf' => __("", 'lang_media'), "application/rtf
-			//'ics' => __("Calendar", 'lang_media'), "text/calendar
-			//'rtx' => __("", 'lang_media'), "text/richtext
-			//'vtt' => __("", 'lang_media'), "text/vtt
+			//'txt|asc|c|cc|h|srt' => "Plain text", "text/plain
+			//'csv' => "CSV", "text/csv
+			//'tsv' => "", "text/tab-separated-values
+			//'rtf' => "", "application/rtf
+			//'ics' => "Calendar", "text/calendar
+			//'rtx' => "", "text/richtext
+			//'vtt' => "", "text/vtt
 
-			//'dfxp' => __("", 'lang_media'), "application/ttaf+xml
+			//'dfxp' => "", "application/ttaf+xml
 		);
 
 		/*'wax' => 'audio/x-ms-wax', 'mka' => 'audio/x-matroska', 'class' => 'application/java', 'xcf' => 'application/octet-stream', 'wri' => 'application/vnd.ms-write', 'mdb' => 'application/vnd.ms-access', 'mpp' => 'application/vnd.ms-project', 'docm' => 'application/vnd.ms-word.document.macroEnabled.12', 'dotx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.template', 'dotm' => 'application/vnd.ms-word.template.macroEnabled.12', 'xlsm' => 'application/vnd.ms-excel.sheet.macroEnabled.12', 'xlsb' => 'application/vnd.ms-excel.sheet.binary.macroEnabled.12', 'xltx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.template', 'xltm' => 'application/vnd.ms-excel.template.macroEnabled.12', 'xlam' => 'application/vnd.ms-excel.addin.macroEnabled.12', 'pptm' => 'application/vnd.ms-powerpoint.presentation.macroEnabled.12', 'ppsx' => 'application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'ppsm' => 'application/vnd.ms-powerpoint.slideshow.macroEnabled.12', 'potx' => 'application/vnd.openxmlformats-officedocument.presentationml.template', 'potm' => 'application/vnd.ms-powerpoint.template.macroEnabled.12', 'ppam' => 'application/vnd.ms-powerpoint.addin.macroEnabled.12', 'sldx' => 'application/vnd.openxmlformats-officedocument.presentationml.slide', 'sldm' => 'application/vnd.ms-powerpoint.slide.macroEnabled.12', 'onetoc|onetoc2|onetmp|onepkg' => 'application/onenote', 'oxps' => 'application/oxps', 'xps' => 'application/vnd.ms-xpsdocument', 'odg' => 'application/vnd.oasis.opendocument.graphics', 'odc' => 'application/vnd.oasis.opendocument.chart', 'odb' => 'application/vnd.oasis.opendocument.database', 'odf' => 'application/vnd.oasis.opendocument.formula', 'wp|wpd' => 'application/wordperfect', 'key' => 'application/vnd.apple.keynote', 'numbers' => 'application/vnd.apple.numbers', 'pages' => 'application/vnd.apple.pages', */
@@ -1136,8 +1128,6 @@ class mf_media
 
 	function get_categories()
 	{
-		global $wpdb;
-
 		if(count($this->categories) == 0)
 		{
 			$role_id = get_current_user_role();
