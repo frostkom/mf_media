@@ -3,7 +3,7 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description: 
-Version: 5.7.13
+Version: 5.7.14
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -60,6 +60,8 @@ if(is_admin())
 	add_filter('count_shortcode_button', array($obj_media, 'count_shortcode_button'));
 	add_filter('get_shortcode_output', array($obj_media, 'get_shortcode_output'));
 }
+
+add_filter('init_base_admin', array($obj_media, 'init_base_admin'));
 
 add_shortcode('mf_media_category', array($obj_media, 'shortcode_media_category'));
 

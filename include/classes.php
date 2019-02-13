@@ -186,7 +186,8 @@ class mf_media
 				$plugin_include_url = plugin_dir_url(__FILE__);
 				$plugin_version = get_plugin_version(__FILE__);
 
-				mf_enqueue_style('style_media', $plugin_include_url."style_wp.css", $plugin_version);
+				mf_enqueue_style('style_media', $plugin_include_url."style.css", $plugin_version);
+				mf_enqueue_style('style_media_wp', $plugin_include_url."style_wp.css", $plugin_version);
 
 				/*$taxonomy = 'category';
 
@@ -306,7 +307,7 @@ class mf_media
 			$file['name'] .= ".".$file_suffix;
 		}
 
-	    return $file;
+		return $file;
 	}
 
 	function hidden_meta_boxes($hidden, $screen)
@@ -839,6 +840,19 @@ class mf_media
 		}
 
 		return $out;
+	}
+
+	function init_base_admin($arr_views)
+	{
+		if(!is_admin())
+		{
+			$plugin_include_url = plugin_dir_url(__FILE__);
+			$plugin_version = get_plugin_version(__FILE__);
+
+			mf_enqueue_style('style_media', $plugin_include_url."style.css", $plugin_version);
+		}
+
+		return $arr_views;
 	}
 
 	function shortcode_media_category($atts)
