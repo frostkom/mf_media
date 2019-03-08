@@ -528,7 +528,7 @@ class mf_media
 
 						else
 						{
-							do_log(sprintf(__("The mime type '%s' does not exist", 'lang_media'), $post_meta));
+							do_log(sprintf("The mime type '%s' does not exist", $post_meta));
 						}
 					}
 				}
