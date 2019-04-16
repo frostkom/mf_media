@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-02 05:11+0100\n"
+"POT-Creation-Date: 2019-03-22 09:52+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -15,11 +15,11 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-msgid "Media"
-msgstr "Media"
-
 msgid "Settings"
 msgstr "Innstillinger"
+
+msgid "Categories"
+msgstr "Kategorier"
 
 msgid "Roles"
 msgstr "Roller"
@@ -33,24 +33,6 @@ msgstr "Ingen"
 msgid "Image"
 msgstr "Bilde"
 
-msgid "Video"
-msgstr "Video"
-
-msgid "APK"
-msgstr "APK"
-
-msgid "SVG"
-msgstr "SVG"
-
-msgid "Javascript"
-msgstr "Javascript"
-
-msgid "HTML"
-msgstr "HTML"
-
-msgid "PDF"
-msgstr "PDF"
-
-msgid "CSV"
-msgstr "CSV"
+msgid "Choose Here"
+msgstr "Velg her"
 

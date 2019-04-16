@@ -7,7 +7,7 @@ class mf_media
 		$this->categories = array();
 		$this->default_tab = 0;
 
-		$this->meta_prefix = "mf_media_";
+		$this->meta_prefix = 'mf_media_';
 	}
 
 	function get_media_roles($post_id)
@@ -957,19 +957,19 @@ class mf_media
 			'woff' =>				array($font_name." (Woff)", "application/octet-stream"), //application/font-woff
 
 			'exe' =>				array(__("Program", 'lang_media'), "application/x-msdownload"),
-			'apk' =>				array(__("APK", 'lang_media'), "application/vnd.android.package-archive"),
+			'apk' =>				array("APK", "application/vnd.android.package-archive"),
 
 			'ico' =>				array(__("Icon", 'lang_media'), "image/x-icon"),
-			'svg' =>				array(__("SVG", 'lang_media'), "image/svg+xmln"),
+			'svg' =>				array("SVG", "image/svg+xmln"),
 			'jpg|jpeg|jpe' =>		array($image_name." (JPEG)", "image/jpeg"),
 			'gif' =>				array($image_name." (GIF)", "image/gif"),
 			'png' =>				array($image_name." (PNG)", "image/png"),
 			'bmp' =>				array($image_name." (BMP)", "image/bmp"),
 			'tiff|tif' =>			array($image_name." (TIFF)", "image/tiff"),
 
-			'css' =>				array(__("Stylesheet", 'lang_media'), "text/css"),
-			'js' =>					array(__("Javascript", 'lang_media'), "application/javascript"),
-			'htm|html' =>			array(__("HTML", 'lang_media'), "text/html"),
+			'css' =>				array("CSS", "text/css"),
+			'js' =>					array("Javascript", "application/javascript"),
+			'htm|html' =>			array("HTML", "text/html"),
 
 			'mp3|m4a|m4b' =>		array($audio_name." (MP3)", "audio/mpeg"),
 			'wav' =>				array($audio_name." (Wav)", "audio/wav"),
@@ -994,7 +994,7 @@ class mf_media
 			//'3gp|3gpp' =>			array($video_name." (3gp)", "video/3gpp"),
 			//'3g2|3gp2' =>			array($video_name." (3g2)", "video/3gpp2"),
 
-			'pdf' =>				array(__("PDF", 'lang_media'), "application/pdf"),
+			'pdf' =>				array("PDF", "application/pdf"),
 			'tar' =>				array($compressed_name." (Tar)", "application/x-tar"),
 			'zip' =>				array($compressed_name." (Zip)", "application/zip"),
 			'gz|gzip' =>			array($compressed_name." (Gzip)", "application/x-gzip"),
