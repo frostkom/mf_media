@@ -3,7 +3,7 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description: 
-Version: 5.7.17
+Version: 5.8.1
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -19,6 +19,7 @@ include_once("include/classes.php");
 $obj_media = new mf_media();
 
 add_action('cron_base', 'activate_media', mt_rand(1, 10));
+add_action('cron_base', array($obj_media, 'cron_base'), mt_rand(1, 10));
 
 add_action('init', array($obj_media, 'init'));
 add_action('init', array($obj_media, 'init_callback'), 100);
@@ -39,14 +40,14 @@ if(is_admin())
 	add_filter('hidden_meta_boxes', array($obj_media, 'hidden_meta_boxes'), 10, 2);
 	add_action('rwmb_meta_boxes', array($obj_media, 'rwmb_meta_boxes'));
 
-	add_filter('manage_media_columns', array($obj_media, 'column_header'), 5);
-	add_action('manage_media_custom_column', array($obj_media, 'column_cell'), 5, 2);
-
 	add_action('restrict_manage_posts', array($obj_media, 'restrict_manage_posts'));
 	add_action('pre_get_posts', array($obj_media, 'pre_get_posts'));
 
-	add_filter('manage_mf_media_allowed_posts_columns', array($obj_media, 'column_header_allowed'), 5);
-	add_action('manage_mf_media_allowed_posts_custom_column', array($obj_media, 'column_cell_allowed'), 5, 2);
+	add_filter('manage_media_columns', array($obj_media, 'column_header'), 5);
+	add_action('manage_media_custom_column', array($obj_media, 'column_cell'), 5, 2);
+
+	add_filter('manage_'.$obj_media->post_type_allowed.'_posts_columns', array($obj_media, 'column_header'), 5);
+	add_action('manage_'.$obj_media->post_type_allowed.'_posts_custom_column', array($obj_media, 'column_cell'), 5, 2);
 
 	add_filter('filter_on_category', array($obj_media, 'filter_on_category'), 10, 2);
 
@@ -123,17 +124,19 @@ function activate_media()
 				}
 			}
 		}*/
-
-		replace_user_meta(array('old' => 'mf_mc_current_media_category', 'new' => 'meta_current_media_category'));
 	}
+
+	replace_option(array('old' => 'setting_show_admin_menu', 'new' => 'setting_media_display_categories_in_menu'));
 }
 
 function uninstall_media()
 {
+	global $obj_media;
+
 	mf_uninstall_plugin(array(
-		'options' => array('setting_show_admin_menu'),
+		'options' => array('setting_media_sanitize_files', 'setting_media_activate_categories', 'setting_media_display_categories_in_menu', 'setting_media_files2sync'),
 		'meta' => array('meta_current_media_category'),
-		'post_types' => array('mf_media_allowed'),
+		'post_types' => array($obj_media->post_type_allowed),
 		'tables' => array('media2category', 'media2role'),
 	));
 }

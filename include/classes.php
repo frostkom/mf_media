@@ -7,6 +7,7 @@ class mf_media
 		$this->categories = array();
 		$this->default_tab = 0;
 
+		$this->post_type_allowed = 'mf_media_allowed';
 		$this->meta_prefix = 'mf_media_';
 	}
 
@@ -81,6 +82,190 @@ class mf_media
 		}
 	}
 
+	function cron_base()
+	{
+		global $wpdb;
+
+		$obj_cron = new mf_cron();
+		$obj_cron->start(__CLASS__);
+
+		if($obj_cron->is_running == false)
+		{
+			$setting_base_template_site = get_option('setting_base_template_site');
+
+			if($setting_base_template_site != '' && $setting_base_template_site != get_site_url() && filter_var($setting_base_template_site, FILTER_VALIDATE_URL))
+			{
+				list($content, $headers) = get_url_content(array('url' => $setting_base_template_site."/wp-content/plugins/mf_media/include/api/?type=files2sync", 'catch_head' => true));
+
+				switch($headers['http_code'])
+				{
+					case 200:
+						$json = json_decode($content, true);
+
+						if(isset($json['success']) && $json['success'] == true)
+						{
+							if(count($json['files']) > 0)
+							{
+								//do_log("files2sync: ".var_export($json['files'], true));
+
+								foreach($json['files'] as $file)
+								{
+									/*// Gives us access to the download_url() and wp_handle_sideload() functions
+									require_once(ABSPATH.'wp-admin/includes/file.php');
+
+									$temp_file = download_url($file['url'], 5);
+
+									if(!is_wp_error($temp_file))
+									{
+										// Array based on $_FILE as seen in PHP file uploads
+										$file = array(
+											'name' => basename($file['url']), // ex: wp-header-logo.png
+											'type' => $file['type'],
+											'tmp_name' => $temp_file,
+											'error' => 0,
+											'size' => filesize($temp_file),
+										);
+
+										$overrides = array(
+											// Tells WordPress to not look for the POST form fields that would normally be present as we downloaded the file from a remote server, so there will be no form fields
+											'test_form' => false, // Default is true
+
+											// Setting this to false lets WordPress allow empty files, not recommended
+											'test_size' => true, // Default is true
+										);
+
+										// Move the temporary file into the uploads directory
+										$results = wp_handle_sideload($file, $overrides);
+
+										if(!empty($results['error']))
+										{
+											do_log("file2sync Error 2: ".var_export($results['error'], true));
+										}
+
+										else
+										{
+											$filename = $results['file']; // Full path to the file
+											$local_url = $results['url'];  // URL to the file in the uploads dir
+											$type = $results['type']; // MIME type of the file
+
+											// Perform any actions here based in the above results
+										}
+									}
+
+									else
+									{
+										do_log("file2sync Error 1: ".var_export($temp_file, true));
+									}*/
+
+									list($upload_path, $upload_url) = get_uploads_folder('', false);
+									//$upload_dir = wp_upload_dir();
+									$file_path = $upload_path.date("Y")."/".date("m")."/".$file['name'];
+
+									list($content, $headers) = get_url_content(array(
+										'url' => $file['url'],
+										'catch_head' => true,
+									));
+
+									$log_message = "The file could not be found (".$file['url'].")";
+
+									switch($headers['http_code'])
+									{
+										case 200:
+											$content_md5 = md5($content);
+
+											$post_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." INNER JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id WHERE post_type = %s AND post_title = %s AND ".$wpdb->postmeta.".meta_key = %s", 'attachment', $file['name'], $this->meta_prefix.'synced_file'));
+											$already_exists = ($post_id > 0);
+											$file_content_updated = false;
+
+											if($already_exists)
+											{
+												$synced_file = update_post_meta($post_id, $this->meta_prefix.'synced_file', true);
+
+												if($synced_file != $content_md5)
+												{
+													$file_content_updated = true;
+												}
+											}
+
+											else
+											{
+												$file_content_updated = true;
+											}
+
+											if($file_content_updated)
+											{
+												$savefile = fopen($file_path, 'w');
+												fwrite($savefile, $content);
+												fclose($savefile);
+											}
+
+											if($already_exists)
+											{
+												$post_data = array(
+													'ID' => $post_id,
+													'post_modified' => $file['modified'],
+													'meta_input' => array(
+														'_wp_attachment_image_alt' => $file['image_alt'],
+													),
+												);
+
+												wp_update_post($post_data);
+											}
+
+											else
+											{
+												//$wp_filetype = wp_check_filetype(basename($file['name']), null);
+
+												$post_data = array(
+													'post_mime_type' => $file['type'], //$wp_filetype['type']
+													'post_title' => $file['name'],
+													'post_content' => '',
+													'post_status' => 'inherit',
+													'post_modified' => $file['modified'],
+													'meta_input' => array(
+														'_wp_attachment_image_alt' => $file['image_alt'],
+													),
+												);
+
+												$post_id = wp_insert_attachment($post_data, $file_path);
+											}
+
+											if($file_content_updated)
+											{
+												//$post = get_post($post_id);
+												$file_full_size_path = get_attached_file($post_id);
+
+												$attach_data = wp_generate_attachment_metadata($post_id, $file_full_size_path);
+												wp_update_attachment_metadata($post_id, $attach_data);
+
+												update_post_meta($post_id, $this->meta_prefix.'synced_file', $content_md5);
+											}
+
+											do_log($log_message, 'trash');
+										break;
+
+										default:
+											do_log($log_message);
+										break;
+									}
+								}
+
+								do_log("Getting files to sync from", 'trash');
+							}
+						}
+
+					break;
+
+					default:
+						do_log(sprintf("Getting files to sync from %s returned an error (%s)", $setting_base_template_site, $content));
+					break;
+				}
+			}
+		}
+
+		$obj_cron->end();
+	}
+
 	function init()
 	{
 		$labels = array(
@@ -100,7 +285,7 @@ class mf_media
 			'has_archive' => false,
 		);
 
-		register_post_type('mf_media_allowed', $args);
+		register_post_type($this->post_type_allowed, $args);
 
 		register_taxonomy_for_object_type('category', 'attachment');
 	}
@@ -137,8 +322,10 @@ class mf_media
 
 		if(get_option('setting_media_activate_categories') == 'yes')
 		{
-			$arr_settings['setting_show_admin_menu'] = __("Show admin menu with categories and files", 'lang_media');
+			$arr_settings['setting_media_display_categories_in_menu'] = __("Display Categories in Menu", 'lang_media');
 		}
+
+		$arr_settings['setting_media_files2sync'] = __("Files to Sync", 'lang_media');
 
 		show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
 	}
@@ -167,12 +354,25 @@ class mf_media
 		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option, 'description' => __("This will add the possibility to connect categories and restrict roles to every file in the Media Library", 'lang_media')));
 	}
 
-	function setting_show_admin_menu_callback()
+	function setting_media_display_categories_in_menu_callback()
 	{
 		$setting_key = get_setting_key(__FUNCTION__);
 		$option = get_option($setting_key, 'no');
 
 		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
+	}
+
+	function setting_media_files2sync_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option($setting_key);
+
+		//echo get_media_library(array('name' => $setting_key, 'value' => $option, 'multiple' => true, 'description' => __("These files will be downloaded and/or updated to child sites, if there are any", 'lang_media')));
+
+		$arr_data = array();
+		get_post_children(array('add_choose_here' => true, 'post_type' => 'attachment'), $arr_data);
+
+		echo show_select(array('data' => $arr_data, 'name' => $setting_key."[]", 'value' => $option, 'description' => __("These files will be downloaded and/or updated to child sites, if there are any", 'lang_media')));
 	}
 
 	function admin_init()
@@ -214,7 +414,7 @@ class mf_media
 		$menu_start = $menu_root.'list/index.php';
 		$menu_capability = 'read';
 
-		if(get_option('setting_show_admin_menu') == 'yes')
+		if(get_option('setting_media_display_categories_in_menu') == 'yes')
 		{
 			$menu_title = __("Files", 'lang_media');
 
@@ -225,7 +425,7 @@ class mf_media
 		{
 			$menu_title = __("Allowed Types", 'lang_media');
 
-			add_submenu_page("upload.php", $menu_title, $menu_title, $menu_capability, "edit.php?post_type=mf_media_allowed");
+			add_submenu_page("upload.php", $menu_title, $menu_title, $menu_capability, "edit.php?post_type=".$this->post_type_allowed);
 		}
 	}
 
@@ -235,7 +435,7 @@ class mf_media
 
 		$arr_types = $this->get_media_types(array('type' => 'mime'));
 
-		$result = $wpdb->get_results("SELECT ID FROM ".$wpdb->posts." WHERE post_type = 'mf_media_allowed' AND post_status = 'publish'");
+		$result = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." WHERE post_type = %s AND post_status = %s", $this->post_type_allowed, 'publish'));
 
 		foreach($result as $r)
 		{
@@ -331,7 +531,7 @@ class mf_media
 		$meta_boxes[] = array(
 			'id' => $this->meta_prefix.'settings',
 			'title' => __("Settings", 'lang_media'),
-			'post_types' => array('mf_media_allowed'),
+			'post_types' => array($this->post_type_allowed),
 			//'context' => 'side',
 			'priority' => 'low',
 			'fields' => array(
@@ -365,60 +565,6 @@ class mf_media
 		);
 
 		return $meta_boxes;
-	}
-
-	function column_header($cols)
-	{
-		if(IS_ADMIN && get_option('setting_media_activate_categories') == 'yes')
-		{
-			unset($cols['author']);
-			unset($cols['date']);
-			unset($cols['categories']);
-			unset($cols['parent']);
-			unset($cols['comments']);
-
-			$cols['media_categories'] = __("Categories", 'lang_media');
-			$cols['media_roles'] = __("Roles", 'lang_media');
-		}
-
-		return $cols;
-	}
-
-	function column_cell($col, $id)
-	{
-		switch($col)
-		{
-			case 'media_categories':
-				$field_value = $this->get_media_categories($id);
-
-				$i = 0;
-
-				foreach($field_value as $category_id)
-				{
-					echo ($i > 0 ? ", " : "").get_cat_name($category_id);
-
-					$i++;
-				}
-			break;
-
-			case 'media_roles':
-				$field_value = $this->get_media_roles($id);
-
-				$arr_data = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
-
-				$i = 0;
-
-				foreach($arr_data as $key => $value)
-				{
-					if(in_array($key, $field_value))
-					{
-						echo ($i > 0 ? ", " : "").$value;
-
-						$i++;
-					}
-				}
-			break;
-		}
 	}
 
 	function restrict_manage_posts()
@@ -455,82 +601,147 @@ class mf_media
 		}
 	}
 
-	function column_header_allowed($cols)
+	function column_header($cols)
 	{
-		unset($cols['date']);
+		global $post_type;
 
-		$cols['action'] = __("Action", 'lang_media');
-		$cols['role'] = __("Role", 'lang_media');
-		$cols['types'] = __("Types", 'lang_media');
+		switch($post_type)
+		{
+			case 'attachment':
+				unset($cols['author']);
+				unset($cols['date']);
+				unset($cols['parent']);
+				unset($cols['comments']);
+
+				if(IS_ADMIN && get_option('setting_media_activate_categories') == 'yes')
+				{
+					unset($cols['categories']);
+
+					$cols['media_categories'] = __("Categories", 'lang_media');
+					$cols['media_roles'] = __("Roles", 'lang_media');
+				}
+			break;
+
+			case $this->post_type_allowed:
+				unset($cols['date']);
+
+				$cols['action'] = __("Action", 'lang_media');
+				$cols['role'] = __("Role", 'lang_media');
+				$cols['types'] = __("Types", 'lang_media');
+			break;
+		}
 
 		return $cols;
 	}
 
-	function column_cell_allowed($col, $id)
+	function column_cell($col, $id)
 	{
-		switch($col)
+		global $post;
+
+		switch($post->post_type)
 		{
-			case 'action':
-				$arr_actions = $this->get_media_actions();
-
-				$post_meta = get_post_meta($id, $this->meta_prefix.$col, true);
-
-				echo $arr_actions[$post_meta];
-			break;
-
-			case 'role':
-				$arr_roles = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
-
-				$arr_post_meta = get_post_meta($id, $this->meta_prefix.$col, false);
-
-				$i = 0;
-
-				foreach($arr_post_meta as $post_meta)
+			case 'attachment':
+				switch($col)
 				{
-					echo ($i > 0 ? ", " : "").$arr_roles[$post_meta];
+					case 'media_categories':
+						$field_value = $this->get_media_categories($id);
 
-					$i++;
-				}
-			break;
+						$i = 0;
 
-			case 'types':
-				$arr_types = $this->get_media_types(array('type' => 'name'));
-
-				$arr_post_meta = get_post_meta($id, $this->meta_prefix.$col, false);
-
-				if(count($arr_post_meta) == 0)
-				{
-					$post_role = get_post_meta($id, $this->meta_prefix.'role', false);
-
-					if(count($post_role) == 1 && in_array('administrator', $post_role))
-					{
-						echo __("All", 'lang_media');
-					}
-
-					else
-					{
-						echo __("None", 'lang_media')." (".__("Only administrators can have unfiltered uploads", 'lang_media').")";
-					}
-				}
-
-				else
-				{
-					$i = 0;
-
-					foreach($arr_post_meta as $post_meta)
-					{
-						if(isset($arr_types[$post_meta]))
+						foreach($field_value as $category_id)
 						{
-							echo ($i > 0 ? ", " : "").$arr_types[$post_meta];
+							echo ($i > 0 ? ", " : "").get_cat_name($category_id);
 
 							$i++;
+						}
+					break;
+
+					case 'media_roles':
+						$field_value = $this->get_media_roles($id);
+
+						$arr_data = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
+
+						$i = 0;
+
+						foreach($arr_data as $key => $value)
+						{
+							if(in_array($key, $field_value))
+							{
+								echo ($i > 0 ? ", " : "").$value;
+
+								$i++;
+							}
+						}
+					break;
+				}
+			break;
+
+			case $this->post_type_allowed:
+				switch($col)
+				{
+					case 'action':
+						$arr_actions = $this->get_media_actions();
+
+						$post_meta = get_post_meta($id, $this->meta_prefix.$col, true);
+
+						echo $arr_actions[$post_meta];
+					break;
+
+					case 'role':
+						$arr_roles = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
+
+						$arr_post_meta = get_post_meta($id, $this->meta_prefix.$col, false);
+
+						$i = 0;
+
+						foreach($arr_post_meta as $post_meta)
+						{
+							echo ($i > 0 ? ", " : "").$arr_roles[$post_meta];
+
+							$i++;
+						}
+					break;
+
+					case 'types':
+						$arr_types = $this->get_media_types(array('type' => 'name'));
+
+						$arr_post_meta = get_post_meta($id, $this->meta_prefix.$col, false);
+
+						if(count($arr_post_meta) == 0)
+						{
+							$post_role = get_post_meta($id, $this->meta_prefix.'role', false);
+
+							if(count($post_role) == 1 && in_array('administrator', $post_role))
+							{
+								echo __("All", 'lang_media');
+							}
+
+							else
+							{
+								echo __("None", 'lang_media')." (".__("Only administrators can have unfiltered uploads", 'lang_media').")";
+							}
 						}
 
 						else
 						{
-							do_log(sprintf("The mime type '%s' does not exist", $post_meta));
+							$i = 0;
+
+							foreach($arr_post_meta as $post_meta)
+							{
+								if(isset($arr_types[$post_meta]))
+								{
+									echo ($i > 0 ? ", " : "").$arr_types[$post_meta];
+
+									$i++;
+								}
+
+								else
+								{
+									do_log(sprintf("The mime type '%s' does not exist", $post_meta));
+								}
+							}
 						}
-					}
+					break;
 				}
 			break;
 		}
