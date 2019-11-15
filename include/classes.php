@@ -82,7 +82,7 @@ class mf_media
 		}
 	}
 
-	function cron_base()
+	/*function cron_base()
 	{
 		global $wpdb;
 
@@ -110,53 +110,6 @@ class mf_media
 
 								foreach($json['files'] as $file)
 								{
-									/*// Gives us access to the download_url() and wp_handle_sideload() functions
-									require_once(ABSPATH.'wp-admin/includes/file.php');
-
-									$temp_file = download_url($file['url'], 5);
-
-									if(!is_wp_error($temp_file))
-									{
-										// Array based on $_FILE as seen in PHP file uploads
-										$file = array(
-											'name' => basename($file['url']), // ex: wp-header-logo.png
-											'type' => $file['type'],
-											'tmp_name' => $temp_file,
-											'error' => 0,
-											'size' => filesize($temp_file),
-										);
-
-										$overrides = array(
-											// Tells WordPress to not look for the POST form fields that would normally be present as we downloaded the file from a remote server, so there will be no form fields
-											'test_form' => false, // Default is true
-
-											// Setting this to false lets WordPress allow empty files, not recommended
-											'test_size' => true, // Default is true
-										);
-
-										// Move the temporary file into the uploads directory
-										$results = wp_handle_sideload($file, $overrides);
-
-										if(!empty($results['error']))
-										{
-											do_log("file2sync Error 2: ".var_export($results['error'], true));
-										}
-
-										else
-										{
-											$filename = $results['file']; // Full path to the file
-											$local_url = $results['url'];  // URL to the file in the uploads dir
-											$type = $results['type']; // MIME type of the file
-
-											// Perform any actions here based in the above results
-										}
-									}
-
-									else
-									{
-										do_log("file2sync Error 1: ".var_export($temp_file, true));
-									}*/
-
 									list($upload_path, $upload_url) = get_uploads_folder('', false);
 									//$upload_dir = wp_upload_dir();
 									$file_path = $upload_path.date("Y")."/".date("m")."/".$file['name'];
@@ -264,6 +217,141 @@ class mf_media
 		}
 
 		$obj_cron->end();
+	}*/
+
+	function cron_sync($json)
+	{
+		global $wpdb;
+
+		if(count($json['files']) > 0)
+		{
+			//do_log("Media -> cron_sync: ".var_export($json['files'], true));
+
+			foreach($json['files'] as $file)
+			{
+				list($upload_path, $upload_url) = get_uploads_folder('', false);
+				$file_path = $upload_path.date("Y")."/".date("m")."/".$file['name'];
+
+				list($content, $headers) = get_url_content(array(
+					'url' => $file['url'],
+					'catch_head' => true,
+				));
+
+				$log_message = "The file could not be found (".$file['url'].")";
+
+				switch($headers['http_code'])
+				{
+					case 200:
+						$content_md5 = md5($content);
+
+						$post_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." INNER JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id WHERE post_type = %s AND post_title = %s AND ".$wpdb->postmeta.".meta_key = %s", 'attachment', $file['name'], $this->meta_prefix.'synced_file'));
+						$already_exists = ($post_id > 0);
+						$file_content_updated = false;
+
+						if($already_exists)
+						{
+							$synced_file = update_post_meta($post_id, $this->meta_prefix.'synced_file', true);
+
+							if($synced_file != $content_md5)
+							{
+								$file_content_updated = true;
+							}
+						}
+
+						else
+						{
+							$file_content_updated = true;
+						}
+
+						if($file_content_updated)
+						{
+							$savefile = fopen($file_path, 'w');
+							fwrite($savefile, $content);
+							fclose($savefile);
+						}
+
+						if($already_exists)
+						{
+							$post_data = array(
+								'ID' => $post_id,
+								'post_modified' => $file['modified'],
+								'meta_input' => array(
+									'_wp_attachment_image_alt' => $file['image_alt'],
+								),
+							);
+
+							wp_update_post($post_data);
+						}
+
+						else
+						{
+							//$wp_filetype = wp_check_filetype(basename($file['name']), null);
+
+							$post_data = array(
+								'post_mime_type' => $file['type'], //$wp_filetype['type']
+								'post_title' => $file['name'],
+								'post_content' => '',
+								'post_status' => 'inherit',
+								'post_modified' => $file['modified'],
+								'meta_input' => array(
+									'_wp_attachment_image_alt' => $file['image_alt'],
+								),
+							);
+
+							$post_id = wp_insert_attachment($post_data, $file_path);
+						}
+
+						if($file_content_updated)
+						{
+							//$post = get_post($post_id);
+							$file_full_size_path = get_attached_file($post_id);
+
+							$attach_data = wp_generate_attachment_metadata($post_id, $file_full_size_path);
+							wp_update_attachment_metadata($post_id, $attach_data);
+
+							update_post_meta($post_id, $this->meta_prefix.'synced_file', $content_md5);
+						}
+
+						do_log($log_message, 'trash');
+					break;
+
+					default:
+						do_log($log_message);
+					break;
+				}
+			}
+		}
+	}
+
+	function api_sync($json_output)
+	{
+		$json_output['files'] = array();
+
+		$setting_media_files2sync = get_option_or_default('setting_media_files2sync', array());
+
+		if(count($setting_media_files2sync) > 0)
+		{
+			list($upload_path, $upload_url) = get_uploads_folder('', false);
+
+			foreach($setting_media_files2sync as $post_id)
+			{
+				$file_url = get_post_meta($post_id, '_wp_attached_file', true);
+				$arr_file_url = explode("/", $file_url, 3);
+
+				//$file_full_size_path = get_attached_file($post->ID);
+
+				$json_output['files'][] = array(
+					'name' => $arr_file_url[2],
+					'title' => get_post_title($post_id),
+					'image_alt' => get_post_meta($post_id, '_wp_attachment_image_alt', true),
+					'url' => $upload_url.$file_url,
+					'type' => mf_get_post_content($post_id, 'post_mime_type'),
+					'modified' => mf_get_post_content($post_id, 'post_modified'),
+				);
+			}
+		}
+
+		return $json_output;
 	}
 
 	function init()
