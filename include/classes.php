@@ -82,143 +82,6 @@ class mf_media
 		}
 	}
 
-	/*function cron_base()
-	{
-		global $wpdb;
-
-		$obj_cron = new mf_cron();
-		$obj_cron->start(__CLASS__);
-
-		if($obj_cron->is_running == false)
-		{
-			$setting_base_template_site = get_option('setting_base_template_site');
-
-			if($setting_base_template_site != '' && $setting_base_template_site != get_site_url() && filter_var($setting_base_template_site, FILTER_VALIDATE_URL))
-			{
-				list($content, $headers) = get_url_content(array('url' => $setting_base_template_site."/wp-content/plugins/mf_media/include/api/?type=files2sync", 'catch_head' => true));
-
-				switch($headers['http_code'])
-				{
-					case 200:
-						$json = json_decode($content, true);
-
-						if(isset($json['success']) && $json['success'] == true)
-						{
-							if(count($json['files']) > 0)
-							{
-								//do_log("files2sync: ".var_export($json['files'], true));
-
-								foreach($json['files'] as $file)
-								{
-									list($upload_path, $upload_url) = get_uploads_folder('', false);
-									//$upload_dir = wp_upload_dir();
-									$file_path = $upload_path.date("Y")."/".date("m")."/".$file['name'];
-
-									list($content, $headers) = get_url_content(array(
-										'url' => $file['url'],
-										'catch_head' => true,
-									));
-
-									$log_message = "The file could not be found (".$file['url'].")";
-
-									switch($headers['http_code'])
-									{
-										case 200:
-											$content_md5 = md5($content);
-
-											$post_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." INNER JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id WHERE post_type = %s AND post_title = %s AND ".$wpdb->postmeta.".meta_key = %s", 'attachment', $file['name'], $this->meta_prefix.'synced_file'));
-											$already_exists = ($post_id > 0);
-											$file_content_updated = false;
-
-											if($already_exists)
-											{
-												$synced_file = update_post_meta($post_id, $this->meta_prefix.'synced_file', true);
-
-												if($synced_file != $content_md5)
-												{
-													$file_content_updated = true;
-												}
-											}
-
-											else
-											{
-												$file_content_updated = true;
-											}
-
-											if($file_content_updated)
-											{
-												$savefile = fopen($file_path, 'w');
-												fwrite($savefile, $content);
-												fclose($savefile);
-											}
-
-											if($already_exists)
-											{
-												$post_data = array(
-													'ID' => $post_id,
-													'post_modified' => $file['modified'],
-													'meta_input' => array(
-														'_wp_attachment_image_alt' => $file['image_alt'],
-													),
-												);
-
-												wp_update_post($post_data);
-											}
-
-											else
-											{
-												//$wp_filetype = wp_check_filetype(basename($file['name']), null);
-
-												$post_data = array(
-													'post_mime_type' => $file['type'], //$wp_filetype['type']
-													'post_title' => $file['name'],
-													'post_content' => '',
-													'post_status' => 'inherit',
-													'post_modified' => $file['modified'],
-													'meta_input' => array(
-														'_wp_attachment_image_alt' => $file['image_alt'],
-													),
-												);
-
-												$post_id = wp_insert_attachment($post_data, $file_path);
-											}
-
-											if($file_content_updated)
-											{
-												//$post = get_post($post_id);
-												$file_full_size_path = get_attached_file($post_id);
-
-												$attach_data = wp_generate_attachment_metadata($post_id, $file_full_size_path);
-												wp_update_attachment_metadata($post_id, $attach_data);
-
-												update_post_meta($post_id, $this->meta_prefix.'synced_file', $content_md5);
-											}
-
-											do_log($log_message, 'trash');
-										break;
-
-										default:
-											do_log($log_message);
-										break;
-									}
-								}
-
-								do_log("Getting files to sync from", 'trash');
-							}
-						}
-
-					break;
-
-					default:
-						do_log(sprintf("Getting files to sync from %s returned an error (%s)", $setting_base_template_site, $content));
-					break;
-				}
-			}
-		}
-
-		$obj_cron->end();
-	}*/
-
 	function cron_sync($json)
 	{
 		global $wpdb;
@@ -323,7 +186,7 @@ class mf_media
 		}
 	}
 
-	function api_sync($json_output)
+	function api_sync($json_output, $data = array())
 	{
 		$json_output['files'] = array();
 
@@ -452,13 +315,15 @@ class mf_media
 
 	function setting_media_files2sync_callback()
 	{
+		global $wpdb;
+
 		$setting_key = get_setting_key(__FUNCTION__);
 		$option = get_option($setting_key);
 
 		//echo get_media_library(array('name' => $setting_key, 'value' => $option, 'multiple' => true, 'description' => __("These files will be downloaded and/or updated to child sites, if there are any", 'lang_media')));
 
 		$arr_data = array();
-		get_post_children(array('add_choose_here' => true, 'post_type' => 'attachment'), $arr_data);
+		get_post_children(array('add_choose_here' => false, 'post_type' => 'attachment'), $arr_data);
 
 		echo show_select(array('data' => $arr_data, 'name' => $setting_key."[]", 'value' => $option, 'description' => __("These files will be downloaded and/or updated to child sites, if there are any", 'lang_media')));
 	}
