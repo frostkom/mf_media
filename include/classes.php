@@ -562,7 +562,6 @@ class mf_media
 		{
 			case 'attachment':
 				unset($cols['author']);
-				unset($cols['date']);
 				unset($cols['parent']);
 				unset($cols['comments']);
 
