@@ -3,7 +3,7 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description: 
-Version: 5.8.6
+Version: 5.8.8
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -19,6 +19,7 @@ include_once("include/classes.php");
 $obj_media = new mf_media();
 
 add_action('cron_base', 'activate_media', mt_rand(1, 10));
+add_action('cron_base', array($obj_media, 'cron_base'), mt_rand(1, 10));
 
 add_action('cron_sync', array($obj_media, 'cron_sync'));
 add_filter('api_sync', array($obj_media, 'api_sync'), 10, 2);
@@ -65,6 +66,7 @@ if(is_admin())
 }
 
 add_filter('init_base_admin', array($obj_media, 'init_base_admin'));
+add_filter('filter_is_file_used', array($obj_media, 'filter_is_file_used'));
 
 add_shortcode('mf_media_category', array($obj_media, 'shortcode_media_category'));
 
@@ -105,27 +107,6 @@ function activate_media()
 		);
 
 		add_index($arr_add_index);
-
-		//Migrate from option to DB
-		/*if(IS_ADMIN)
-		{
-			$result = $wpdb->get_results("SELECT ID FROM ".$wpdb->posts." WHERE post_type = 'attachment'");
-
-			foreach($result as $r)
-			{
-				$arr_categories = get_post_meta($r->ID, 'mf_mc_category', false);
-
-				foreach($arr_categories as $key => $value)
-				{
-					$wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2category WHERE fileID = '%d' AND categoryID = '%d' LIMIT 0, 1", $r->ID, $value));
-
-					if($wpdb->num_rows == 0)
-					{
-						$wpdb->query($wpdb->prepare("INSERT INTO ".$wpdb->prefix."media2category SET fileID = '%d', categoryID = '%d'", $r->ID, $value));
-					}
-				}
-			}
-		}*/
 	}
 
 	replace_option(array('old' => 'setting_show_admin_menu', 'new' => 'setting_media_display_categories_in_menu'));

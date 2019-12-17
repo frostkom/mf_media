@@ -82,6 +82,56 @@ class mf_media
 		}
 	}
 
+	function cron_base()
+	{
+		global $wpdb;
+
+		$obj_cron = new mf_cron();
+		$obj_cron->start(__CLASS__);
+
+		if($obj_cron->is_running == false)
+		{
+			/* Check which files are used */
+			#######################################
+			$site_url = get_site_url();
+
+			$arr_data = array();
+			get_post_children(array('add_choose_here' => false, 'post_type' => 'attachment'), $arr_data);
+
+			do_log("Running cron_base() (".var_export($arr_data, true).")");
+
+			foreach($arr_data as $post_id => $value)
+			{
+				$file_url = str_replace($site_url, "", wp_get_attachment_url($post_id));
+				//$post_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." WHERE guid LIKE %s LIMIT 0, 1", "%".$file_url));
+
+				$arr_used = array(
+					'id' => $post_id,
+					'file_url' => $file_url,
+					'amount' => 0,
+					'example' => '',
+				);
+
+				$arr_used = apply_filters('filter_is_file_used', $arr_used);
+
+				if($arr_used['amount'] > 0)
+				{
+					update_post_meta($post_id, $this->meta_prefix.'used_amount', $arr_used['amount']);
+				}
+
+				else
+				{
+					delete_post_meta($post_id, $this->meta_prefix.'used_amount');
+				}
+
+				//update_post_meta($post_id, $this->meta_prefix.'used_example', $arr_used['example']);
+			}
+			#######################################
+		}
+
+		$obj_cron->end();
+	}
+
 	function cron_sync($json)
 	{
 		global $wpdb;
@@ -572,6 +622,8 @@ class mf_media
 					$cols['media_categories'] = __("Categories", 'lang_media');
 					$cols['media_roles'] = __("Roles", 'lang_media');
 				}
+
+				$cols['used'] = __("Used", 'lang_media');
 			break;
 
 			case $this->post_type_allowed:
@@ -588,7 +640,7 @@ class mf_media
 
 	function column_cell($col, $id)
 	{
-		global $post;
+		global $wpdb, $post;
 
 		switch($post->post_type)
 		{
@@ -624,6 +676,24 @@ class mf_media
 								$i++;
 							}
 						}
+					break;
+
+					case 'used':
+						$arr_used = array(
+							'id' => $id,
+							//'file_url' => $file_url,
+							'amount' => get_post_meta($id, $this->meta_prefix.'used_amount', true),
+							//'example' => get_post_meta($id, $this->meta_prefix.'used_example', true),
+						);
+
+						echo "<i class='".($arr_used['amount'] > 0 ? "fa fa-check green" : "fa fa-times red")." fa-lg' title='".sprintf(__("Used in %d places", 'lang_media'), $arr_used['amount'])."'></i>";
+
+						/*if($arr_used['example'] != '')
+						{
+							echo "<div class='row-actions'>"
+								."<a href='".$arr_used['example']."'>".__("View Example", 'lang_media')."</a>"
+							."</div>";
+						}*/
 					break;
 				}
 			break;
@@ -1003,6 +1073,103 @@ class mf_media
 		}
 
 		return $out;
+	}
+
+	function filter_is_file_used($arr_used)
+	{
+		global $wpdb;
+
+		$result = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." WHERE post_content LIKE %s", "%".$arr_used['file_url']."%"));
+		$rows = $wpdb->num_rows;
+
+		if($rows > 0)
+		{
+			$arr_used['amount'] += $rows;
+
+			foreach($result as $r)
+			{
+				if($arr_used['example'] != '')
+				{
+					break;
+				}
+
+				$arr_used['example'] = admin_url("post.php?action=edit&post=".$r->ID);
+			}
+		}
+
+		$result = $wpdb->get_results($wpdb->prepare("SELECT option_key FROM ".$wpdb->options." WHERE option_value LIKE %s", "%".$arr_used['file_url']."%"));
+		$rows = $wpdb->num_rows;
+
+		if($rows > 0)
+		{
+			$arr_used['amount'] += $rows;
+
+			foreach($result as $r)
+			{
+				if($arr_used['example'] != '')
+				{
+					break;
+				}
+
+				$arr_used['example'] = "#option_key=".$r->option_key;
+			}
+		}
+
+		$result = $wpdb->get_results($wpdb->prepare("SELECT meta_key FROM ".$wpdb->postmeta." WHERE meta_value LIKE %s", "%".$arr_used['file_url']."%"));
+		$rows = $wpdb->num_rows;
+
+		if($rows > 0)
+		{
+			$arr_used['amount'] += $rows;
+
+			foreach($result as $r)
+			{
+				if($arr_used['example'] != '')
+				{
+					break;
+				}
+
+				$arr_used['example'] = "#post:meta_key=".$r->meta_key;
+			}
+		}
+
+		$result = $wpdb->get_results($wpdb->prepare("SELECT meta_key FROM ".$wpdb->sitemeta." WHERE site_id = '%d' AND meta_value LIKE %s", $wpdb->blogid, "%".$arr_used['file_url']."%"));
+		$rows = $wpdb->num_rows;
+
+		if($rows > 0)
+		{
+			$arr_used['amount'] += $rows;
+
+			foreach($result as $r)
+			{
+				if($arr_used['example'] != '')
+				{
+					break;
+				}
+
+				$arr_used['example'] = "#site:meta_key=".$r->meta_key;
+			}
+		}
+
+		$result = $wpdb->get_results($wpdb->prepare("SELECT meta_key FROM ".$wpdb->usermeta." WHERE meta_value LIKE %s", "%".$arr_used['file_url']."%"));
+		$rows = $wpdb->num_rows;
+
+		if($rows > 0)
+		{
+			$arr_used['amount'] += $rows;
+
+			foreach($result as $r)
+			{
+				if($arr_used['example'] != '')
+				{
+					break;
+				}
+
+				$arr_used['example'] = "#user:meta_key=".$r->meta_key;
+			}
+		}
+
+		return $arr_used;
 	}
 
 	function init_base_admin($arr_views)
