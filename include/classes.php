@@ -1097,7 +1097,7 @@ class mf_media
 			}
 		}
 
-		$result = $wpdb->get_results($wpdb->prepare("SELECT option_key FROM ".$wpdb->options." WHERE option_value LIKE %s", "%".$arr_used['file_url']."%"));
+		$result = $wpdb->get_results($wpdb->prepare("SELECT option_name FROM ".$wpdb->options." WHERE option_value LIKE %s", "%".$arr_used['file_url']."%"));
 		$rows = $wpdb->num_rows;
 
 		if($rows > 0)
@@ -1111,7 +1111,7 @@ class mf_media
 					break;
 				}
 
-				$arr_used['example'] = "#option_key=".$r->option_key;
+				$arr_used['example'] = "#option_name=".$r->option_key;
 			}
 		}
 
