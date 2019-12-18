@@ -98,8 +98,6 @@ class mf_media
 			$arr_data = array();
 			get_post_children(array('add_choose_here' => false, 'post_type' => 'attachment'), $arr_data);
 
-			do_log("Running cron_base() (".var_export($arr_data, true).")");
-
 			foreach($arr_data as $post_id => $value)
 			{
 				$file_url = str_replace($site_url, "", wp_get_attachment_url($post_id));
