@@ -95,13 +95,15 @@ class mf_media
 			#######################################
 			$site_url = get_site_url();
 
-			$arr_data = array();
-			get_post_children(array('add_choose_here' => false, 'post_type' => 'attachment'), $arr_data);
+			/*$arr_data = array();
+			get_post_children(array('add_choose_here' => false, 'post_type' => 'attachment'), $arr_data);*/
+			$result = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." WHERE post_type = %s ORDER BY RAND() LIMIT 0, 100", 'attachment'));
 
-			foreach($arr_data as $post_id => $value)
+			foreach($result as $r)
 			{
+				$post_id = $r->ID;
+
 				$file_url = str_replace($site_url, "", wp_get_attachment_url($post_id));
-				//$post_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." WHERE guid LIKE %s LIMIT 0, 1", "%".$file_url));
 
 				$arr_used = array(
 					'id' => $post_id,
@@ -122,7 +124,7 @@ class mf_media
 					delete_post_meta($post_id, $this->meta_prefix.'used_amount');
 				}
 
-				//update_post_meta($post_id, $this->meta_prefix.'used_example', $arr_used['example']);
+				update_post_meta($post_id, $this->meta_prefix.'used_example', $arr_used['example']);
 			}
 			#######################################
 		}
@@ -681,17 +683,17 @@ class mf_media
 							'id' => $id,
 							//'file_url' => $file_url,
 							'amount' => get_post_meta($id, $this->meta_prefix.'used_amount', true),
-							//'example' => get_post_meta($id, $this->meta_prefix.'used_example', true),
+							'example' => get_post_meta($id, $this->meta_prefix.'used_example', true),
 						);
 
 						echo "<i class='".($arr_used['amount'] > 0 ? "fa fa-check green" : "fa fa-times red")." fa-lg' title='".sprintf(__("Used in %d places", 'lang_media'), $arr_used['amount'])."'></i>";
 
-						/*if($arr_used['example'] != '')
+						if($arr_used['example'] != '')
 						{
 							echo "<div class='row-actions'>"
 								."<a href='".$arr_used['example']."'>".__("View Example", 'lang_media')."</a>"
 							."</div>";
-						}*/
+						}
 					break;
 				}
 			break;
@@ -1109,11 +1111,24 @@ class mf_media
 					break;
 				}
 
-				$arr_used['example'] = "#option_name=".$r->option_name;
+				if(substr($r->option_name, 0, 11) == "theme_mods_")
+				{
+					$arr_used['example'] = admin_url("customize.php#".$r->option_name);
+				}
+				
+				else if(substr($r->option_name, 0, 8) == "setting_")
+				{
+					$arr_used['example'] = admin_url("options-general.php?page=settings_mf_base#".$r->option_name);
+				}
+
+				else
+				{
+					$arr_used['example'] = "#option_name=".$r->option_name;
+				}
 			}
 		}
 
-		$result = $wpdb->get_results($wpdb->prepare("SELECT meta_key FROM ".$wpdb->postmeta." WHERE meta_value LIKE %s", "%".$arr_used['file_url']."%"));
+		$result = $wpdb->get_results($wpdb->prepare("SELECT meta_key FROM ".$wpdb->postmeta." WHERE post_id != '%d' AND meta_value LIKE %s", $arr_used['id'], "%".$arr_used['file_url']."%"));
 		$rows = $wpdb->num_rows;
 
 		if($rows > 0)
