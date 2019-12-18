@@ -1111,7 +1111,7 @@ class mf_media
 					break;
 				}
 
-				$arr_used['example'] = "#option_name=".$r->option_key;
+				$arr_used['example'] = "#option_name=".$r->option_name;
 			}
 		}
 
