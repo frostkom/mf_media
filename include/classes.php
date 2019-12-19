@@ -86,7 +86,7 @@ class mf_media
 	{
 		$arr_used = array(
 			'id' => $post_id,
-			'file_url' => str_replace($site_url, "", wp_get_attachment_url($post_id)),
+			'file_url' => str_replace(get_site_url(), "", wp_get_attachment_url($post_id)),
 			'amount' => 0,
 			'example' => '',
 		);
@@ -120,8 +120,6 @@ class mf_media
 			#######################################
 			if(get_site_option('setting_media_activate_is_file_used') == 'yes')
 			{
-				$site_url = get_site_url();
-
 				$result = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." LEFT JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND (meta_value IS null OR meta_value < DATE_SUB(NOW(), INTERVAL 1 DAY)) ORDER BY meta_value ASC LIMIT 0, 20", $this->meta_prefix.'used_updated', 'attachment'));
 
 				foreach($result as $r)
@@ -719,16 +717,16 @@ class mf_media
 
 						$used_amount = get_post_meta($id, $this->meta_prefix.'used_amount', true);
 
-						echo "<i class='".($arr_used['amount'] > 0 ? "fa fa-check green" : "fa fa-times red")." fa-lg' title='".sprintf(__("Used in %d places", 'lang_media'), $arr_used['amount'])."'></i>";
+						echo "<i class='".($used_amount > 0 ? "fa fa-check green" : "fa fa-times red")." fa-lg' title='".sprintf(__("Used in %d places", 'lang_media'), $used_amount)."'></i>";
 
 						if($used_amount > 0)
 						{
 							$used_example = get_post_meta($id, $this->meta_prefix.'used_example', true);
 
-							if($arr_used['example'] != '')
+							if($used_example != '')
 							{
 								echo "<div class='row-actions'>"
-									."<a href='".$arr_used['example']."'>".__("View Example", 'lang_media')."</a>"
+									."<a href='".$used_example."'>".__("View Example", 'lang_media')."</a>"
 								."</div>";
 							}
 						}
