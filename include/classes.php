@@ -1147,14 +1147,19 @@ class mf_media
 					break;
 				}
 
-				if(substr($r->option_name, 0, 11) == "theme_mods_")
+				if(substr($r->option_name, 0, 8) == "setting_")
+				{
+					$arr_used['example'] = admin_url("options-general.php?page=settings_mf_base#".$r->option_name);
+				}
+
+				else if(substr($r->option_name, 0, 11) == "theme_mods_")
 				{
 					$arr_used['example'] = admin_url("customize.php#".$r->option_name);
 				}
-				
-				else if(substr($r->option_name, 0, 8) == "setting_")
+
+				else if(substr($r->option_name, 0, 7) == "widget_")
 				{
-					$arr_used['example'] = admin_url("options-general.php?page=settings_mf_base#".$r->option_name);
+					$arr_used['example'] = admin_url("widgets.php#".$r->option_name);
 				}
 
 				else
