@@ -341,7 +341,12 @@ class mf_media
 			$arr_settings['setting_media_display_categories_in_menu'] = __("Display Categories in Menu", 'lang_media');
 		}
 
-		$arr_settings['setting_media_files2sync'] = __("Files to Sync", 'lang_media');
+		$option_sync_sites = get_option('option_sync_sites', array());
+
+		if(count($option_sync_sites) > 0)
+		{
+			$arr_settings['setting_media_files2sync'] = __("Files to Sync", 'lang_media');
+		}
 
 		show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
 	}
