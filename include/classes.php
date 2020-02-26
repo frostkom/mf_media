@@ -1231,9 +1231,11 @@ class mf_media
 		return $arr_used;
 	}
 
-	function init_base_admin($arr_views)
+	function init_base_admin($arr_views, $data = array())
 	{
-		if(!is_admin())
+		if(!isset($data['init'])){	$data['init'] = false;}
+
+		if($data['init'] == true)
 		{
 			$plugin_include_url = plugin_dir_url(__FILE__);
 			$plugin_version = get_plugin_version(__FILE__);

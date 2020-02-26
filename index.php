@@ -65,7 +65,7 @@ if(is_admin())
 	add_filter('get_shortcode_output', array($obj_media, 'get_shortcode_output'));
 }
 
-add_filter('init_base_admin', array($obj_media, 'init_base_admin'));
+add_filter('init_base_admin', array($obj_media, 'init_base_admin'), 10, 2);
 add_filter('filter_is_file_used', array($obj_media, 'filter_is_file_used'));
 
 add_shortcode('mf_media_category', array($obj_media, 'shortcode_media_category'));
