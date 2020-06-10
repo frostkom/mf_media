@@ -150,11 +150,11 @@ class mf_media
 		{
 			//do_log("Media -> cron_sync: ".var_export($json['files'], true));
 
+			list($upload_path, $upload_url) = get_uploads_folder('', false);
+			$file_base_path = $upload_path.date("Y")."/".date("m")."/";
+
 			foreach($json['files'] as $file)
 			{
-				list($upload_path, $upload_url) = get_uploads_folder('', false);
-				$file_path = $upload_path.date("Y")."/".date("m")."/".$file['name'];
-
 				list($content, $headers) = get_url_content(array(
 					'url' => $file['url'],
 					'catch_head' => true,
@@ -170,6 +170,8 @@ class mf_media
 						$post_id = $wpdb->get_var($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." INNER JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id WHERE post_type = %s AND post_title = %s AND ".$wpdb->postmeta.".meta_key = %s", 'attachment', $file['name'], $this->meta_prefix.'synced_file'));
 						$already_exists = ($post_id > 0);
 						$file_content_updated = false;
+
+						$file_path = $file_base_path.$file['name'];
 
 						if($already_exists)
 						{
@@ -208,10 +210,8 @@ class mf_media
 
 						else
 						{
-							//$wp_filetype = wp_check_filetype(basename($file['name']), null);
-
 							$post_data = array(
-								'post_mime_type' => $file['type'], //$wp_filetype['type']
+								'post_mime_type' => $file['type'],
 								'post_title' => $file['name'],
 								'post_content' => '',
 								'post_status' => 'inherit',
@@ -226,7 +226,6 @@ class mf_media
 
 						if($file_content_updated)
 						{
-							//$post = get_post($post_id);
 							$file_full_size_path = get_attached_file($post_id);
 
 							$attach_data = wp_generate_attachment_metadata($post_id, $file_full_size_path);
