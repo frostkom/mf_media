@@ -9,7 +9,7 @@ window.wp = window.wp || {};
 		{
 			if(script_media.current_media_category > 0)
 			{
-				$('.attachment-' + script_media.taxonomy + '-filter').val(script_media.current_media_category).change();
+				$(".attachment-" + script_media.taxonomy + "-filter").val(script_media.current_media_category).change();
 			}
 		}
 
@@ -82,7 +82,7 @@ window.wp = window.wp || {};
 
 					if(term_list && filters)
 					{
-						self.toolbar.set(script_media.taxonomy + '-filter', new media.view.AttachmentFilters.Taxonomy(
+						self.toolbar.set(script_media.taxonomy + "-filter", new media.view.AttachmentFilters.Taxonomy(
 						{
 							controller: self.controller,
 							model: self.collection.props,
@@ -90,7 +90,7 @@ window.wp = window.wp || {};
 							taxonomy: script_media.taxonomy,
 							termList: term_list,
 							termListTitle: script_media.list_title,
-							className: script_media.taxonomy + '-filter attachment-' + script_media.taxonomy + '-filter'
+							className: script_media.taxonomy + "-filter attachment-" + script_media.taxonomy + "-filter"
 						}).render());
 
 						setTimeout(function()

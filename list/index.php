@@ -5,6 +5,7 @@ $obj_media->get_categories();
 
 echo "<div class='wrap'>
 	<h2>".__("Files", 'lang_media')."</h2>"
-	.$obj_media->show_categories()
-	.$obj_media->show_files()
+	.$obj_media->display_categories_and_files()
+	//.$obj_media->show_categories()
+	//.$obj_media->show_files()
 ."</div>";
