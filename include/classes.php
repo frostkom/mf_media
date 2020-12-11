@@ -1345,6 +1345,8 @@ class mf_media
 
 	function get_media_types($data)
 	{
+		global $obj_base;
+
 		//https://codex.wordpress.org/Function_Reference/get_allowed_mime_types
 		$font_name = __("Font", 'lang_media');
 		$image_name = __("Image", 'lang_media');
@@ -1442,7 +1444,12 @@ class mf_media
 			$arr_types[$key] = $data['type'] == 'name' ? $value[0] : $value[1];
 		}
 
-		return array_sort(array('array' => $arr_types, 'on' => 1, 'keep_index' => true));
+		if(!isset($obj_base))
+		{
+			$obj_base = new mf_base();
+		}
+
+		return $obj_base->array_sort(array('array' => $arr_types, 'on' => 1, 'keep_index' => true));
 	}
 
 	function filter_categories()
