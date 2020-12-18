@@ -1172,7 +1172,33 @@ class mf_media
 
 				else if(substr($r->option_name, 0, 11) == "theme_mods_")
 				{
-					$arr_used['example'] = admin_url("customize.php#".$r->option_name);
+					$option_theme_mods = get_option($r->option_name);
+					$option_name = $r->option_name;
+
+					foreach($option_theme_mods as $key1 => $value1)
+					{
+						if(is_array($value1))
+						{
+							foreach($value1 as $key2 => $value2)
+							{
+								if($value2 != '' && strpos($value2, $arr_used['file_url']))
+								{
+									$option_name = $key2;
+
+									break;
+								}
+							}
+						}
+
+						else if($value1 != '' && strpos($value1, $arr_used['file_url']))
+						{
+							$option_name = $key1;
+
+							break;
+						}
+					}
+
+					$arr_used['example'] = admin_url("customize.php?autofocus[control]=".$option_name);
 				}
 
 				else if(substr($r->option_name, 0, 7) == "widget_")
