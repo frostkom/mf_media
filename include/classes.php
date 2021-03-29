@@ -411,11 +411,6 @@ class mf_media
 	{
 		global $pagenow;
 
-		if(!is_plugin_active("mf_base/index.php"))
-		{
-			deactivate_plugins(str_replace("include/classes.php", "index.php", plugin_basename(__FILE__)));
-		}
-
 		if(get_option('setting_media_activate_categories') == 'yes')
 		{
 			if($pagenow == 'upload.php' || $pagenow == 'admin.php' && substr(check_var('page'), 0, 9) == 'int_page_') //wp_script_is('media-editor') &&
