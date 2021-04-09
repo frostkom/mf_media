@@ -730,7 +730,7 @@ class mf_media
 
 						$used_amount = get_post_meta($id, $this->meta_prefix.'used_amount', true);
 
-						echo "<i class='".($used_amount > 0 ? "fa fa-check green" : "fa fa-times red")." fa-lg' title='".sprintf(__("Used in %d places", 'lang_media'), $used_amount)."'></i>";
+						echo "<i class='fa ".($used_amount > 0 ? "fa-check green" : "fa-times red")." fa-lg' title='".sprintf(__("Used in %d places", 'lang_media'), $used_amount)."'></i>";
 
 						if($used_amount > 0)
 						{
