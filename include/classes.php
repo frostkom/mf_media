@@ -1176,11 +1176,24 @@ class mf_media
 						{
 							foreach($value1 as $key2 => $value2)
 							{
-								if($value2 != '' && strpos($value2, $arr_used['file_url']))
+								if($value2 != '')
 								{
-									$option_name = $key2;
+									if(is_array($value2))
+									{
+										do_log("Value is array: ".var_export($value2, true));
+									}
 
-									break;
+									else if(is_array($arr_used['file_url']))
+									{
+										do_log("URL is array: ".var_export($arr_used['file_url'], true));
+									}
+
+									else if(strpos($value2, $arr_used['file_url']))
+									{
+										$option_name = $key2;
+
+										break;
+									}
 								}
 							}
 						}
