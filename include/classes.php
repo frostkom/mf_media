@@ -1180,12 +1180,12 @@ class mf_media
 								{
 									if(is_array($value2))
 									{
-										do_log("Value is array: ".var_export($value2, true));
+										do_log("Value is array: ".var_export($value2, true)." (".$arr_used['file_url'].")");
 									}
 
 									else if(is_array($arr_used['file_url']))
 									{
-										do_log("URL is array: ".var_export($arr_used['file_url'], true));
+										do_log("URL is array: ".var_export($arr_used['file_url'], true)." (".$value2.")");
 									}
 
 									else if(strpos($value2, $arr_used['file_url']))
