@@ -1180,7 +1180,7 @@ class mf_media
 								{
 									if(is_array($value2))
 									{
-										do_log("Value is array: ".var_export($value2, true)." (".$arr_used['file_url'].")");
+										do_log("Value is array: ".var_export($option_theme_mods, true)." -> ".$key1.": ".var_export($value1, true)." -> ".$key2.": ".var_export($value2, true)." [".$arr_used['file_url']."]");
 									}
 
 									else if(is_array($arr_used['file_url']))

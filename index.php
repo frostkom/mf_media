@@ -3,7 +3,7 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description: 
-Version: 5.8.27
+Version: 5.8.28
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -82,7 +82,7 @@ if(is_plugin_active("mf_base/index.php"))
 
 		if(get_option('setting_media_activate_categories') == 'yes')
 		{
-			$default_charset = DB_CHARSET != '' ? DB_CHARSET : "utf8";
+			$default_charset = (DB_CHARSET != '' ? DB_CHARSET : 'utf8');
 
 			$arr_add_index = array();
 
