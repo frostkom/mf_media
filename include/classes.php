@@ -531,6 +531,44 @@ class mf_media
 		return $existing_mimes;
 	}
 
+	function filter_sites_table_settings($arr_settings)
+	{
+		$arr_settings['settings_media'] = array(
+			'setting_media_sanitize_files' => array(
+				'type' => 'bool',
+				'global' => true,
+				'icon' => "fas fa-broom",
+				'name' => __("Sanitize Filenames", 'lang_media'),
+			),
+			'setting_media_activate_categories' => array(
+				'type' => 'bool',
+				'global' => false,
+				'icon' => "fas fa-network-wired",
+				'name' => __("Activate Categories", 'lang_media'),
+			),
+			'setting_media_activate_is_file_used' => array(
+				'type' => 'bool',
+				'global' => true,
+				'icon' => "fas fa-search",
+				'name' => __("Activate Is File Used", 'lang_media'),
+			),
+			'setting_media_display_categories_in_menu' => array(
+				'type' => 'bool',
+				'global' => false,
+				'icon' => "fas fa-bars",
+				'name' => __("Display Categories in Menu", 'lang_media'),
+			),
+			'setting_media_files2sync' => array(
+				'type' => 'posts',
+				'global' => false,
+				'icon' => "fas fa-sync",
+				'name' => __("Files to Sync", 'lang_media'),
+			),
+		);
+
+		return $arr_settings;
+	}
+
 	function wp_handle_upload_prefilter($file)
 	{
 		if(get_site_option('setting_media_sanitize_files') == 'yes')
@@ -603,6 +641,22 @@ class mf_media
 				),
 			)
 		);
+
+		// For some reason it is not saved in postmeta table...
+		/*$meta_boxes[] = array(
+			'id' => $this->meta_prefix.'settings',
+			'title' => __("Settings", 'lang_media'),
+			'post_types' => array('attachment'),
+			'context' => 'side',
+			'priority' => 'low',
+			'fields' => array(
+				array(
+					'name' => __("Modified", 'lang_media'),
+					'id' => $this->meta_prefix.'attachment_modified',
+					'type' => 'datetime',
+				),
+			)
+		);*/
 
 		return $meta_boxes;
 	}
@@ -1124,6 +1178,29 @@ class mf_media
 		return $out;
 	}
 
+	function get_option_name_from_array($data)
+	{
+		foreach($data['array'] as $key => $value)
+		{
+			if(is_array($value))
+			{
+				$data_temp = $data;
+				$data_temp['array'] = $value;
+
+				$data['option_name'] = $this->get_option_name_from_array($data);
+			}
+
+			else if($value != '' && strpos($value, $data['arr_used']['file_url']))
+			{
+				$data['option_name'] = $key;
+
+				break;
+			}
+		}
+
+		return $data['option_name'];
+	}
+
 	function filter_is_file_used($arr_used)
 	{
 		global $wpdb;
@@ -1168,7 +1245,14 @@ class mf_media
 				else if(substr($r->option_name, 0, 11) == "theme_mods_")
 				{
 					$option_theme_mods = get_option($r->option_name);
-					$option_name = $r->option_name;
+					$option_name = $this->get_option_name_from_array(array('option_name' => $r->option_name, 'array' => $option_theme_mods, 'arr_user' => $arr_used));
+
+					if(is_array($arr_used['file_url']))
+					{
+						do_log("URL is array: ".var_export($arr_used['file_url'], true));
+					}
+
+					/*$option_name = $r->option_name;
 
 					foreach($option_theme_mods as $key1 => $value1)
 					{
@@ -1204,7 +1288,7 @@ class mf_media
 
 							break;
 						}
-					}
+					}*/
 
 					$arr_used['example'] = admin_url("customize.php?autofocus[control]=".$option_name);
 				}

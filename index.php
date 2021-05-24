@@ -3,7 +3,7 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description: 
-Version: 5.8.28
+Version: 5.9.0
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -39,6 +39,8 @@ if(is_plugin_active("mf_base/index.php"))
 
 		add_action('admin_menu', array($obj_media, 'admin_menu'));
 		add_filter('upload_mimes', array($obj_media, 'upload_mimes'));
+
+		add_filter('filter_sites_table_settings', array($obj_media, 'filter_sites_table_settings'));
 
 		add_action('wp_handle_upload_prefilter', array($obj_media, 'wp_handle_upload_prefilter'));
 

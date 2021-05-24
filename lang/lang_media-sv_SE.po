@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-18 07:32+0100\n"
+"POT-Creation-Date: 2021-05-24 13:54+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -15,138 +15,214 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: ..\n"
 
-msgid "Files"
-msgstr "Filer"
-
+#: ../include/classes.php:282
+#: ../include/classes.php:728
 msgid "Types"
 msgstr "Typ"
 
+#: ../include/classes.php:283
+#: ../include/classes.php:633
 msgid "Type"
 msgstr "Typ"
 
+#: ../include/classes.php:284
+#: ../include/classes.php:466
 msgid "Allowed Types"
 msgstr "Tillåtna typer"
 
+#: ../include/classes.php:329
+#: ../include/classes.php:541
 msgid "Sanitize Filenames"
 msgstr "Rengör filnamn"
 
+#: ../include/classes.php:332
+#: ../include/classes.php:547
 msgid "Activate Categories"
 msgstr "Aktivera kategorier"
 
+#: ../include/classes.php:336
+#: ../include/classes.php:553
 msgid "Activate Is File Used"
 msgstr "Aktivera filanvändning"
 
+#: ../include/classes.php:341
+#: ../include/classes.php:559
 msgid "Display Categories in Menu"
 msgstr "Visa kategorier i menyn"
 
+#: ../include/classes.php:348
+#: ../include/classes.php:565
 msgid "Files to Sync"
 msgstr "Filer att synka"
 
+#: ../include/classes.php:358
+msgid "Media"
+msgstr ""
+
+#: ../include/classes.php:375
 msgid "This will add the possibility to connect categories and restrict roles to every file in the Media Library"
 msgstr "Detta lägger till möjligheten att koppla kategorier och begränsa roller till varje fil i Mediabiblioteket"
 
+#: ../include/classes.php:384
 msgid "This will add an extra column in the Media Library to check which files are being used and where"
 msgstr "Detta kommer att lägga till en extra kolumn i Mediabiblioteket för att kolla vilka filer som används och var"
 
+#: ../include/classes.php:407
 msgid "These files will be downloaded and/or updated to child sites, if there are any"
 msgstr "Dessa filer kommer att laddas ner och/eller uppdateras på undersidor, om det finns några"
 
-msgid "View all categories"
-msgstr "Visa alla kategorier"
+#: ../include/classes.php:459
+#: ../list/index.php:7
+msgid "Files"
+msgstr "Filer"
 
+#: ../include/classes.php:611
 msgid "Settings"
 msgstr "Inställningar"
 
+#: ../include/classes.php:617
+#: ../include/classes.php:726
 msgid "Action"
 msgstr "Åtgärd"
 
+#: ../include/classes.php:623
+#: ../include/classes.php:727
 msgid "Role"
 msgstr "Roll"
 
+#: ../include/classes.php:713
+#: ../include/classes.php:1086
 msgid "Categories"
 msgstr "Kategorier"
 
+#: ../include/classes.php:714
+#: ../include/classes.php:1108
 msgid "Roles"
 msgstr "Roller"
 
+#: ../include/classes.php:719
 msgid "Used"
 msgstr "Använd"
 
+#: ../include/classes.php:787
+#, php-format
 msgid "Used in %d places"
 msgstr "Använd på %d ställen"
 
+#: ../include/classes.php:796
 msgid "View Example"
 msgstr "Visa exempel"
 
+#: ../include/classes.php:841
 msgid "All"
 msgstr "Alla"
 
+#: ../include/classes.php:846
 msgid "None"
 msgstr "Inga"
 
+#: ../include/classes.php:846
 msgid "Only administrators can have unfiltered uploads"
 msgstr "Endast administratörer kan ha ofiltrerade uppladdningar"
 
+#: ../include/classes.php:960
 msgid "The file has got no alt text. Please add this to improve your SEO."
 msgstr "Filen har ingen alt-text. Det bör åtgärdas för att förbättra din SEO."
 
+#: ../include/classes.php:980
 msgid "Remove"
 msgstr "Radera"
 
+#: ../include/classes.php:984
 msgid "Deselect"
 msgstr "Avmarkera"
 
+#: ../include/classes.php:991
 msgid "Caption this image"
 msgstr "Beskriv denna bild"
 
+#: ../include/classes.php:995
 msgid "Describe this video"
 msgstr "Beskriv denna video"
 
+#: ../include/classes.php:997
 msgid "Describe this audio file"
 msgstr "Beskriv denna ljudfil"
 
+#: ../include/classes.php:999
 msgid "Describe this media file"
 msgstr "Beskriv denna mediafil"
 
+#: ../include/classes.php:1173
 msgid "Choose a Category"
 msgstr "Välj en kategori"
 
+#: ../include/classes.php:1451
 msgid "I could not find any information to show you"
 msgstr "Jag kunde inte hitta någon information att visa för dig"
 
+#: ../include/classes.php:1458
 msgid "Allow"
 msgstr "Tillåt"
 
+#: ../include/classes.php:1459
 msgid "Allow only these"
 msgstr "Tillåt endast dessa"
 
+#: ../include/classes.php:1460
 msgid "Disallow"
 msgstr "Tillåt inte"
 
+#: ../include/classes.php:1469
 msgid "Font"
 msgstr "Typsnitt"
 
+#: ../include/classes.php:1470
 msgid "Image"
 msgstr "Bild"
 
+#: ../include/classes.php:1471
 msgid "Audio"
 msgstr "Ljud"
 
+#: ../include/classes.php:1472
+msgid "Video"
+msgstr ""
+
+#: ../include/classes.php:1473
 msgid "Compressed"
 msgstr "Komprimerad"
 
+#: ../include/classes.php:1474
 msgid "Document"
 msgstr "Dokument"
 
+#: ../include/classes.php:1475
+msgid "Presentation"
+msgstr ""
+
+#: ../include/classes.php:1476
 msgid "Spreadsheet"
 msgstr "Kalkylark"
 
+#: ../include/classes.php:1483
+msgid "Program"
+msgstr ""
+
+#: ../include/classes.php:1486
 msgid "Icon"
 msgstr "Ikon"
 
+#: ../include/classes.php:1608
 msgid "Choose Here"
 msgstr "Välj här"
 
+#: ../include/classes.php:1885
 msgid "There are no categories to show here"
 msgstr "Det finns inga kategorier att visa här"
 
+#~ msgid "Modified"
+#~ msgstr "Ändrad"
+
+#~ msgid "View all categories"
+#~ msgstr "Visa alla kategorier"
