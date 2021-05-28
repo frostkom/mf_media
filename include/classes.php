@@ -872,6 +872,13 @@ class mf_media
 		}
 	}
 
+	function filter_last_updated_post_types($array, $type)
+	{
+		$array[] = $this->post_type_allowed;
+
+		return $array;
+	}
+
 	function filter_on_category($query, $category = 0)
 	{
 		global $wpdb;

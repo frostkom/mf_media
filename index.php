@@ -3,7 +3,7 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description: 
-Version: 5.9.0
+Version: 5.9.1
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -55,6 +55,8 @@ if(is_plugin_active("mf_base/index.php"))
 
 		add_filter('manage_'.$obj_media->post_type_allowed.'_posts_columns', array($obj_media, 'column_header'), 5);
 		add_action('manage_'.$obj_media->post_type_allowed.'_posts_custom_column', array($obj_media, 'column_cell'), 5, 2);
+
+		add_filter('filter_last_updated_post_types', array($obj_media, 'filter_last_updated_post_types'), 10, 2);
 
 		add_filter('filter_on_category', array($obj_media, 'filter_on_category'), 10, 2);
 
