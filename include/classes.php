@@ -1252,7 +1252,7 @@ class mf_media
 				else if(substr($r->option_name, 0, 11) == "theme_mods_")
 				{
 					$option_theme_mods = get_option($r->option_name);
-					$option_name = $this->get_option_name_from_array(array('option_name' => $r->option_name, 'array' => $option_theme_mods, 'arr_user' => $arr_used));
+					$option_name = $this->get_option_name_from_array(array('option_name' => $r->option_name, 'array' => $option_theme_mods, 'arr_used' => $arr_used));
 
 					if(is_array($arr_used['file_url']))
 					{
