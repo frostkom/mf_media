@@ -413,7 +413,35 @@ class mf_media
 
 		if(get_option('setting_media_activate_categories') == 'yes')
 		{
-			if($pagenow == 'upload.php' || $pagenow == 'admin.php' && substr(check_var('page'), 0, 9) == 'int_page_') //wp_script_is('media-editor') &&
+			$do_enqueue = false;
+
+			switch($pagenow)
+			{
+				case 'upload.php':
+					$do_enqueue = true;
+				break;
+
+				case 'admin.php':
+					if(substr(check_var('page'), 0, 9) == 'int_page_')
+					{
+						$do_enqueue = true;
+					}
+				break;
+
+				case 'post.php':
+					$post_id = check_var('post');
+
+					if($post_id > 0)
+					{
+						if(get_post_type($post_id) == 'attachment')
+						{
+							$do_enqueue = true;
+						}
+					}
+				break;
+			}
+
+			if($do_enqueue == true)
 			{
 				$plugin_include_url = plugin_dir_url(__FILE__);
 				$plugin_version = get_plugin_version(__FILE__);

@@ -21,6 +21,12 @@
 	}
 
 	/* category fields */
+	.compat-attachment-fields th
+	{
+		padding-top: 1.3em;
+		vertical-align: top;
+	}
+
 	.compat-item .term-list
 	{
 		background-color: #fff;
@@ -66,5 +72,12 @@
 	{
 		display: inline-block;
 		margin-right: .5em;
+	}
+
+	/* post.php -> Category List */
+	.compat-attachment-fields th
+	{
+		padding-top: 1.3em;
+		vertical-align: top;
 	}
 }
