@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-24 13:54+0100\n"
+"POT-Creation-Date: 2021-08-19 11:07+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Martin Fors\n"
 "Language-Team: \n"
@@ -16,42 +16,42 @@ msgstr ""
 "X-Poedit-SearchPath-0: ..\n"
 
 #: ../include/classes.php:282
-#: ../include/classes.php:728
+#: ../include/classes.php:756
 msgid "Types"
 msgstr "Typ"
 
 #: ../include/classes.php:283
-#: ../include/classes.php:633
+#: ../include/classes.php:661
 msgid "Type"
 msgstr "Typ"
 
 #: ../include/classes.php:284
-#: ../include/classes.php:466
+#: ../include/classes.php:494
 msgid "Allowed Types"
 msgstr "Tillåtna typer"
 
 #: ../include/classes.php:329
-#: ../include/classes.php:541
+#: ../include/classes.php:569
 msgid "Sanitize Filenames"
 msgstr "Rengör filnamn"
 
 #: ../include/classes.php:332
-#: ../include/classes.php:547
+#: ../include/classes.php:575
 msgid "Activate Categories"
 msgstr "Aktivera kategorier"
 
 #: ../include/classes.php:336
-#: ../include/classes.php:553
+#: ../include/classes.php:581
 msgid "Activate Is File Used"
 msgstr "Aktivera filanvändning"
 
 #: ../include/classes.php:341
-#: ../include/classes.php:559
+#: ../include/classes.php:587
 msgid "Display Categories in Menu"
 msgstr "Visa kategorier i menyn"
 
 #: ../include/classes.php:348
-#: ../include/classes.php:565
+#: ../include/classes.php:593
 msgid "Files to Sync"
 msgstr "Filer att synka"
 
@@ -71,153 +71,153 @@ msgstr "Detta kommer att lägga till en extra kolumn i Mediabiblioteket för att
 msgid "These files will be downloaded and/or updated to child sites, if there are any"
 msgstr "Dessa filer kommer att laddas ner och/eller uppdateras på undersidor, om det finns några"
 
-#: ../include/classes.php:459
+#: ../include/classes.php:487
 #: ../list/index.php:7
 msgid "Files"
 msgstr "Filer"
 
-#: ../include/classes.php:611
+#: ../include/classes.php:639
 msgid "Settings"
 msgstr "Inställningar"
 
-#: ../include/classes.php:617
-#: ../include/classes.php:726
+#: ../include/classes.php:645
+#: ../include/classes.php:754
 msgid "Action"
 msgstr "Åtgärd"
 
-#: ../include/classes.php:623
-#: ../include/classes.php:727
+#: ../include/classes.php:651
+#: ../include/classes.php:755
 msgid "Role"
 msgstr "Roll"
 
-#: ../include/classes.php:713
-#: ../include/classes.php:1086
+#: ../include/classes.php:741
+#: ../include/classes.php:1121
 msgid "Categories"
 msgstr "Kategorier"
 
-#: ../include/classes.php:714
-#: ../include/classes.php:1108
+#: ../include/classes.php:742
+#: ../include/classes.php:1143
 msgid "Roles"
 msgstr "Roller"
 
-#: ../include/classes.php:719
+#: ../include/classes.php:747
 msgid "Used"
 msgstr "Använd"
 
-#: ../include/classes.php:787
+#: ../include/classes.php:815
 #, php-format
 msgid "Used in %d places"
 msgstr "Använd på %d ställen"
 
-#: ../include/classes.php:796
+#: ../include/classes.php:824
 msgid "View Example"
 msgstr "Visa exempel"
 
-#: ../include/classes.php:841
+#: ../include/classes.php:869
 msgid "All"
 msgstr "Alla"
 
-#: ../include/classes.php:846
+#: ../include/classes.php:874
 msgid "None"
 msgstr "Inga"
 
-#: ../include/classes.php:846
+#: ../include/classes.php:874
 msgid "Only administrators can have unfiltered uploads"
 msgstr "Endast administratörer kan ha ofiltrerade uppladdningar"
 
-#: ../include/classes.php:960
+#: ../include/classes.php:995
 msgid "The file has got no alt text. Please add this to improve your SEO."
 msgstr "Filen har ingen alt-text. Det bör åtgärdas för att förbättra din SEO."
 
-#: ../include/classes.php:980
+#: ../include/classes.php:1015
 msgid "Remove"
 msgstr "Radera"
 
-#: ../include/classes.php:984
+#: ../include/classes.php:1019
 msgid "Deselect"
 msgstr "Avmarkera"
 
-#: ../include/classes.php:991
+#: ../include/classes.php:1026
 msgid "Caption this image"
 msgstr "Beskriv denna bild"
 
-#: ../include/classes.php:995
+#: ../include/classes.php:1030
 msgid "Describe this video"
 msgstr "Beskriv denna video"
 
-#: ../include/classes.php:997
+#: ../include/classes.php:1032
 msgid "Describe this audio file"
 msgstr "Beskriv denna ljudfil"
 
-#: ../include/classes.php:999
+#: ../include/classes.php:1034
 msgid "Describe this media file"
 msgstr "Beskriv denna mediafil"
 
-#: ../include/classes.php:1173
+#: ../include/classes.php:1208
 msgid "Choose a Category"
 msgstr "Välj en kategori"
 
-#: ../include/classes.php:1451
+#: ../include/classes.php:1486
 msgid "I could not find any information to show you"
 msgstr "Jag kunde inte hitta någon information att visa för dig"
 
-#: ../include/classes.php:1458
+#: ../include/classes.php:1493
 msgid "Allow"
 msgstr "Tillåt"
 
-#: ../include/classes.php:1459
+#: ../include/classes.php:1494
 msgid "Allow only these"
 msgstr "Tillåt endast dessa"
 
-#: ../include/classes.php:1460
+#: ../include/classes.php:1495
 msgid "Disallow"
 msgstr "Tillåt inte"
 
-#: ../include/classes.php:1469
+#: ../include/classes.php:1504
 msgid "Font"
 msgstr "Typsnitt"
 
-#: ../include/classes.php:1470
+#: ../include/classes.php:1505
 msgid "Image"
 msgstr "Bild"
 
-#: ../include/classes.php:1471
+#: ../include/classes.php:1506
 msgid "Audio"
 msgstr "Ljud"
 
-#: ../include/classes.php:1472
+#: ../include/classes.php:1507
 msgid "Video"
 msgstr ""
 
-#: ../include/classes.php:1473
+#: ../include/classes.php:1508
 msgid "Compressed"
 msgstr "Komprimerad"
 
-#: ../include/classes.php:1474
+#: ../include/classes.php:1509
 msgid "Document"
 msgstr "Dokument"
 
-#: ../include/classes.php:1475
+#: ../include/classes.php:1510
 msgid "Presentation"
 msgstr ""
 
-#: ../include/classes.php:1476
+#: ../include/classes.php:1511
 msgid "Spreadsheet"
 msgstr "Kalkylark"
 
-#: ../include/classes.php:1483
+#: ../include/classes.php:1518
 msgid "Program"
 msgstr ""
 
-#: ../include/classes.php:1486
+#: ../include/classes.php:1521
 msgid "Icon"
 msgstr "Ikon"
 
-#: ../include/classes.php:1608
+#: ../include/classes.php:1643
 msgid "Choose Here"
 msgstr "Välj här"
 
-#: ../include/classes.php:1885
+#: ../include/classes.php:1920
 msgid "There are no categories to show here"
 msgstr "Det finns inga kategorier att visa här"
 

@@ -459,7 +459,7 @@ class mf_media
 
 				mf_enqueue_script('script_media', $plugin_include_url."script_wp.js", array(
 					'taxonomy' => $taxonomy,
-					'list_title' => "-- ".__("View all categories", 'lang_media')." --",
+					'list_title' => "-- "." --",
 					'term_list' => "[".$attachment_terms."]",
 					'terms_test' => get_terms($taxonomy, array('hide_empty' => false)),
 					'current_media_category' => $current_media_category
@@ -679,7 +679,7 @@ class mf_media
 			'priority' => 'low',
 			'fields' => array(
 				array(
-					'name' => __("Modified", 'lang_media'),
+					'name' => ,
 					'id' => $this->meta_prefix.'attachment_modified',
 					'type' => 'datetime',
 				),
