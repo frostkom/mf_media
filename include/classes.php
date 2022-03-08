@@ -1287,44 +1287,6 @@ class mf_media
 						do_log("URL is array: ".var_export($arr_used['file_url'], true));
 					}
 
-					/*$option_name = $r->option_name;
-
-					foreach($option_theme_mods as $key1 => $value1)
-					{
-						if(is_array($value1))
-						{
-							foreach($value1 as $key2 => $value2)
-							{
-								if($value2 != '')
-								{
-									if(is_array($value2))
-									{
-										do_log("Value is array: ".var_export($option_theme_mods, true)." -> ".$key1.": ".var_export($value1, true)." -> ".$key2.": ".var_export($value2, true)." [".$arr_used['file_url']."]");
-									}
-
-									else if(is_array($arr_used['file_url']))
-									{
-										do_log("URL is array: ".var_export($arr_used['file_url'], true)." (".$value2.")");
-									}
-
-									else if(strpos($value2, $arr_used['file_url']))
-									{
-										$option_name = $key2;
-
-										break;
-									}
-								}
-							}
-						}
-
-						else if($value1 != '' && strpos($value1, $arr_used['file_url']))
-						{
-							$option_name = $key1;
-
-							break;
-						}
-					}*/
-
 					$arr_used['example'] = admin_url("customize.php?autofocus[control]=".$option_name);
 				}
 
@@ -1650,7 +1612,7 @@ class mf_media
 			$cat_id = $r->term_id;
 			$cat_name = $r->name;
 
-			if($data['only_used'] == true)
+			if($data['only_used'] == true && does_table_exist($wpdb->prefix."media2category"))
 			{
 				$wpdb->get_results($wpdb->prepare("SELECT categoryID FROM ".$wpdb->prefix."media2category WHERE categoryID = '%d'", $cat_id));
 				$rows = $wpdb->num_rows;
