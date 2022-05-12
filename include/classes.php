@@ -562,24 +562,24 @@ class mf_media
 	function filter_sites_table_settings($arr_settings)
 	{
 		$arr_settings['settings_media'] = array(
-			'setting_media_sanitize_files' => array(
+			/*'setting_media_sanitize_files' => array(
 				'type' => 'bool',
 				'global' => true,
 				'icon' => "fas fa-broom",
 				'name' => __("Sanitize Filenames", 'lang_media'),
-			),
+			),*/
 			'setting_media_activate_categories' => array(
 				'type' => 'bool',
 				'global' => false,
 				'icon' => "fas fa-network-wired",
 				'name' => __("Activate Categories", 'lang_media'),
 			),
-			'setting_media_activate_is_file_used' => array(
+			/*'setting_media_activate_is_file_used' => array(
 				'type' => 'bool',
 				'global' => true,
 				'icon' => "fas fa-search",
 				'name' => __("Activate Is File Used", 'lang_media'),
-			),
+			),*/
 			'setting_media_display_categories_in_menu' => array(
 				'type' => 'bool',
 				'global' => false,
