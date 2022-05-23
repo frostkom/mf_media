@@ -116,6 +116,46 @@ class mf_media
 
 		if($obj_cron->is_running == false)
 		{
+			/* Look for duplicates */
+			#######################################
+			$result = $wpdb->get_results($wpdb->prepare("SELECT post_title, COUNT(post_title) AS post_title_count FROM ".$wpdb->posts." INNER JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND post_status != %s AND post_title != '' GROUP BY post_title ORDER BY post_title_count DESC LIMIT 0, 1", '_wp_attachment_metadata', 'attachment', 'trash'));
+
+			//do_log("Tested: ".$wpdb->last_query);
+
+			foreach($result as $r)
+			{
+				$post_title = $r->post_title;
+				$post_title_count = $r->post_title_count;
+
+				$result_files = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." INNER JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND post_status != %s AND post_title = %s LIMIT 0, 5", '_wp_attachment_metadata', 'attachment', 'trash', $post_title));
+
+				$post_wp_attachment_metadata_temp = array(
+					'height' => 0,
+					'width' => 0,
+				);
+
+				foreach($result_files as $r)
+				{
+					$post_id = $r->ID;
+
+					$post_wp_attachment_metadata = get_post_meta($post_id, '_wp_attachment_metadata', true);
+
+					//do_log(sprintf("%d had the value %s", $post_id, str_replace(array("\n", "\r"), "", var_export($post_wp_attachment_metadata, true))));
+
+					if($post_wp_attachment_metadata['height'] == $post_wp_attachment_metadata_temp['height'] && $post_wp_attachment_metadata['width'] == $post_wp_attachment_metadata_temp['width'])
+					{
+						do_log("<a href='".admin_url("upload.php?mode=list&s=".$post_title)."'>".sprintf("There were multiple files called %s with the same size %s", $post_title, $post_wp_attachment_metadata['height']."x".$post_wp_attachment_metadata['width'])."</a>");
+
+						break;
+					}
+
+					$post_wp_attachment_metadata_temp = $post_wp_attachment_metadata;
+				}
+
+				//do_log(sprintf("There are %d files called %s", $post_title_count, $post_title));
+			}
+			#######################################
+
 			/* Check which files are used */
 			#######################################
 			if(get_site_option('setting_media_activate_is_file_used') == 'yes')
