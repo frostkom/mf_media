@@ -129,7 +129,7 @@ class mf_media
 
 				$result_files = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." INNER JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND post_status != %s AND post_title = %s LIMIT 0, 5", '_wp_attachment_metadata', 'attachment', 'trash', $post_title));
 
-				$post_wp_attachment_metadata_temp = array(
+				$arr_attachment_metadata_temp = array(
 					'height' => 0,
 					'width' => 0,
 				);
@@ -138,18 +138,36 @@ class mf_media
 				{
 					$post_id = $r->ID;
 
-					$post_wp_attachment_metadata = get_post_meta($post_id, '_wp_attachment_metadata', true);
+					//$arr_attachment_metadata = get_post_meta($post_id, '_wp_attachment_metadata', true);
+					$arr_attachment_metadata = wp_get_attachment_metadata($post_id);
 
-					//do_log(sprintf("%d had the value %s", $post_id, str_replace(array("\n", "\r"), "", var_export($post_wp_attachment_metadata, true))));
+					$arr_attachment_metadata['id'] = $post_id;
 
-					if($post_wp_attachment_metadata['height'] == $post_wp_attachment_metadata_temp['height'] && $post_wp_attachment_metadata['width'] == $post_wp_attachment_metadata_temp['width'])
+					if(!isset($arr_attachment_metadata['filesize']))
 					{
-						do_log("<a href='".admin_url("upload.php?mode=list&s=".$post_title)."'>".sprintf("There were multiple files called %s with the same size %s", $post_title, $post_wp_attachment_metadata['height']."x".$post_wp_attachment_metadata['width'])."</a>");
+						$file = get_attached_file($post_id);
+
+						if(file_exists($file))
+						{
+							$arr_attachment_metadata['filesize'] = filesize($file);
+						}
+
+						else
+						{
+							$arr_attachment_metadata['filesize'] = 0;
+						}
+					}
+
+					//do_log(sprintf("%d had the value %s", $post_id, str_replace(array("\n", "\r"), "", var_export($arr_attachment_metadata, true))));
+
+					if($arr_attachment_metadata['height'] == $arr_attachment_metadata_temp['height'] && $arr_attachment_metadata['width'] == $arr_attachment_metadata_temp['width'] && $arr_attachment_metadata['filesize'] == $arr_attachment_metadata_temp['filesize'])
+					{
+						do_log("<a href='".admin_url("upload.php?mode=list&s=".$post_title)."'>".sprintf("There were multiple files called %s with the same proportions %s and size %s", $post_title, $arr_attachment_metadata['height']."x".$arr_attachment_metadata['width'], size_format($arr_attachment_metadata['filesize']))."</a> (<a href='".admin_url("post.php?post=".$arr_attachment_metadata['id']."&action=edit")."'>#".$arr_attachment_metadata['id']."</a> & <a href='".admin_url("post.php?post=".$arr_attachment_metadata_temp['id']."&action=edit")."'>".$arr_attachment_metadata_temp['id']."</a>)");
 
 						break;
 					}
 
-					$post_wp_attachment_metadata_temp = $post_wp_attachment_metadata;
+					$arr_attachment_metadata_temp = $arr_attachment_metadata;
 				}
 
 				//do_log(sprintf("There are %d files called %s", $post_title_count, $post_title));
