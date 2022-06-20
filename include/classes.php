@@ -132,6 +132,7 @@ class mf_media
 				$arr_attachment_metadata_temp = array(
 					'height' => 0,
 					'width' => 0,
+					'filesize' => 0,
 				);
 
 				foreach($result_files as $r)
@@ -142,6 +143,16 @@ class mf_media
 					$arr_attachment_metadata = wp_get_attachment_metadata($post_id);
 
 					$arr_attachment_metadata['id'] = $post_id;
+
+					if(!isset($arr_attachment_metadata['height']))
+					{
+						$arr_attachment_metadata['height'] = 0;
+					}
+
+					if(!isset($arr_attachment_metadata['width']))
+					{
+						$arr_attachment_metadata['width'] = 0;
+					}
 
 					if(!isset($arr_attachment_metadata['filesize']))
 					{
