@@ -1294,7 +1294,9 @@ class mf_media
 				$data_temp = $data;
 				$data_temp['array'] = $value;
 
-				$data['option_name'] = $this->get_option_name_from_array($data);
+				$data['option_name'] = $this->get_option_name_from_array($data_temp);
+
+				unset($data_temp);
 			}
 
 			else if($value != '' && strpos($value, $data['arr_used']['file_url']))
