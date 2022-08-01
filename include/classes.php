@@ -1394,21 +1394,24 @@ class mf_media
 			}
 		}
 
-		$result = $wpdb->get_results($wpdb->prepare("SELECT meta_key FROM ".$wpdb->sitemeta." WHERE site_id = '%d' AND meta_value LIKE %s", $wpdb->blogid, "%".$arr_used['file_url']."%"));
-		$rows = $wpdb->num_rows;
-
-		if($rows > 0)
+		if(isset($wpdb->sitemeta) && $wpdb->sitemeta != '')
 		{
-			$arr_used['amount'] += $rows;
+			$result = $wpdb->get_results($wpdb->prepare("SELECT meta_key FROM ".$wpdb->sitemeta." WHERE site_id = '%d' AND meta_value LIKE %s", $wpdb->blogid, "%".$arr_used['file_url']."%"));
+			$rows = $wpdb->num_rows;
 
-			foreach($result as $r)
+			if($rows > 0)
 			{
-				if($arr_used['example'] != '')
-				{
-					break;
-				}
+				$arr_used['amount'] += $rows;
 
-				$arr_used['example'] = "#site:meta_key=".$r->meta_key;
+				foreach($result as $r)
+				{
+					if($arr_used['example'] != '')
+					{
+						break;
+					}
+
+					$arr_used['example'] = "#site:meta_key=".$r->meta_key;
+				}
 			}
 		}
 
