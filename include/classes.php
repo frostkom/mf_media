@@ -1314,6 +1314,8 @@ class mf_media
 	{
 		global $wpdb;
 
+		// Content
+		####################
 		$result = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." WHERE post_content LIKE %s", "%".$arr_used['file_url']."%"));
 		$rows = $wpdb->num_rows;
 
@@ -1331,7 +1333,10 @@ class mf_media
 				$arr_used['example'] = admin_url("post.php?action=edit&post=".$r->ID);
 			}
 		}
+		####################
 
+		// Options
+		####################
 		$result = $wpdb->get_results($wpdb->prepare("SELECT option_name FROM ".$wpdb->options." WHERE option_value LIKE %s", "%".$arr_used['file_url']."%"));
 		$rows = $wpdb->num_rows;
 
@@ -1375,7 +1380,10 @@ class mf_media
 				}
 			}
 		}
+		####################
 
+		// Post meta
+		####################
 		$result = $wpdb->get_results($wpdb->prepare("SELECT meta_key FROM ".$wpdb->postmeta." WHERE post_id != '%d' AND meta_value LIKE %s", $arr_used['id'], "%".$arr_used['file_url']."%"));
 		$rows = $wpdb->num_rows;
 
@@ -1393,7 +1401,22 @@ class mf_media
 				$arr_used['example'] = "#post:meta_key=".$r->meta_key;
 			}
 		}
+		####################
 
+		// Custom header, background etc.
+		####################
+		$post = get_post($arr_used['id']);
+		$arr_media_states = get_media_states($post);
+
+		if(is_array($arr_media_states) && count($arr_media_states) > 0)
+		{
+			$arr_used['amount'] += count($arr_media_states);
+			$arr_used['example'] = "#meta_state:".implode("|", $arr_media_states);
+		}
+		####################
+
+		// Site meta
+		####################
 		if(isset($wpdb->sitemeta) && $wpdb->sitemeta != '')
 		{
 			$result = $wpdb->get_results($wpdb->prepare("SELECT meta_key FROM ".$wpdb->sitemeta." WHERE site_id = '%d' AND meta_value LIKE %s", $wpdb->blogid, "%".$arr_used['file_url']."%"));
@@ -1414,7 +1437,10 @@ class mf_media
 				}
 			}
 		}
+		####################
 
+		// User meta
+		####################
 		$result = $wpdb->get_results($wpdb->prepare("SELECT meta_key FROM ".$wpdb->usermeta." WHERE meta_value LIKE %s", "%".$arr_used['file_url']."%"));
 		$rows = $wpdb->num_rows;
 
@@ -1432,6 +1458,7 @@ class mf_media
 				$arr_used['example'] = "#user:meta_key=".$r->meta_key;
 			}
 		}
+		####################
 
 		return $arr_used;
 	}
