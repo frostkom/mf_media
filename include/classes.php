@@ -101,6 +101,19 @@ class mf_media
 		else
 		{
 			delete_post_meta($post_id, $this->meta_prefix.'used_amount');
+
+			$post = get_post($post_id);
+			$post_date = date("Y-m-d", strtotime($post->post_date));
+			$post_date_limit = date("Y-m-d", strtotime("-3 year"));
+
+			if(!isset($this->check_if_file_is_used_logged) && $post_date < $post_date_limit)
+			{
+				$post_title = get_post_title($post_id);
+
+				do_log(sprintf("%sThe file%s (%s) is not in use and is old (%s)", "<a href='".admin_url("upload.php?mode=list&s=".$post_title)."'>", "</a>", "<a href='".admin_url("post.php?post=".$post_id."&action=edit")."'>".$post_title." <i class='fa fa-wrench' title='".__("Edit", 'lang_media')."'></i></a>", $post_date));
+
+				$this->check_if_file_is_used_logged = true;
+			}
 		}
 
 		update_post_meta($post_id, $this->meta_prefix.'used_example', $arr_used['example']);
