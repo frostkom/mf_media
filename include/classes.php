@@ -104,13 +104,13 @@ class mf_media
 
 			$post = get_post($post_id);
 			$post_date = date("Y-m-d", strtotime($post->post_date));
-			$post_date_limit = date("Y-m-d", strtotime("-3 year"));
+			$post_date_limit = date("Y-m-d", strtotime("-5 year"));
 
 			if(!isset($this->check_if_file_is_used_logged) && $post_date < $post_date_limit)
 			{
 				$post_title = get_post_title($post_id);
 
-				do_log(sprintf("%sThe file%s (%s) is not in use and is old (%s)", "<a href='".admin_url("upload.php?mode=list&s=".$post_title)."'>", "</a>", "<a href='".admin_url("post.php?post=".$post_id."&action=edit")."'>".$post_title." <i class='fa fa-wrench' title='".__("Edit", 'lang_media')."'></i></a>", $post_date));
+				do_log(sprintf("%sThe file%s (%s) is not in use and is old (%s)", "<a href='".admin_url("upload.php?mode=list&s=".$post_title)."'>", "</a>", "<a href='".admin_url("post.php?post=".$post_id."&action=edit")."'>".($post_title != '' ? $post_title : "<em>".__("Unknown", 'lang_media')."</em>")." <i class='fa fa-wrench'></i></a>", $post_date));
 
 				$this->check_if_file_is_used_logged = true;
 			}
@@ -132,8 +132,6 @@ class mf_media
 			/* Look for duplicates */
 			#######################################
 			$result = $wpdb->get_results($wpdb->prepare("SELECT post_title, COUNT(post_title) AS post_title_count FROM ".$wpdb->posts." INNER JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND post_status != %s AND post_title != '' GROUP BY post_title ORDER BY post_title_count DESC LIMIT 0, 1", '_wp_attachment_metadata', 'attachment', 'trash'));
-
-			//do_log("Tested: ".$wpdb->last_query);
 
 			foreach($result as $r)
 			{
@@ -1350,8 +1348,17 @@ class mf_media
 
 		// Options
 		####################
-		$result = $wpdb->get_results($wpdb->prepare("SELECT option_name FROM ".$wpdb->options." WHERE option_value LIKE %s", "%".$arr_used['file_url']."%"));
+		//$result = $wpdb->get_results($wpdb->prepare("SELECT option_name FROM ".$wpdb->options." WHERE (option_value LIKE %s OR option_value LIKE %s)", "%".$arr_used['file_url']."%", "%".str_replace("/sites/".$wpdb->blogid."/", "/", $arr_used['file_url'])."%"));
+
+		list($upload_path, $upload_url) = get_uploads_folder();
+
+		$file_path_temp = str_replace(array("http://", "https://"), "", $arr_used['file_url']);
+		$file_path_temp = str_replace(str_replace(array("http://", "https://"), "", $upload_url), "", $file_path_temp);
+
+		$result = $wpdb->get_results($wpdb->prepare("SELECT option_name, option_value FROM ".$wpdb->options." WHERE (option_value = '%d' OR option_value LIKE %s OR option_value LIKE %s)", $arr_used['id'], "%".$file_path_temp."%", "%".str_replace("/sites/".$wpdb->blogid."/", "/", $file_path_temp)."%"));
 		$rows = $wpdb->num_rows;
+
+		//do_log("Used in Options: ".$wpdb->last_query);
 
 		if($rows > 0)
 		{
@@ -1384,7 +1391,45 @@ class mf_media
 
 				else if(substr($r->option_name, 0, 7) == "widget_")
 				{
+					$widget_option = get_option($r->option_name);
+					$arr_sidebars = wp_get_sidebars_widgets();
+					
+					/*do_log("Widget: ".var_export($widget_option, true));
+					do_log("Sidebars: ".var_export($arr_sidebars, true));*/
+
 					$arr_used['example'] = admin_url("widgets.php#".$r->option_name);
+
+					$widget_key = str_replace("widget_", "", $r->option_name);
+
+					foreach($widget_option as $widget_key_temp => $arr_widget)
+					{
+						if(strpos(var_export($arr_widget, true), $file_path_temp) || strpos(var_export($arr_widget, true), str_replace("/sites/".$wpdb->blogid."/", "/", $file_path_temp)))
+						{
+							$widget_key .= "-".$widget_key_temp;
+
+							$sidebar_key = "";
+
+							foreach($arr_sidebars as $sidebar_key_temp => $arr_sidebar)
+							{
+								foreach($arr_sidebar as $widget_key_temp)
+								{
+									if($widget_key_temp == $widget_key)
+									{
+										$sidebar_key = $sidebar_key_temp;
+
+										break;
+									}
+								}
+							}
+
+							$arr_used['example'] = admin_url("widgets.php#".$sidebar_key."&".$widget_key);
+						}
+					}
+				}
+
+				else if($r->option_value == $arr_used['id'])
+				{
+					$arr_used['example'] = "#option_name=".$r->option_name."&option_value=".$r->option_value;
 				}
 
 				else
@@ -1397,7 +1442,7 @@ class mf_media
 
 		// Post meta
 		####################
-		$result = $wpdb->get_results($wpdb->prepare("SELECT meta_key FROM ".$wpdb->postmeta." WHERE post_id != '%d' AND meta_value LIKE %s", $arr_used['id'], "%".$arr_used['file_url']."%"));
+		$result = $wpdb->get_results($wpdb->prepare("SELECT post_id, meta_key, meta_value FROM ".$wpdb->postmeta." WHERE post_id != '%d' AND (meta_value = '%d' OR meta_value LIKE %s)", $arr_used['id'], $arr_used['id'], "%".$arr_used['file_url']."%"));
 		$rows = $wpdb->num_rows;
 
 		if($rows > 0)
@@ -1411,7 +1456,13 @@ class mf_media
 					break;
 				}
 
-				$arr_used['example'] = "#post:meta_key=".$r->meta_key;
+				$arr_used['example'] = admin_url("post.php?action=edit&post=".$r->post_id);
+				$arr_used['example'] .= "#meta_key=".$r->meta_key;
+
+				if($r->meta_value == $arr_used['id'])
+				{
+					$arr_used['example'] .= "&meta_value=".$r->meta_value;
+				}
 			}
 		}
 		####################
