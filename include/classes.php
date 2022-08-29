@@ -84,9 +84,35 @@ class mf_media
 
 	function check_if_file_is_used($post_id)
 	{
+		list($upload_path, $upload_url) = get_uploads_folder();
+
+		$file_path = str_replace(get_site_url(), "", wp_get_attachment_url($post_id));
+		$file_path = str_replace(array("http://", "https://"), "", $file_path);
+		$file_path = str_replace(str_replace(array("http://", "https://"), "", $upload_url), "", $file_path);
+		
+		$file_thumb_path = $file_path;
+
+		if(wp_attachment_is_image($post_id))
+		{
+			$file_name_temp = $file_name_orig = basename($file_path);
+
+			if(substr_count($file_name_orig, ".") > 1)
+			{
+				do_log("There were several dots in the filename (".$file_name_orig.")");
+			}
+
+			else
+			{
+				$file_name_temp = str_replace(".", "%.", $file_name_orig);
+			}
+
+			$file_thumb_path = str_replace($file_name_orig, $file_name_temp, $file_path);
+		}
+
 		$arr_used = array(
 			'id' => $post_id,
-			'file_url' => str_replace(get_site_url(), "", wp_get_attachment_url($post_id)),
+			'file_url' => $file_path,
+			'file_thumb_url' => $file_thumb_path,
 			'amount' => 0,
 			'example' => '',
 		);
@@ -1327,7 +1353,7 @@ class mf_media
 
 		// Content
 		####################
-		$result = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." WHERE post_content LIKE %s", "%".$arr_used['file_url']."%"));
+		$result = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." WHERE (post_content LIKE %s OR post_content LIKE %s)", "%".$arr_used['file_url']."%", "%".$arr_used['file_thumb_url']."%"));
 		$rows = $wpdb->num_rows;
 
 		if($rows > 0)
@@ -1348,17 +1374,13 @@ class mf_media
 
 		// Options
 		####################
-		//$result = $wpdb->get_results($wpdb->prepare("SELECT option_name FROM ".$wpdb->options." WHERE (option_value LIKE %s OR option_value LIKE %s)", "%".$arr_used['file_url']."%", "%".str_replace("/sites/".$wpdb->blogid."/", "/", $arr_used['file_url'])."%"));
-
-		list($upload_path, $upload_url) = get_uploads_folder();
-
-		$file_path_temp = str_replace(array("http://", "https://"), "", $arr_used['file_url']);
-		$file_path_temp = str_replace(str_replace(array("http://", "https://"), "", $upload_url), "", $file_path_temp);
-
-		$result = $wpdb->get_results($wpdb->prepare("SELECT option_name, option_value FROM ".$wpdb->options." WHERE (option_value = '%d' OR option_value LIKE %s OR option_value LIKE %s)", $arr_used['id'], "%".$file_path_temp."%", "%".str_replace("/sites/".$wpdb->blogid."/", "/", $file_path_temp)."%"));
+		$result = $wpdb->get_results($wpdb->prepare("SELECT option_name, option_value FROM ".$wpdb->options." WHERE (option_value = '%d' OR option_value LIKE %s OR option_value LIKE %s OR option_value LIKE %s OR option_value LIKE %s)", $arr_used['id'], "%".$arr_used['file_url']."%", "%".$arr_used['file_thumb_url']."%", "%".str_replace("/sites/".$wpdb->blogid."/", "/", $arr_used['file_url'])."%", "%".str_replace("/sites/".$wpdb->blogid."/", "/", $arr_used['file_thumb_url'])."%"));
 		$rows = $wpdb->num_rows;
 
-		//do_log("Used in Options: ".$wpdb->last_query);
+		/*if($arr_used['id'] == )
+		{
+			do_log("Used in Options: ".$wpdb->last_query);
+		}*/
 
 		if($rows > 0)
 		{
@@ -1403,7 +1425,7 @@ class mf_media
 
 					foreach($widget_option as $widget_key_temp => $arr_widget)
 					{
-						if(strpos(var_export($arr_widget, true), $file_path_temp) || strpos(var_export($arr_widget, true), str_replace("/sites/".$wpdb->blogid."/", "/", $file_path_temp)))
+						if(strpos(var_export($arr_widget, true), $arr_used['file_url']) || strpos(var_export($arr_widget, true), $arr_used['file_thumb_url']) || strpos(var_export($arr_widget, true), str_replace("/sites/".$wpdb->blogid."/", "/", $arr_used['file_url'])) || strpos(var_export($arr_widget, true), str_replace("/sites/".$wpdb->blogid."/", "/", $arr_used['file_thumb_url'])))
 						{
 							$widget_key .= "-".$widget_key_temp;
 
@@ -1442,7 +1464,7 @@ class mf_media
 
 		// Post meta
 		####################
-		$result = $wpdb->get_results($wpdb->prepare("SELECT post_id, meta_key, meta_value FROM ".$wpdb->postmeta." WHERE post_id != '%d' AND (meta_value = '%d' OR meta_value LIKE %s)", $arr_used['id'], $arr_used['id'], "%".$arr_used['file_url']."%"));
+		$result = $wpdb->get_results($wpdb->prepare("SELECT post_id, meta_key, meta_value FROM ".$wpdb->postmeta." WHERE post_id != '%d' AND (meta_value = '%d' OR meta_value LIKE %s OR meta_value LIKE %s)", $arr_used['id'], $arr_used['id'], "%".$arr_used['file_url']."%", "%".$arr_used['file_thumb_url']."%"));
 		$rows = $wpdb->num_rows;
 
 		if($rows > 0)
@@ -1483,7 +1505,7 @@ class mf_media
 		####################
 		if(isset($wpdb->sitemeta) && $wpdb->sitemeta != '')
 		{
-			$result = $wpdb->get_results($wpdb->prepare("SELECT meta_key FROM ".$wpdb->sitemeta." WHERE site_id = '%d' AND meta_value LIKE %s", $wpdb->blogid, "%".$arr_used['file_url']."%"));
+			$result = $wpdb->get_results($wpdb->prepare("SELECT meta_key FROM ".$wpdb->sitemeta." WHERE site_id = '%d' AND (meta_value LIKE %s OR meta_value LIKE %s)", $wpdb->blogid, "%".$arr_used['file_url']."%", "%".$arr_used['file_thumb_url']."%"));
 			$rows = $wpdb->num_rows;
 
 			if($rows > 0)
@@ -1505,7 +1527,7 @@ class mf_media
 
 		// User meta
 		####################
-		$result = $wpdb->get_results($wpdb->prepare("SELECT meta_key FROM ".$wpdb->usermeta." WHERE meta_value LIKE %s", "%".$arr_used['file_url']."%"));
+		$result = $wpdb->get_results($wpdb->prepare("SELECT user_id, meta_key FROM ".$wpdb->usermeta." WHERE (meta_value LIKE %s OR meta_value LIKE %s)", "%".$arr_used['file_url']."%", "%".$arr_used['file_thumb_url']."%"));
 		$rows = $wpdb->num_rows;
 
 		if($rows > 0)
@@ -1519,7 +1541,7 @@ class mf_media
 					break;
 				}
 
-				$arr_used['example'] = "#user:meta_key=".$r->meta_key;
+				$arr_used['example'] = admin_url("user-edit.php?user_id=".$r->user_id."#user:meta_key=".$r->meta_key);
 			}
 		}
 		####################
