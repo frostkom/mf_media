@@ -98,7 +98,30 @@ class mf_media
 
 			if(substr_count($file_name_orig, ".") > 1)
 			{
-				do_log("There were several dots in the filename (".$file_name_orig.")");
+				$file_name_temp = "";
+
+				$arr_file_name = explode(".", $file_name_orig);
+				$count_temp = count($arr_file_name);
+
+				for($i = 0; $i < $count_temp; $i++)
+				{
+					if($file_name_temp != '')
+					{
+						if($i == ($count_temp - 1))
+						{
+							$file_name_temp .= "%.";
+						}
+
+						else
+						{
+							$file_name_temp .= ".";
+						}
+					}
+
+					$file_name_temp .= $arr_file_name[$i];
+				}
+
+				//do_log("There were several dots in the filename (".$file_name_orig." -> ".$file_name_temp.")");
 			}
 
 			else
