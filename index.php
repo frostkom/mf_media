@@ -3,7 +3,7 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description:
-Version: 5.10.2
+Version: 5.10.3
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://frostkom.se
@@ -120,7 +120,9 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 	function uninstall_media()
 	{
-		global $obj_media;
+		include_once("include/classes.php");
+
+		$obj_media = new mf_media();
 
 		mf_uninstall_plugin(array(
 			'options' => array('setting_media_sanitize_files', 'setting_media_activate_categories', 'setting_media_activate_is_file_used', 'setting_media_display_categories_in_menu', 'setting_media_files2sync'),

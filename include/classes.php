@@ -89,7 +89,7 @@ class mf_media
 		$file_path = str_replace(get_site_url(), "", wp_get_attachment_url($post_id));
 		$file_path = str_replace(array("http://", "https://"), "", $file_path);
 		$file_path = str_replace(str_replace(array("http://", "https://"), "", $upload_url), "", $file_path);
-		
+
 		$file_thumb_path = $file_path;
 
 		if(wp_attachment_is_image($post_id))
@@ -1054,7 +1054,7 @@ class mf_media
 
 			else
 			{
-				$intCategoryID = isset($_REQUEST['query']['category']) ? check_var($_REQUEST['query']['category'], 'int', false) : 0;
+				$intCategoryID = (isset($_REQUEST['query']['category']) ? check_var($_REQUEST['query']['category'], 'int', false) : 0);
 			}
 
 			if($intCategoryID > 0)
@@ -1183,7 +1183,7 @@ class mf_media
 
 			$taxonomies = get_object_taxonomies('attachment', 'names');
 
-			$query = isset($_REQUEST['query']) ? (array)$_REQUEST['query'] : array();
+			$query = (isset($_REQUEST['query']) ? (array)$_REQUEST['query'] : array());
 
 			$defaults = array('s', 'order', 'orderby', 'posts_per_page', 'paged', 'post_mime_type', 'post_parent', 'post__in', 'post__not_in');
 
@@ -1438,7 +1438,7 @@ class mf_media
 				{
 					$widget_option = get_option($r->option_name);
 					$arr_sidebars = wp_get_sidebars_widgets();
-					
+
 					/*do_log("Widget: ".var_export($widget_option, true));
 					do_log("Sidebars: ".var_export($arr_sidebars, true));*/
 
