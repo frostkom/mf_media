@@ -470,6 +470,8 @@ class mf_media
 			$arr_settings['setting_media_display_categories_in_menu'] = __("Display Categories in Menu", 'lang_media');
 		}
 
+		$arr_settings['setting_media_resize_original_image'] = __("Resize Original Image", 'lang_media');
+
 		$option_sync_sites = get_option('option_sync_sites', array());
 
 		if(count($option_sync_sites) > 0)
@@ -519,6 +521,14 @@ class mf_media
 		$option = get_option($setting_key, 'no');
 
 		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
+	}
+
+	function setting_media_resize_original_image_callback()
+	{
+		$setting_key = get_setting_key(__FUNCTION__);
+		$option = get_option($setting_key, 'yes');
+
+		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option, 'description' => __("This will remove the original image if it is larger than the largest resized size", 'lang_media')));
 	}
 
 	function setting_media_files2sync_callback()
@@ -746,6 +756,42 @@ class mf_media
 		}
 
 		return $file;
+	}
+
+	function wp_generate_attachment_metadata($image_data) 
+	{
+		if(get_option('setting_media_resize_original_image', 'yes') == 'yes')
+		{
+			if(isset($image_data['sizes']['2048x2048']))
+			{
+				$image_size = '2048x2048';
+			}
+
+			else
+			{
+				$image_size = 'large';
+			}
+
+			if(isset($image_data['sizes'][$image_size]))
+			{
+				$upload_dir = wp_upload_dir();
+				$uploaded_image_location = $upload_dir['path']."/".$image_data['original_image'];
+				$large_image_location = $upload_dir['path']."/".$image_data['sizes'][$image_size]['file'];
+
+				// delete the uploaded image
+				unlink($uploaded_image_location);
+
+				// copy the large image
+				copy($large_image_location, $uploaded_image_location);
+
+				// update image metadata and return them
+				$image_data['width'] = $image_data['sizes'][$image_size]['width'];
+				$image_data['height'] = $image_data['sizes'][$image_size]['height'];
+				unset($image_data['sizes'][$image_size]);
+			}
+		}
+
+		return $image_data;
 	}
 
 	function hidden_meta_boxes($hidden, $screen)
