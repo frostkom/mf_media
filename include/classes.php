@@ -775,19 +775,28 @@ class mf_media
 			if(isset($image_data['sizes'][$image_size]))
 			{
 				$upload_dir = wp_upload_dir();
-				$uploaded_image_location = $upload_dir['path']."/".$image_data['original_image'];
-				$large_image_location = $upload_dir['path']."/".$image_data['sizes'][$image_size]['file'];
 
-				// delete the uploaded image
-				unlink($uploaded_image_location);
+				if(isset($image_data['original_image']))
+				{
+					$uploaded_image_location = $upload_dir['path']."/".$image_data['original_image'];
+					$large_image_location = $upload_dir['path']."/".$image_data['sizes'][$image_size]['file'];
 
-				// copy the large image
-				copy($large_image_location, $uploaded_image_location);
+					// Delete the uploaded image
+					unlink($uploaded_image_location);
 
-				// update image metadata and return them
-				$image_data['width'] = $image_data['sizes'][$image_size]['width'];
-				$image_data['height'] = $image_data['sizes'][$image_size]['height'];
-				unset($image_data['sizes'][$image_size]);
+					// Copy the large image
+					copy($large_image_location, $uploaded_image_location);
+
+					// Update image metadata and return them
+					$image_data['width'] = $image_data['sizes'][$image_size]['width'];
+					$image_data['height'] = $image_data['sizes'][$image_size]['height'];
+					unset($image_data['sizes'][$image_size]);
+				}
+
+				else
+				{
+					do_log("wp_generate_attachment_metadata() Error: No Original Image (".var_export($image_data, true).")");
+				}
 			}
 		}
 
