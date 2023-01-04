@@ -90,7 +90,7 @@ class mf_media
 		$file_path = str_replace(array("http://", "https://"), "", $file_path);
 		$file_path = str_replace(str_replace(array("http://", "https://"), "", $upload_url), "", $file_path);
 
-		$file_thumb_path = $file_path;
+		$file_thumb_path = $file_path = str_replace("/wp-content/uploads/", "", $file_path);
 
 		if(wp_attachment_is_image($post_id))
 		{
@@ -1565,6 +1565,8 @@ class mf_media
 				}
 			}
 		}
+
+		//do_log("filter_is_file_used -> postmeta: ".$wpdb->last_query);
 		####################
 
 		// Custom header, background etc.
