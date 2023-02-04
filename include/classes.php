@@ -86,6 +86,8 @@ class mf_media
 	{
 		list($upload_path, $upload_url) = get_uploads_folder();
 
+		$is_used = false;
+
 		$file_path = str_replace(get_site_url(), "", wp_get_attachment_url($post_id));
 		$file_path = str_replace(array("http://", "https://"), "", $file_path);
 		$file_path = str_replace(str_replace(array("http://", "https://"), "", $upload_url), "", $file_path);
@@ -145,6 +147,8 @@ class mf_media
 		if($arr_used['amount'] > 0)
 		{
 			update_post_meta($post_id, $this->meta_prefix.'used_amount', $arr_used['amount']);
+
+			$is_used = true;
 		}
 
 		else
@@ -167,6 +171,8 @@ class mf_media
 
 		update_post_meta($post_id, $this->meta_prefix.'used_example', $arr_used['example']);
 		update_post_meta($post_id, $this->meta_prefix.'used_updated', date("Y-m-d H:i:s"));
+
+		return $is_used;
 	}
 
 	function cron_base()
@@ -249,7 +255,7 @@ class mf_media
 			#######################################
 			if(get_site_option('setting_media_activate_is_file_used') == 'yes')
 			{
-				$result = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." LEFT JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND (meta_value IS null OR meta_value < DATE_SUB(NOW(), INTERVAL 1 DAY)) ORDER BY meta_value ASC LIMIT 0, 20", $this->meta_prefix.'used_updated', 'attachment'));
+				$result = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." LEFT JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND (meta_value IS null OR meta_value < DATE_SUB(NOW(), INTERVAL 1 WEEK)) ORDER BY meta_value ASC LIMIT 0, 20", $this->meta_prefix.'used_updated', 'attachment'));
 
 				foreach($result as $r)
 				{
@@ -265,6 +271,141 @@ class mf_media
 				delete_post_meta_by_key($this->meta_prefix.'used_example');
 				delete_post_meta_by_key($this->meta_prefix.'used_updated');
 			}
+			#######################################
+
+			/* Look for special characters in file names */
+			#######################################
+			/*if(get_site_option('setting_media_sanitize_files') == 'yes')
+			{
+				$debug_mode = false;
+
+				list($upload_path, $upload_url) = get_uploads_folder();
+				$upload_url = $upload_url; //get_site_url().
+
+				$arr_exclude = $arr_include = array();
+				//$arr_exclude[] = "é";	$arr_include[] = "e"; // Does not work
+				$arr_exclude[] = "Ã©";	$arr_include[] = "e";
+				$arr_exclude[] = "Ã¨";	$arr_include[] = "e";
+				//$arr_exclude[] = "ê";	$arr_include[] = "e"; // Does not work
+				$arr_exclude[] = "Ã«";	$arr_include[] = "e";
+				//$arr_exclude[] = "ü";	$arr_include[] = "u"; // Does not work
+				$arr_exclude[] = "Ã¼";	$arr_include[] = "u";
+				$arr_exclude[] = "å";	$arr_include[] = "a";
+				$arr_exclude[] = "Ã¥";	$arr_include[] = "a";
+				$arr_exclude[] = "Å";	$arr_include[] = "A";
+				$arr_exclude[] = "Ã…";	$arr_include[] = "A";
+				$arr_exclude[] = "ä";	$arr_include[] = "a";
+				$arr_exclude[] = "Ã¤";	$arr_include[] = "a";
+				$arr_exclude[] = "Ä";	$arr_include[] = "A";
+				$arr_exclude[] = "Ã„";	$arr_include[] = "A";
+				$arr_exclude[] = "ö";	$arr_include[] = "o";
+				$arr_exclude[] = "Ã¶";	$arr_include[] = "o";
+				$arr_exclude[] = "Ö";	$arr_include[] = "O";
+				$arr_exclude[] = "Ã–";	$arr_include[] = "O";
+				//$arr_exclude[] = "´";	$arr_include[] = ""; // Does not work
+				//$arr_exclude[] = "Â´";	$arr_include[] = ""; // Does not work
+
+				$query_where = "";
+
+				$count_temp = count($arr_exclude);
+
+				$query_where .= " AND (";
+
+					for($i = 0; $i < $count_temp; $i++)
+					{
+						$query_where .= ($i > 0 ? " OR " : "")."guid LIKE '%".utf8_encode($arr_exclude[$i])."%'";
+					}
+
+				$query_where .= ")";
+
+				$query_select = "SELECT ID, post_title, guid FROM ".$wpdb->posts." WHERE post_type = 'attachment'".$query_where; //." ORDER BY ID ASC LIMIT 0, 5"
+				$result = $wpdb->get_results($query_select);
+
+				foreach($result as $r)
+				{
+					$post_id = $r->ID;
+					$post_title = $r->post_title;
+					$post_guid = $r->guid;
+
+					//$file_url = get_permalink($post_id);
+					$file_url = wp_get_attachment_url($post_id);
+					//$file_path = str_replace(array("http://", "https://"), "", $file_url);
+					$file_path_old = str_replace($upload_url, $upload_path, $file_url);
+					$file_path_new = str_replace($arr_exclude, $arr_include, $file_path_old);
+
+					// Change GUID for attachments
+					############################
+					$query_update = $wpdb->prepare("UPDATE ".$wpdb->posts." SET guid = %s WHERE ID = '%d'", str_replace($arr_exclude, $arr_include, $post_guid), $post_id); // AND guid = %s //, $post_guid
+
+					if($debug_mode)
+					{
+						do_log("Replace GUID: ".$query_update); //".$query_select." -> 
+					}
+
+					else
+					{
+						$wpdb->query($query_update);
+
+						if($wpdb->rows_affected > 0)
+						{
+							// Success
+						}
+
+						else
+						{
+							do_log("Replace GUID did NOT work: ".$query_update);
+						}
+					}
+					############################
+
+					// Change URL in posts etc.
+					// Replace $arr_exclude[$i] -> $arr_include[$i] in all tables used in filter_is_file_used()
+					############################
+					$query_update = $wpdb->prepare("UPDATE ".$wpdb->postmeta." SET meta_value = %s WHERE post_id = '%d'", str_replace($arr_exclude, $arr_include, $post_guid), $post_id); // AND meta_value = %s //, $post_guid
+
+					if($debug_mode)
+					{
+						do_log("Replace meta value: ".$query_update); //".$query_select." -> 
+					}
+
+					else
+					{
+						$wpdb->query($query_update);
+
+						if($wpdb->rows_affected > 0)
+						{
+							// Success
+						}
+
+						else
+						{
+							do_log("Replace meta value did NOT work: ".$query_update);
+						}
+					}
+					############################
+
+					// Change file names
+					############################
+					if($debug_mode)
+					{
+						do_log("Replace file name: ".$file_path_old." -> ".$file_path_new); //".$file_url." -> ".$upload_url." -> ".$upload_path." -> 
+					}
+
+					else
+					{
+						if(file_exists($file_path_old) && copy($file_path_old, $file_path_new))
+						{
+							// Success
+						}
+
+						else
+						{
+							do_log("Replace file name did NOT work: ".$file_path_old." -> ".$file_path_new); //".$file_url." -> ".$upload_url." -> ".$upload_path." -> 
+						}
+					}
+					############################
+				}
+			}*/
 			#######################################
 		}
 
@@ -410,7 +551,7 @@ class mf_media
 		$labels = array(
 			'name' => _x(__("Types", 'lang_media'), 'post type general name'),
 			'singular_name' => _x(__("Type", 'lang_media'), 'post type singular name'),
-			'menu_name' => __("Allowed Types", 'lang_media')
+			'menu_name' => __("Allowed Types", 'lang_media'),
 		);
 
 		$args = array(
@@ -495,7 +636,7 @@ class mf_media
 		settings_save_site_wide($setting_key);
 		$option = get_site_option($setting_key, get_option($setting_key, 'yes'));
 
-		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
+		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option, 'description' => __("This will remove special characters from file names and URLs", 'lang_media')));
 	}
 
 	function setting_media_activate_categories_callback()
@@ -1930,7 +2071,7 @@ class mf_media
 					$cat_id = $r->term_id;
 					$cat_name = $r->name;
 
-					if($data['only_used'] == true)
+					if($data['only_used'] == true && does_table_exist($wpdb->prefix."media2category"))
 					{
 						$wpdb->get_results($wpdb->prepare("SELECT categoryID FROM ".$wpdb->prefix."media2category WHERE categoryID = '%d'", $cat_id));
 						$rows = $wpdb->num_rows;
