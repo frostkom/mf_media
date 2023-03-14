@@ -654,6 +654,13 @@ class mf_media
 		$option = get_site_option($setting_key, get_option($setting_key, 'no'));
 
 		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option, 'description' => __("This will add an extra column in the Media Library to check which files are being used and where", 'lang_media')));
+
+		if($option == 'no')
+		{
+			delete_post_meta_by_key($this->meta_prefix.'used_amount');
+			delete_post_meta_by_key($this->meta_prefix.'used_example');
+			delete_post_meta_by_key($this->meta_prefix.'used_updated');
+		}
 	}
 
 	function setting_media_display_categories_in_menu_callback()
@@ -1695,6 +1702,42 @@ class mf_media
 				else
 				{
 					$arr_used['example'] = "#option_name=".$r->option_name;
+				}
+			}
+		}
+		####################
+
+		// Gallery
+		####################
+		$arr_widget_option = get_option('widget_media_gallery');
+
+		if(is_array($arr_widget_option) && count($arr_widget_option) > 0)
+		{
+			$arr_sidebars = wp_get_sidebars_widgets();
+
+			foreach($arr_widget_option as $widget_key_temp => $arr_widget)
+			{
+				if(in_array($arr_used['id'], $arr_widget['ids']))
+				{
+					$sidebar_key = "";
+					$widget_key = "media_gallery-".$widget_key_temp;
+
+					foreach($arr_sidebars as $sidebar_key_temp => $arr_sidebar)
+					{
+						foreach($arr_sidebar as $widget_key_temp)
+						{
+							if($widget_key_temp == $widget_key)
+							{
+								if($sidebar_key == '')
+								{
+									$sidebar_key = $sidebar_key_temp;
+									$arr_used['example'] = admin_url("widgets.php#".$sidebar_key."&media"); //.$widget_key
+								}
+
+								$arr_used['amount']++;
+							}
+						}
+					}
 				}
 			}
 		}
