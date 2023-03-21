@@ -1717,7 +1717,7 @@ class mf_media
 
 			foreach($arr_widget_option as $widget_key_temp => $arr_widget)
 			{
-				if(in_array($arr_used['id'], $arr_widget['ids']))
+				if(is_array($arr_widget['ids']) && in_array($arr_used['id'], $arr_widget['ids']))
 				{
 					$sidebar_key = "";
 					$widget_key = "media_gallery-".$widget_key_temp;
