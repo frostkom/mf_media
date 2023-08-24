@@ -744,7 +744,7 @@ class mf_media
 
 				$current_media_category = get_user_meta(get_current_user_id(), 'meta_current_media_category', true);
 
-				mf_enqueue_script('script_media', $plugin_include_url."script_wp.js", array(
+				mf_enqueue_script('script_media_taxonomy', $plugin_include_url."script_taxonomy.js", array(
 					'taxonomy' => $taxonomy,
 					'list_title' => "-- "." --",
 					'term_list' => "[".$attachment_terms."]",
@@ -1113,6 +1113,20 @@ class mf_media
 
 		return $cols;
 	}
+	
+	function get_used_amount($id)
+	{
+		$used_updated = get_post_meta($id, $this->meta_prefix.'used_updated', true);
+
+		if($used_updated < date("Y-m-d H:i:s", strtotime("-1 week")))
+		{
+			$this->check_if_file_is_used($id);
+
+			//$used_updated = get_post_meta($id, $this->meta_prefix.'used_updated', true);
+		}
+
+		return get_post_meta($id, $this->meta_prefix.'used_amount', true);
+	}
 
 	function column_cell($col, $id)
 	{
@@ -1155,16 +1169,7 @@ class mf_media
 					break;
 
 					case 'used':
-						$used_updated = get_post_meta($id, $this->meta_prefix.'used_updated', true);
-
-						if($used_updated < date("Y-m-d H:i:s", strtotime("-1 week")))
-						{
-							$this->check_if_file_is_used($id);
-
-							$used_updated = get_post_meta($id, $this->meta_prefix.'used_updated', true);
-						}
-
-						$used_amount = get_post_meta($id, $this->meta_prefix.'used_amount', true);
+						$used_amount = $this->get_used_amount($id);
 
 						echo "<i class='fa ".($used_amount > 0 ? "fa-check green" : "fa-times red")." fa-lg' title='".sprintf(__("Used in %d places", 'lang_media'), $used_amount)."'></i>";
 
@@ -1178,6 +1183,11 @@ class mf_media
 									."<a href='".$used_example."'>".__("View Example", 'lang_media')."</a>"
 								."</div>";
 							}
+
+							$plugin_include_url = plugin_dir_url(__FILE__);
+							$plugin_version = get_plugin_version(__FILE__);
+
+							mf_enqueue_script('script_media_used', $plugin_include_url."script_used.js", $plugin_version);
 						}
 					break;
 				}
