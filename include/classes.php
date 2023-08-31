@@ -2,13 +2,18 @@
 
 class mf_media
 {
+	var $categories = array();
+	var $default_tab = 0;
+	var $post_type_allowed = 'mf_media_allowed';
+	var $meta_prefix = 'mf_media_';
+
 	function __construct()
 	{
-		$this->categories = array();
+		/*$this->categories = array();
 		$this->default_tab = 0;
 
 		$this->post_type_allowed = 'mf_media_allowed';
-		$this->meta_prefix = 'mf_media_';
+		$this->meta_prefix = 'mf_media_';*/
 	}
 
 	function get_media_roles($post_id)
@@ -947,12 +952,15 @@ class mf_media
 					$large_image_location = $upload_dir['path']."/".$image_data['sizes'][$image_size]['file'];
 
 					// Delete the uploaded image
-					unlink($uploaded_image_location);
-					//do_log("wp_generate_attachment_metadata() Delete: ".$uploaded_image_location);
+					if(file_exists($uploaded_image_location))
+					{
+						unlink($uploaded_image_location);
+						//do_log("wp_generate_attachment_metadata() Delete: ".$uploaded_image_location);
 
-					// Copy the large image
-					copy($large_image_location, $uploaded_image_location);
-					//do_log("wp_generate_attachment_metadata() Copy: ".$large_image_location." -> ".$uploaded_image_location);
+						// Copy the large image
+						copy($large_image_location, $uploaded_image_location);
+						//do_log("wp_generate_attachment_metadata() Copy: ".$large_image_location." -> ".$uploaded_image_location);
+					}
 
 					// Update image metadata and return them
 					/*$image_data['width'] = $image_data['sizes'][$image_size]['width'];
@@ -1113,7 +1121,7 @@ class mf_media
 
 		return $cols;
 	}
-	
+
 	function get_used_amount($id)
 	{
 		$used_updated = get_post_meta($id, $this->meta_prefix.'used_updated', true);
