@@ -861,31 +861,31 @@ class mf_media
 				'type' => 'bool',
 				'global' => true,
 				'icon' => "fas fa-broom",
-				'name' => __("Sanitize Filenames", 'lang_media'),
+				'name' => __("Media", 'lang_media')." - ".__("Sanitize Filenames", 'lang_media'),
 			),*/
 			'setting_media_activate_categories' => array(
 				'type' => 'bool',
 				'global' => false,
 				'icon' => "fas fa-network-wired",
-				'name' => __("Activate Categories", 'lang_media'),
+				'name' => __("Media", 'lang_media')." - ".__("Activate Categories", 'lang_media'),
 			),
 			/*'setting_media_activate_is_file_used' => array(
 				'type' => 'bool',
 				'global' => true,
 				'icon' => "fas fa-search",
-				'name' => __("Activate Is File Used", 'lang_media'),
+				'name' => __("Media", 'lang_media')." - ".__("Activate Is File Used", 'lang_media'),
 			),*/
 			'setting_media_display_categories_in_menu' => array(
 				'type' => 'bool',
 				'global' => false,
 				'icon' => "fas fa-bars",
-				'name' => __("Display Categories in Menu", 'lang_media'),
+				'name' => __("Media", 'lang_media')." - ".__("Display Categories in Menu", 'lang_media'),
 			),
 			'setting_media_files2sync' => array(
 				'type' => 'posts',
 				'global' => false,
 				'icon' => "fas fa-sync",
-				'name' => __("Files to Sync", 'lang_media'),
+				'name' => __("Media", 'lang_media')." - ".__("Files to Sync", 'lang_media'),
 			),
 		);
 
