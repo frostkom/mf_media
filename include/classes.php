@@ -6,15 +6,9 @@ class mf_media
 	var $default_tab = 0;
 	var $post_type_allowed = 'mf_media_allowed';
 	var $meta_prefix = 'mf_media_';
+	var $check_if_file_is_used_logged = false;
 
-	function __construct()
-	{
-		/*$this->categories = array();
-		$this->default_tab = 0;
-
-		$this->post_type_allowed = 'mf_media_allowed';
-		$this->meta_prefix = 'mf_media_';*/
-	}
+	function __construct(){}
 
 	function get_media_roles($post_id)
 	{
@@ -164,7 +158,7 @@ class mf_media
 			$post_date = date("Y-m-d", strtotime($post->post_date));
 			$post_date_limit = date("Y-m-d", strtotime("-5 year"));
 
-			if(!isset($this->check_if_file_is_used_logged) && $post_date < $post_date_limit)
+			if($this->check_if_file_is_used_logged == false && $post_date < $post_date_limit)
 			{
 				$post_title = get_post_title($post_id);
 
