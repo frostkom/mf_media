@@ -778,7 +778,7 @@ class mf_media
 			add_submenu_page($menu_start, $menu_title, $menu_title, $menu_capability, admin_url("options-general.php?page=settings_mf_base#settings_media"));
 		}
 
-		if(IS_ADMIN)
+		if(IS_ADMINISTRATOR)
 		{
 			$menu_title = __("Allowed Types", 'lang_media');
 
@@ -1090,7 +1090,7 @@ class mf_media
 				unset($cols['parent']);
 				unset($cols['comments']);
 
-				if(IS_ADMIN && get_option('setting_media_activate_categories') == 'yes')
+				if(IS_ADMINISTRATOR && get_option('setting_media_activate_categories') == 'yes')
 				{
 					unset($cols['categories']);
 
@@ -1442,7 +1442,7 @@ class mf_media
 
 	function attachment_fields_to_edit($form_fields, $post)
 	{
-		if(IS_ADMIN && get_option('setting_media_activate_categories') == 'yes')
+		if(IS_ADMINISTRATOR && get_option('setting_media_activate_categories') == 'yes')
 		{
 			$html = "<ul class='term-list'>";
 
