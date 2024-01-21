@@ -1841,6 +1841,45 @@ class mf_media
 		}
 		####################
 
+		// Categories and roles
+		####################
+		$result = $wpdb->get_results($wpdb->prepare("SELECT categoryID FROM ".$wpdb->prefix."media2category WHERE fileID = '%d'", $arr_used['id']));
+		$rows = $wpdb->num_rows;
+
+		if($rows > 0)
+		{
+			$arr_used['amount'] += $rows;
+
+			/*foreach($result as $r)
+			{
+				if($arr_used['example'] != '')
+				{
+					break;
+				}
+
+				$arr_used['example'] = admin_url("user-edit.php?user_id=".$r->user_id."#user:meta_key=".$r->meta_key);
+			}*/
+		}
+
+		$result = $wpdb->get_results($wpdb->prepare("SELECT categoryID FROM ".$wpdb->prefix."media2role WHERE fileID = '%d'", $arr_used['id']));
+		$rows = $wpdb->num_rows;
+
+		if($rows > 0)
+		{
+			$arr_used['amount'] += $rows;
+
+			/*foreach($result as $r)
+			{
+				if($arr_used['example'] != '')
+				{
+					break;
+				}
+
+				$arr_used['example'] = admin_url("user-edit.php?user_id=".$r->user_id."#user:meta_key=".$r->meta_key);
+			}*/
+		}
+		####################
+
 		return $arr_used;
 	}
 
