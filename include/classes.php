@@ -1843,22 +1843,28 @@ class mf_media
 
 		// Categories and roles
 		####################
-		$result = $wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2category WHERE fileID = '%d'", $arr_used['id']));
-		$rows = $wpdb->num_rows;
-
-		if($rows > 0)
+		if(does_table_exist($wpdb->prefix."media2category"))
 		{
-			$arr_used['amount'] += $rows;
-			$arr_used['example'] = admin_url("post.php?post=".$arr_used['id']."&action=edit");
+			$result = $wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2category WHERE fileID = '%d'", $arr_used['id']));
+			$rows = $wpdb->num_rows;
+
+			if($rows > 0)
+			{
+				$arr_used['amount'] += $rows;
+				$arr_used['example'] = admin_url("post.php?post=".$arr_used['id']."&action=edit");
+			}
 		}
 
-		$result = $wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2role WHERE fileID = '%d'", $arr_used['id']));
-		$rows = $wpdb->num_rows;
-
-		if($rows > 0)
+		if(does_table_exist($wpdb->prefix."media2role"))
 		{
-			$arr_used['amount'] += $rows;
-			$arr_used['example'] = admin_url("post.php?post=".$arr_used['id']."&action=edit");
+			$result = $wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2role WHERE fileID = '%d'", $arr_used['id']));
+			$rows = $wpdb->num_rows;
+
+			if($rows > 0)
+			{
+				$arr_used['amount'] += $rows;
+				$arr_used['example'] = admin_url("post.php?post=".$arr_used['id']."&action=edit");
+			}
 		}
 		####################
 
