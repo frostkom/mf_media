@@ -928,16 +928,19 @@ class mf_media
 					$uploaded_image_location = $upload_dir['path']."/".$image_data['original_image'];
 					$large_image_location = $upload_dir['path']."/".$image_data['sizes'][$image_size]['file'];
 
-					// Delete the uploaded image
-					unlink($uploaded_image_location);
+					if(file_exists($uploaded_image_location))
+					{
+						// Delete the uploaded image
+						unlink($uploaded_image_location);
 
-					// Copy the large image
-					copy($large_image_location, $uploaded_image_location);
+						// Copy the large image
+						copy($large_image_location, $uploaded_image_location);
 
-					// Update image metadata and return them
-					$image_data['width'] = $image_data['sizes'][$image_size]['width'];
-					$image_data['height'] = $image_data['sizes'][$image_size]['height'];
-					unset($image_data['sizes'][$image_size]);
+						// Update image metadata and return them
+						$image_data['width'] = $image_data['sizes'][$image_size]['width'];
+						$image_data['height'] = $image_data['sizes'][$image_size]['height'];
+						unset($image_data['sizes'][$image_size]);
+					}
 				}
 
 				else if(isset($image_data['file']))
@@ -945,9 +948,9 @@ class mf_media
 					$uploaded_image_location = $upload_dir['path']."/".$image_data['file'];
 					$large_image_location = $upload_dir['path']."/".$image_data['sizes'][$image_size]['file'];
 
-					// Delete the uploaded image
 					if(file_exists($uploaded_image_location))
 					{
+						// Delete the uploaded image
 						unlink($uploaded_image_location);
 						//do_log("wp_generate_attachment_metadata() Delete: ".$uploaded_image_location);
 
