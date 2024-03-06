@@ -6,6 +6,7 @@ class mf_media
 	var $default_tab = 0;
 	var $post_type_allowed = 'mf_media_allowed';
 	var $meta_prefix = 'mf_media_';
+	var $check_if_file_is_used_start = false;
 	var $check_if_file_is_used_logged = false;
 
 	function __construct(){}
@@ -83,6 +84,11 @@ class mf_media
 
 	function check_if_file_is_used($post_id)
 	{
+		if($this->check_if_file_is_used_start == false)
+		{
+			$this->check_if_file_is_used_start = date("Y-m-d H:i:s");
+		}
+
 		list($upload_path, $upload_url) = get_uploads_folder();
 
 		$is_used = false;
@@ -1174,11 +1180,14 @@ class mf_media
 					break;
 
 					case 'used':
-						$used_amount = $this->get_used_amount($id);
+						if($this->check_if_file_is_used_start < date("Y-m-d H:i:s", strtotime("-30 second")))
+						{
+							$used_amount = $this->get_used_amount($id);
 
-						echo "<i class='fa ".($used_amount > 0 ? "fa-check green" : "fa-times red")." fa-lg' title='".sprintf(__("Used in %d places", 'lang_media'), $used_amount)."'></i>";
+							echo "<i class='fa ".($used_amount > 0 ? "fa-check green" : "fa-times red")." fa-lg' title='".sprintf(__("Used in %d places", 'lang_media'), $used_amount)."'></i>";
+						}
 
-						if($used_amount > 0)
+						if(isset($used_amount) && $used_amount > 0)
 						{
 							$used_example = get_post_meta($id, $this->meta_prefix.'used_example', true);
 
