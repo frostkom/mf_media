@@ -553,6 +553,8 @@ class mf_media
 
 	function init()
 	{
+		load_plugin_textdomain('lang_media', false, str_replace("/include", "", dirname(plugin_basename(__FILE__)))."/lang/");
+
 		$labels = array(
 			'name' => _x(__("Types", 'lang_media'), 'post type general name'),
 			'singular_name' => _x(__("Type", 'lang_media'), 'post type singular name'),
