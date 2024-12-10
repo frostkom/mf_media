@@ -1144,7 +1144,7 @@ class mf_media
 		return get_post_meta($id, $this->meta_prefix.'used_amount', true);
 	}
 
-	function column_cell($col, $id)
+	function column_cell($col, $post_id)
 	{
 		global $wpdb, $post;
 
@@ -1154,7 +1154,7 @@ class mf_media
 				switch($col)
 				{
 					case 'media_categories':
-						$field_value = $this->get_media_categories($id);
+						$field_value = $this->get_media_categories($post_id);
 
 						$i = 0;
 
@@ -1167,7 +1167,7 @@ class mf_media
 					break;
 
 					case 'media_roles':
-						$field_value = $this->get_media_roles($id);
+						$field_value = $this->get_media_roles($post_id);
 
 						$arr_data = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
 
@@ -1187,14 +1187,14 @@ class mf_media
 					case 'used':
 						if($this->check_if_file_is_used_start < date("Y-m-d H:i:s", strtotime("-30 second")))
 						{
-							$used_amount = $this->get_used_amount($id);
+							$used_amount = $this->get_used_amount($post_id);
 
 							echo "<i class='fa ".($used_amount > 0 ? "fa-check green" : "fa-times red")." fa-lg' title='".sprintf(__("Used in %d places", 'lang_media'), $used_amount)."'></i>";
 						}
 
 						if(isset($used_amount) && $used_amount > 0)
 						{
-							$used_example = get_post_meta($id, $this->meta_prefix.'used_example', true);
+							$used_example = get_post_meta($post_id, $this->meta_prefix.'used_example', true);
 
 							if($used_example != '')
 							{
@@ -1218,7 +1218,7 @@ class mf_media
 					case 'action':
 						$arr_actions = $this->get_media_actions();
 
-						$post_meta = get_post_meta($id, $this->meta_prefix.$col, true);
+						$post_meta = get_post_meta($post_id, $this->meta_prefix.$col, true);
 
 						echo $arr_actions[$post_meta];
 					break;
@@ -1226,7 +1226,7 @@ class mf_media
 					case 'role':
 						$arr_roles = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
 
-						$arr_post_meta = get_post_meta($id, $this->meta_prefix.$col, false);
+						$arr_post_meta = get_post_meta($post_id, $this->meta_prefix.$col, false);
 
 						$i = 0;
 
@@ -1241,11 +1241,11 @@ class mf_media
 					case 'types':
 						$arr_types = $this->get_media_types(array('type' => 'name'));
 
-						$arr_post_meta = get_post_meta($id, $this->meta_prefix.$col, false);
+						$arr_post_meta = get_post_meta($post_id, $this->meta_prefix.$col, false);
 
 						if(count($arr_post_meta) == 0)
 						{
-							$post_role = get_post_meta($id, $this->meta_prefix.'role', false);
+							$post_role = get_post_meta($post_id, $this->meta_prefix.'role', false);
 
 							if(count($post_role) == 1 && in_array('administrator', $post_role))
 							{
