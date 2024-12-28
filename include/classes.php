@@ -2005,6 +2005,7 @@ class mf_media
 			'eot' =>				array($font_name." (Opentype)", "application/vnd.ms-fontobject"), //font/opentype
 			'ttf' =>				array($font_name." (Truetype)", "application/x-font-ttf"), //font/truetype
 			'woff' =>				array($font_name." (Woff)", "application/octet-stream"), //application/font-woff
+			'woff2' =>				array($font_name." (Woff2)", "application/octet-stream"), //application/font-woff
 
 			'exe' =>				array(__("Program", 'lang_media'), "application/x-msdownload"),
 			'apk' =>				array("APK", "application/vnd.android.package-archive"),
