@@ -2017,6 +2017,7 @@ class mf_media
 			'png' =>				array($image_name." (PNG)", "image/png"),
 			'bmp' =>				array($image_name." (BMP)", "image/bmp"),
 			'tiff|tif' =>			array($image_name." (TIFF)", "image/tiff"),
+			'webp' =>				array($image_name." (WEBP)", "image/webp"),
 
 			'css' =>				array("CSS", "text/css"),
 			'js' =>					array("Javascript", "application/javascript"),
