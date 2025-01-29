@@ -738,10 +738,9 @@ class mf_media
 			if($do_enqueue == true)
 			{
 				$plugin_include_url = plugin_dir_url(__FILE__);
-				$plugin_version = get_plugin_version(__FILE__);
 
-				mf_enqueue_style('style_media', $plugin_include_url."style.css", $plugin_version);
-				mf_enqueue_style('style_media_wp', $plugin_include_url."style_wp.css", $plugin_version);
+				mf_enqueue_style('style_media', $plugin_include_url."style.css");
+				mf_enqueue_style('style_media_wp', $plugin_include_url."style_wp.css");
 
 				/*$taxonomy = 'category';
 
@@ -757,15 +756,14 @@ class mf_media
 					'term_list' => "[".$attachment_terms."]",
 					'terms_test' => get_terms($taxonomy, array('hide_empty' => false)),
 					'current_media_category' => $current_media_category
-				), $plugin_version);*/
+				));*/
 			}
 
 			else if($pagenow == 'admin.php' && check_var('page') == 'mf_media/list/index.php')
 			{
 				$plugin_base_include_url = plugins_url()."/mf_base/include";
-				$plugin_version = get_plugin_version(__FILE__);
 
-				mf_enqueue_script('script_base_settings', $plugin_base_include_url."/script_settings.js", array('default_tab' => $this->default_tab, 'settings_page' => false), $plugin_version);
+				mf_enqueue_script('script_base_settings', $plugin_base_include_url."/script_settings.js", array('default_tab' => $this->default_tab, 'settings_page' => false));
 			}
 		}
 	}
@@ -1204,9 +1202,8 @@ class mf_media
 							}
 
 							$plugin_include_url = plugin_dir_url(__FILE__);
-							$plugin_version = get_plugin_version(__FILE__);
 
-							mf_enqueue_script('script_media_used', $plugin_include_url."script_used.js", $plugin_version);
+							mf_enqueue_script('script_media_used', $plugin_include_url."script_used.js");
 						}
 					break;
 				}
@@ -1895,9 +1892,8 @@ class mf_media
 		if($data['init'] == true)
 		{
 			$plugin_include_url = plugin_dir_url(__FILE__);
-			$plugin_version = get_plugin_version(__FILE__);
 
-			mf_enqueue_style('style_media', $plugin_include_url."style.css", $plugin_version);
+			mf_enqueue_style('style_media', $plugin_include_url."style.css");
 		}
 
 		return $arr_views;
