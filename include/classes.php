@@ -166,7 +166,7 @@ class mf_media
 
 			if($this->check_if_file_is_used_logged == false && $post_date < $post_date_limit)
 			{
-				$post_title = get_post_title($post_id);
+				$post_title = get_the_title($post_id);
 
 				do_log(sprintf("%sThe file%s (%s) is not in use and is old (%s)", "<a href='".admin_url("upload.php?mode=list&s=".$post_title)."'>", "</a>", "<a href='".admin_url("post.php?post=".$post_id."&action=edit")."'>".($post_title != '' ? $post_title : "<em>".__("Unknown", 'lang_media')."</em>")." <i class='fa fa-wrench'></i></a>", $post_date));
 
@@ -539,7 +539,7 @@ class mf_media
 
 				$json_output['files'][] = array(
 					'name' => $arr_file_url[2],
-					'title' => get_post_title($post_id),
+					'title' => get_the_title($post_id),
 					'image_alt' => get_post_meta($post_id, '_wp_attachment_image_alt', true),
 					'url' => $upload_url.$file_url,
 					'type' => mf_get_post_content($post_id, 'post_mime_type'),
@@ -1931,13 +1931,13 @@ class mf_media
 				}
 			}
 
-			//do_log("File Media: ".$file_id.", ".get_post_title($file_id).", ".$display.", ".apply_filters('display_category_file', $display, $file_id));
+			//do_log("File Media: ".$file_id.", ".get_the_title($file_id).", ".$display.", ".apply_filters('display_category_file', $display, $file_id));
 
 			if($display == true && apply_filters('display_category_file', $display, $file_id) == true)
 			{
 				$file_url = wp_get_attachment_url($file_id);
 				$file_thumb = wp_get_attachment_thumb_url($file_id);
-				$file_name = get_post_title($file_id);
+				$file_name = get_the_title($file_id);
 
 				if($file_name != '' && $file_url != '')
 				{
