@@ -244,7 +244,7 @@ class mf_media
 
 					if($arr_attachment_metadata['height'] == $arr_attachment_metadata_temp['height'] && $arr_attachment_metadata['width'] == $arr_attachment_metadata_temp['width'] && $arr_attachment_metadata['filesize'] == $arr_attachment_metadata_temp['filesize'])
 					{
-						do_log("<a href='".admin_url("upload.php?mode=list&s=".$post_title)."'>".sprintf("There were multiple files called %s with the same proportions %s and size %s", $post_title, $arr_attachment_metadata['height']."x".$arr_attachment_metadata['width'], size_format($arr_attachment_metadata['filesize']))."</a> (<a href='".admin_url("post.php?post=".$arr_attachment_metadata['id']."&action=edit")."'>#".$arr_attachment_metadata['id']."</a> & <a href='".admin_url("post.php?post=".$arr_attachment_metadata_temp['id']."&action=edit")."'>".$arr_attachment_metadata_temp['id']."</a>)");
+						do_log("<a href='".admin_url("upload.php?mode=list&s=".$post_title)."'>".sprintf("There were multiple files called %s with the same proportions %s and size %s", $post_title, $arr_attachment_metadata['height']."x".$arr_attachment_metadata['width'], size_format($arr_attachment_metadata['filesize']))."</a> (<a href='".admin_url("post.php?post=".$arr_attachment_metadata['id']."&action=edit")."'>#".$arr_attachment_metadata['id']."</a> & <a href='".admin_url("post.php?post=".$arr_attachment_metadata_temp['id']."&action=edit")."'>".$arr_attachment_metadata_temp['id']."</a>)", 'publish', false);
 
 						break;
 					}
@@ -1079,7 +1079,7 @@ class mf_media
 	{
 		global $post_type, $pagenow;
 
-		if($pagenow == 'upload.php') // && $post_type == ''a
+		if($pagenow == 'upload.php')
 		{
 			//$strFilterAttachmentCategory = get_or_set_table_filter(array('key' => 'strFilterAttachmentCategory'));
 			$strFilterAttachmentCategory = check_var('strFilterAttachmentCategory');
@@ -1098,9 +1098,15 @@ class mf_media
 		switch($post_type)
 		{
 			case 'attachment':
+				global $obj_base;
+
+				if($obj_base->has_comments() == false)
+				{
+					unset($cols['comments']);
+				}
+
 				unset($cols['author']);
 				unset($cols['parent']);
-				unset($cols['comments']);
 
 				if(IS_ADMINISTRATOR && get_option('setting_media_activate_categories') == 'yes')
 				{
