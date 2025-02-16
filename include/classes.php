@@ -1098,9 +1098,7 @@ class mf_media
 		switch($post_type)
 		{
 			case 'attachment':
-				global $obj_base;
-
-				if($obj_base->has_comments() == false)
+				if(apply_filters('has_comments', true) == false)
 				{
 					unset($cols['comments']);
 				}
