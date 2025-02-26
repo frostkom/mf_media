@@ -2012,10 +2012,11 @@ class mf_media
 
 			'ico' =>				array(__("Icon", 'lang_media'), "image/x-icon"),
 			'svg' =>				array("SVG", "image/svg+xmln"),
-			'jpg|jpeg|jpe' =>		array($image_name." (JPEG)", "image/jpeg"),
+			'avif' =>				array($image_name." (AVIF)", "image/avif"),
 			'gif' =>				array($image_name." (GIF)", "image/gif"),
+			'jpg|jpeg|jpe' =>		array($image_name." (JPEG)", "image/jpeg"),
 			'png' =>				array($image_name." (PNG)", "image/png"),
-			'bmp' =>				array($image_name." (BMP)", "image/bmp"),
+			//'bmp' =>				array($image_name." (BMP)", "image/bmp"),
 			'tiff|tif' =>			array($image_name." (TIFF)", "image/tiff"),
 			'webp' =>				array($image_name." (WEBP)", "image/webp"),
 
