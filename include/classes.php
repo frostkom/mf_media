@@ -555,14 +555,14 @@ class mf_media
 	{
 		load_plugin_textdomain('lang_media', false, str_replace("/include", "", dirname(plugin_basename(__FILE__)))."/lang/");
 
-		$labels = array(
-			'name' => _x(__("Types", 'lang_media'), 'post type general name'),
-			'singular_name' => _x(__("Type", 'lang_media'), 'post type singular name'),
-			'menu_name' => __("Allowed Types", 'lang_media'),
-		);
-
-		$args = array(
-			'labels' => $labels,
+		// Post types
+		#######################
+		register_post_type($this->post_type_allowed, array(
+			'labels' => array(
+				'name' => _x(__("Types", 'lang_media'), 'post type general name'),
+				'singular_name' => _x(__("Type", 'lang_media'), 'post type singular name'),
+				'menu_name' => __("Allowed Types", 'lang_media'),
+			),
 			'public' => false, // Previously true but changed to hide in sitemap.xml
 			'show_ui' => true,
 			'show_in_menu' => false,
@@ -571,11 +571,10 @@ class mf_media
 			'supports' => array('title'),
 			'hierarchical' => false,
 			'has_archive' => false,
-		);
-
-		register_post_type($this->post_type_allowed, $args);
+		));
 
 		register_taxonomy_for_object_type('category', 'attachment');
+		#######################
 	}
 
 	function init_callback()
@@ -763,7 +762,10 @@ class mf_media
 			{
 				$plugin_base_include_url = plugins_url()."/mf_base/include";
 
-				mf_enqueue_script('script_base_settings', $plugin_base_include_url."/script_settings.js", array('default_tab' => $this->default_tab, 'settings_page' => false));
+				mf_enqueue_script('script_base_settings', $plugin_base_include_url."/script_settings.js", array(
+					'default_tab' => $this->default_tab,
+					'settings_page' => false,
+				));
 			}
 		}
 	}
