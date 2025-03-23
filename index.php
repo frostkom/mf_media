@@ -3,7 +3,7 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description:
-Version: 5.10.39
+Version: 5.10.40
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://martinfors.se
@@ -24,7 +24,7 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 	add_action('cron_base', array($obj_media, 'cron_base'), mt_rand(1, 10));
 
 	add_action('cron_sync', array($obj_media, 'cron_sync'));
-	add_filter('api_sync', array($obj_media, 'api_sync'), 10, 2);
+	//add_filter('api_sync', array($obj_media, 'api_sync'), 10, 2);
 
 	add_action('init', array($obj_media, 'init'));
 	add_action('init', array($obj_media, 'init_callback'), 100);
@@ -114,6 +114,10 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 
 			add_index($arr_add_index);
 		}
+		
+		mf_uninstall_plugin(array(
+			'options' => array('setting_media_files2sync'),
+		));
 	}
 
 	function uninstall_media()

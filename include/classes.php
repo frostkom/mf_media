@@ -423,7 +423,7 @@ class mf_media
 
 		if(count($json['files']) > 0)
 		{
-			//do_log("Media -> cron_sync: ".var_export($json['files'], true));
+			//do_log(__FUNCTION__.": ".var_export($json['files'], true));
 
 			list($upload_path, $upload_url) = get_uploads_folder('', false);
 			$file_base_path = $upload_path.date("Y")."/".date("m")."/";
@@ -520,7 +520,7 @@ class mf_media
 		}
 	}
 
-	function api_sync($json_output, $data = array())
+	/*function api_sync($json_output, $data = array())
 	{
 		$json_output['files'] = array();
 
@@ -535,8 +535,6 @@ class mf_media
 				$file_url = get_post_meta($post_id, '_wp_attached_file', true);
 				$arr_file_url = explode("/", $file_url, 3);
 
-				//$file_full_size_path = get_attached_file($post->ID);
-
 				$json_output['files'][] = array(
 					'name' => $arr_file_url[2],
 					'title' => get_the_title($post_id),
@@ -549,7 +547,7 @@ class mf_media
 		}
 
 		return $json_output;
-	}
+	}*/
 
 	function init()
 	{
@@ -619,12 +617,12 @@ class mf_media
 
 		$arr_settings['setting_media_resize_original_image'] = __("Resize Original Image", 'lang_media');
 
-		$option_sync_sites = get_option('option_sync_sites', array());
+		/*$option_sync_sites = get_option('option_sync_sites', array());
 
 		if(count($option_sync_sites) > 0)
 		{
 			$arr_settings['setting_media_files2sync'] = __("Files to Sync", 'lang_media');
-		}
+		}*/
 
 		show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
 	}
@@ -685,20 +683,18 @@ class mf_media
 		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option, 'description' => __("This will remove the original image if it is larger than the largest resized size", 'lang_media')));
 	}
 
-	function setting_media_files2sync_callback()
+	/*function setting_media_files2sync_callback()
 	{
 		global $wpdb;
 
 		$setting_key = get_setting_key(__FUNCTION__);
 		$option = get_option($setting_key);
 
-		//echo get_media_library(array('name' => $setting_key, 'value' => $option, 'multiple' => true, 'description' => __("These files will be downloaded and/or updated to child sites, if there are any", 'lang_media')));
-
 		$arr_data = array();
 		get_post_children(array('add_choose_here' => false, 'post_type' => 'attachment'), $arr_data);
 
 		echo show_select(array('data' => $arr_data, 'name' => $setting_key."[]", 'value' => $option, 'description' => __("These files will be downloaded and/or updated to child sites, if there are any", 'lang_media')));
-	}
+	}*/
 
 	function admin_init()
 	{
@@ -886,12 +882,12 @@ class mf_media
 				'icon' => "fas fa-bars",
 				'name' => __("Media", 'lang_media')." - ".__("Display Categories in Menu", 'lang_media'),
 			),
-			'setting_media_files2sync' => array(
+			/*'setting_media_files2sync' => array(
 				'type' => 'posts',
 				'global' => false,
 				'icon' => "fas fa-sync",
 				'name' => __("Media", 'lang_media')." - ".__("Files to Sync", 'lang_media'),
-			),
+			),*/
 		);
 
 		return $arr_settings;
