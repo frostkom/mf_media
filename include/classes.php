@@ -1905,11 +1905,11 @@ class mf_media
 	{
 		global $wpdb;
 
-		extract(shortcode_atts(array(
+		$out = "";
+
+		/*extract(shortcode_atts(array(
 			'id' => ''
 		), $atts));
-
-		$out = "";
 
 		$current_user_role = get_current_user_role();
 
@@ -1965,15 +1965,19 @@ class mf_media
 
 		if($out != '')
 		{
-			return "<ul class='media_categories'>"
+			$out = "<ul class='media_categories'>"
 				.$out
 			."</ul>";
 		}
 
 		else
 		{
-			return "<p>".__("I could not find any information to show you", 'lang_media')."</p>";
-		}
+			$out = "<p>".__("I could not find any information to show you", 'lang_media')."</p>";
+		}*/
+
+		do_log(__FUNCTION__.": Add a block instead (".var_export($atts, true).")");
+
+		return $out;
 	}
 
 	function get_media_actions()
