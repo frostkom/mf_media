@@ -475,9 +475,9 @@ class mf_media
 							$post_data = array(
 								'ID' => $post_id,
 								'post_modified' => $file['modified'],
-								'meta_input' => array(
+								'meta_input' => apply_filters('filter_meta_input', array(
 									'_wp_attachment_image_alt' => $file['image_alt'],
-								),
+								)),
 							);
 
 							wp_update_post($post_data);
@@ -491,9 +491,9 @@ class mf_media
 								'post_content' => '',
 								'post_status' => 'inherit',
 								'post_modified' => $file['modified'],
-								'meta_input' => array(
+								'meta_input' => apply_filters('filter_meta_input', array(
 									'_wp_attachment_image_alt' => $file['image_alt'],
-								),
+								)),
 							);
 
 							$post_id = wp_insert_attachment($post_data, $file_path);
@@ -557,8 +557,8 @@ class mf_media
 		#######################
 		register_post_type($this->post_type_allowed, array(
 			'labels' => array(
-				'name' => _x(__("Types", 'lang_media'), 'post type general name'),
-				'singular_name' => _x(__("Type", 'lang_media'), 'post type singular name'),
+				'name' => __("Types", 'lang_media'),
+				'singular_name' => __("Type", 'lang_media'),
 				'menu_name' => __("Allowed Types", 'lang_media'),
 			),
 			'public' => false, // Previously true but changed to hide in sitemap.xml
@@ -1564,7 +1564,7 @@ class mf_media
 		}
 	}
 
-	function count_shortcode_button($count)
+	/*function count_shortcode_button($count)
 	{
 		if($count == 0 && get_option('setting_media_activate_categories') == 'yes')
 		{
@@ -1577,9 +1577,9 @@ class mf_media
 		}
 
 		return $count;
-	}
+	}*/
 
-	function get_shortcode_output($out)
+	/*function get_shortcode_output($out)
 	{
 		if(get_option('setting_media_activate_categories') == 'yes')
 		{
@@ -1593,7 +1593,7 @@ class mf_media
 		}
 
 		return $out;
-	}
+	}*/
 
 	function get_option_name_from_array($data)
 	{
