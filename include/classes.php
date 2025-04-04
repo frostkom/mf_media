@@ -1975,7 +1975,7 @@ class mf_media
 			$out = "<p>".__("I could not find any information to show you", 'lang_media')."</p>";
 		}*/
 
-		do_log(__FUNCTION__.": Add a block instead (#".$post->ID.", ".var_export($atts, true).")");
+		do_log(__FUNCTION__.": Add a block instead (#".$post->ID.", ".var_export($atts, true).")", 'publish', false);
 
 		return $out;
 	}
