@@ -1564,37 +1564,6 @@ class mf_media
 		}
 	}
 
-	/*function count_shortcode_button($count)
-	{
-		if($count == 0 && get_option('setting_media_activate_categories') == 'yes')
-		{
-			$this->get_categories();
-
-			if(count($this->categories) > 0)
-			{
-				$count++;
-			}
-		}
-
-		return $count;
-	}*/
-
-	/*function get_shortcode_output($out)
-	{
-		if(get_option('setting_media_activate_categories') == 'yes')
-		{
-			$arr_data = $this->get_categories_for_select(array('add_choose_here' => true));
-
-			if(count($arr_data) > 1)
-			{
-				$out .= "<h3>".__("Choose a Category", 'lang_media')."</h3>"
-				.show_select(array('data' => $arr_data, 'xtra' => "rel='mf_media_category'"));
-			}
-		}
-
-		return $out;
-	}*/
-
 	function get_option_name_from_array($data)
 	{
 		foreach($data['array'] as $key => $value)
