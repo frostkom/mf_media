@@ -1061,7 +1061,6 @@ class mf_media
 
 		if($post_type == 'attachment')
 		{
-			//$strFilterAttachmentCategory = get_or_set_table_filter(array('key' => 'strFilterAttachmentCategory', 'save' => true));
 			$strFilterAttachmentCategory = check_var('strFilterAttachmentCategory');
 
 			$arr_data = $this->get_categories_for_select(array('only_used' => true, 'add_choose_here' => true));
@@ -1079,7 +1078,6 @@ class mf_media
 
 		if($pagenow == 'upload.php')
 		{
-			//$strFilterAttachmentCategory = get_or_set_table_filter(array('key' => 'strFilterAttachmentCategory'));
 			$strFilterAttachmentCategory = check_var('strFilterAttachmentCategory');
 
 			if($strFilterAttachmentCategory != '')
