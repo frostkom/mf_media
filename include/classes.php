@@ -599,22 +599,6 @@ class mf_media
 
 				mf_enqueue_style('style_media', $plugin_include_url."style.css");
 				mf_enqueue_style('style_media_wp', $plugin_include_url."style_wp.css");
-
-				/*$taxonomy = 'category';
-
-				$this->get_categories();
-
-				$attachment_terms = $this->get_categories_options();
-
-				$current_media_category = get_user_meta(get_current_user_id(), 'meta_current_media_category', true);
-
-				mf_enqueue_script('script_media_taxonomy', $plugin_include_url."script_taxonomy.js", array(
-					'taxonomy' => $taxonomy,
-					'list_title' => "-- "." --",
-					'term_list' => "[".$attachment_terms."]",
-					'terms_test' => get_terms($taxonomy, array('hide_empty' => false)),
-					'current_media_category' => $current_media_category
-				));*/
 			}
 
 			else if($pagenow == 'admin.php' && check_var('page') == 'mf_media/list/index.php')
@@ -1729,85 +1713,6 @@ class mf_media
 		}
 
 		return $arr_views;
-	}
-
-	function shortcode_media_category($atts)
-	{
-		global $wpdb, $post;
-
-		$out = "";
-
-		/*extract(shortcode_atts(array(
-			'id' => ''
-		), $atts));
-
-		$current_user_role = get_current_user_role();
-
-		$result = $wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2category WHERE categoryID = '%d'", $id));
-
-		foreach($result as $r)
-		{
-			$file_id = $r->fileID;
-
-			$display = true;
-
-			$wpdb->get_var($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2role WHERE fileID = '%d' LIMIT 0, 1", $file_id));
-
-			if($wpdb->num_rows > 0)
-			{
-				$wpdb->get_var($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2role WHERE fileID = '%d' AND roleKey = %s LIMIT 0, 1", $file_id, $current_user_role));
-
-				if($wpdb->num_rows == 0)
-				{
-					$display = false;
-				}
-			}
-
-			//do_log("File Media: ".$file_id.", ".get_the_title($file_id).", ".$display.", ".apply_filters('display_category_file', $display, $file_id));
-
-			if($display == true && apply_filters('display_category_file', $display, $file_id) == true)
-			{
-				$file_url = wp_get_attachment_url($file_id);
-				$file_thumb = wp_get_attachment_thumb_url($file_id);
-				$file_name = get_the_title($file_id);
-
-				if($file_name != '' && $file_url != '')
-				{
-					$out .= "<li>";
-
-						if($file_thumb != '')
-						{
-							$out .= "<img src='".$file_thumb."'>";
-						}
-
-						else
-						{
-							$out .= get_file_icon(array('file' => $file_url, 'size' => "fa-3x"));
-						}
-
-						$out .= "<a href='".$file_url."'>".$file_name."</a>
-					</li>";
-				}
-			}
-		}
-
-		$out = apply_filters('media_categories_displayed', $out, $id);
-
-		if($out != '')
-		{
-			$out = "<ul class='media_categories'>"
-				.$out
-			."</ul>";
-		}
-
-		else
-		{
-			$out = "<p>".__("I could not find any information to show you", 'lang_media')."</p>";
-		}*/
-
-		do_log(__FUNCTION__.": Add a block instead (#".$post->ID.", ".var_export($atts, true).")", 'publish', false);
-
-		return $out;
 	}
 
 	function get_media_actions()
