@@ -934,7 +934,7 @@ class mf_media
 		}
 	}
 
-	function column_header($cols)
+	function column_header($columns)
 	{
 		global $post_type;
 
@@ -943,36 +943,36 @@ class mf_media
 			case 'attachment':
 				if(apply_filters('has_comments', true) == false)
 				{
-					unset($cols['comments']);
+					unset($columns['comments']);
 				}
 
-				unset($cols['author']);
-				unset($cols['parent']);
+				unset($columns['author']);
+				unset($columns['parent']);
 
 				if(IS_ADMINISTRATOR && get_option('setting_media_activate_categories') == 'yes')
 				{
-					unset($cols['categories']);
+					unset($columns['categories']);
 
-					$cols['media_categories'] = __("Categories", 'lang_media');
-					$cols['media_roles'] = __("Roles", 'lang_media');
+					$columns['media_categories'] = __("Categories", 'lang_media');
+					$columns['media_roles'] = __("Roles", 'lang_media');
 				}
 
 				if(get_site_option('setting_media_activate_is_file_used') == 'yes')
 				{
-					$cols['used'] = __("Used", 'lang_media');
+					$columns['used'] = __("Used", 'lang_media');
 				}
 			break;
 
 			case $this->post_type_allowed:
-				unset($cols['date']);
+				unset($columns['date']);
 
-				$cols['action'] = __("Action", 'lang_media');
-				$cols['role'] = __("Role", 'lang_media');
-				$cols['types'] = __("Types", 'lang_media');
+				$columns['action'] = __("Action", 'lang_media');
+				$columns['role'] = __("Role", 'lang_media');
+				$columns['types'] = __("Types", 'lang_media');
 			break;
 		}
 
-		return $cols;
+		return $columns;
 	}
 
 	function get_used_amount($id)
@@ -989,14 +989,14 @@ class mf_media
 		return get_post_meta($id, $this->meta_prefix.'used_amount', true);
 	}
 
-	function column_cell($col, $post_id)
+	function column_cell($column, $post_id)
 	{
 		global $wpdb, $post;
 
 		switch($post->post_type)
 		{
 			case 'attachment':
-				switch($col)
+				switch($column)
 				{
 					case 'media_categories':
 						$field_value = $this->get_media_categories($post_id);
@@ -1057,12 +1057,12 @@ class mf_media
 			break;
 
 			case $this->post_type_allowed:
-				switch($col)
+				switch($column)
 				{
 					case 'action':
 						$arr_actions = $this->get_media_actions();
 
-						$post_meta = get_post_meta($post_id, $this->meta_prefix.$col, true);
+						$post_meta = get_post_meta($post_id, $this->meta_prefix.$column, true);
 
 						echo $arr_actions[$post_meta];
 					break;
@@ -1070,7 +1070,7 @@ class mf_media
 					case 'role':
 						$arr_roles = get_roles_for_select(array('add_choose_here' => false, 'use_capability' => false));
 
-						$arr_post_meta = get_post_meta($post_id, $this->meta_prefix.$col, false);
+						$arr_post_meta = get_post_meta($post_id, $this->meta_prefix.$column, false);
 
 						$i = 0;
 
@@ -1085,7 +1085,7 @@ class mf_media
 					case 'types':
 						$arr_types = $this->get_media_types(array('type' => 'name'));
 
-						$arr_post_meta = get_post_meta($post_id, $this->meta_prefix.$col, false);
+						$arr_post_meta = get_post_meta($post_id, $this->meta_prefix.$column, false);
 
 						if(count($arr_post_meta) == 0)
 						{
