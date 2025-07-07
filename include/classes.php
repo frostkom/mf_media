@@ -2,7 +2,7 @@
 
 class mf_media
 {
-	var $categories = array();
+	var $categories = [];
 	var $default_tab = 0;
 	var $post_type_allowed = 'mf_media_allowed';
 	var $meta_prefix = 'mf_media_';
@@ -15,7 +15,7 @@ class mf_media
 	{
 		global $wpdb;
 
-		$array = array();
+		$array = [];
 
 		$result = $wpdb->get_results($wpdb->prepare("SELECT roleKey FROM ".$wpdb->prefix."media2role WHERE fileID = '%d'", $post_id));
 
@@ -31,7 +31,7 @@ class mf_media
 	{
 		global $wpdb;
 
-		$array = array();
+		$array = [];
 
 		$result = $wpdb->get_results($wpdb->prepare("SELECT categoryID FROM ".$wpdb->prefix."media2category WHERE fileID = '%d'", $post_id));
 
@@ -383,11 +383,11 @@ class mf_media
 		}
 	}
 
-	function api_sync($json_output, $data = array())
+	function api_sync($json_output, $data = [])
 	{
-		$json_output['files'] = array();
+		$json_output['files'] = [];
 
-		$setting_media_files2sync = get_option_or_default('setting_media_files2sync', array());
+		$setting_media_files2sync = get_option_or_default('setting_media_files2sync', []);
 
 		if(count($setting_media_files2sync) > 0)
 		{
@@ -459,7 +459,7 @@ class mf_media
 
 		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
 
-		$arr_settings = array();
+		$arr_settings = [];
 
 		if(IS_SUPER_ADMIN)
 		{
@@ -480,7 +480,7 @@ class mf_media
 
 		$arr_settings['setting_media_resize_original_image'] = __("Resize Original Image", 'lang_media');
 
-		/*$option_sync_sites = get_option('option_sync_sites', array());
+		/*$option_sync_sites = get_option('option_sync_sites', []);
 
 		if(count($option_sync_sites) > 0)
 		{
@@ -553,7 +553,7 @@ class mf_media
 		$setting_key = get_setting_key(__FUNCTION__);
 		$option = get_option($setting_key);
 
-		$arr_data = array();
+		$arr_data = [];
 		get_post_children(array('add_choose_here' => false, 'post_type' => 'attachment'), $arr_data);
 
 		echo show_select(array('data' => $arr_data, 'name' => $setting_key."[]", 'value' => $option, 'description' => __("These files will be downloaded and/or updated to child sites, if there are any", 'lang_media')));
@@ -608,6 +608,7 @@ class mf_media
 				mf_enqueue_script('script_base_settings', $plugin_base_include_url."/script_settings.js", array(
 					'default_tab' => $this->default_tab,
 					'settings_page' => false,
+					//'loading_animation' => apply_filters('get_loading_animation', ''),
 				));
 			}
 		}
@@ -640,7 +641,7 @@ class mf_media
 		}
 	}
 
-	function upload_mimes($existing_mimes = array())
+	function upload_mimes($existing_mimes = [])
 	{
 		global $wpdb;
 
@@ -681,7 +682,7 @@ class mf_media
 					break;
 
 					case 'allow_only_these':
-						$existing_mimes = array();
+						$existing_mimes = [];
 
 						foreach($post_types as $post_type)
 						{
@@ -1154,7 +1155,7 @@ class mf_media
 
 			if($intCategoryID > 0)
 			{
-				$arr_file_ids = array();
+				$arr_file_ids = [];
 
 				$result = $wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2category WHERE categoryID = '%d'", $intCategoryID));
 
@@ -1278,7 +1279,7 @@ class mf_media
 
 			$taxonomies = get_object_taxonomies('attachment', 'names');
 
-			$query = (isset($_REQUEST['query']) ? (array)$_REQUEST['query'] : array());
+			$query = (isset($_REQUEST['query']) ? (array)$_REQUEST['query'] : []);
 
 			$defaults = array('s', 'order', 'orderby', 'posts_per_page', 'paged', 'post_mime_type', 'post_parent', 'post__in', 'post__not_in');
 
@@ -1701,7 +1702,7 @@ class mf_media
 		return $arr_used;
 	}
 
-	function init_base_admin($arr_views, $data = array())
+	function init_base_admin($arr_views, $data = [])
 	{
 		if(!isset($data['init'])){	$data['init'] = false;}
 
@@ -1821,7 +1822,7 @@ class mf_media
 
 		/*'wax' => 'audio/x-ms-wax', 'mka' => 'audio/x-matroska', 'class' => 'application/java', 'xcf' => 'application/octet-stream', 'wri' => 'application/vnd.ms-write', 'mdb' => 'application/vnd.ms-access', 'mpp' => 'application/vnd.ms-project', 'docm' => 'application/vnd.ms-word.document.macroEnabled.12', 'dotx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.template', 'dotm' => 'application/vnd.ms-word.template.macroEnabled.12', 'xlsm' => 'application/vnd.ms-excel.sheet.macroEnabled.12', 'xlsb' => 'application/vnd.ms-excel.sheet.binary.macroEnabled.12', 'xltx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.template', 'xltm' => 'application/vnd.ms-excel.template.macroEnabled.12', 'xlam' => 'application/vnd.ms-excel.addin.macroEnabled.12', 'pptm' => 'application/vnd.ms-powerpoint.presentation.macroEnabled.12', 'ppsx' => 'application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'ppsm' => 'application/vnd.ms-powerpoint.slideshow.macroEnabled.12', 'potx' => 'application/vnd.openxmlformats-officedocument.presentationml.template', 'potm' => 'application/vnd.ms-powerpoint.template.macroEnabled.12', 'ppam' => 'application/vnd.ms-powerpoint.addin.macroEnabled.12', 'sldx' => 'application/vnd.openxmlformats-officedocument.presentationml.slide', 'sldm' => 'application/vnd.ms-powerpoint.slide.macroEnabled.12', 'onetoc|onetoc2|onetmp|onepkg' => 'application/onenote', 'oxps' => 'application/oxps', 'xps' => 'application/vnd.ms-xpsdocument', 'odg' => 'application/vnd.oasis.opendocument.graphics', 'odc' => 'application/vnd.oasis.opendocument.chart', 'odb' => 'application/vnd.oasis.opendocument.database', 'odf' => 'application/vnd.oasis.opendocument.formula', 'wp|wpd' => 'application/wordperfect', 'key' => 'application/vnd.apple.keynote', 'numbers' => 'application/vnd.apple.numbers', 'pages' => 'application/vnd.apple.pages', */
 
-		$arr_types = array();
+		$arr_types = [];
 
 		foreach($arr_types_raw as $key => $value)
 		{
@@ -1860,14 +1861,14 @@ class mf_media
 		}
 	}
 
-	function get_categories_for_select($data = array())
+	function get_categories_for_select($data = [])
 	{
 		global $wpdb;
 
 		if(!isset($data['only_used'])){			$data['only_used'] = false;}
 		if(!isset($data['add_choose_here'])){	$data['add_choose_here'] = true;}
 
-		$arr_data = array();
+		$arr_data = [];
 
 		if($data['add_choose_here'] == true)
 		{
@@ -1952,7 +1953,7 @@ class mf_media
 
 				$cat_files = $this->get_files($cat_id, $role_id);
 
-				$this->categories[$cat_id] = array('name' => $cat_name, 'files' => $cat_files, 'sub' => array());
+				$this->categories[$cat_id] = array('name' => $cat_name, 'files' => $cat_files, 'sub' => []);
 
 				$arr_categories2 = $this->get_taxonomy(array('taxonomy' => $taxonomy, 'parent' => $cat_id));
 
@@ -1978,7 +1979,7 @@ class mf_media
 	{
 		global $wpdb;
 
-		$out = array();
+		$out = [];
 
 		$result = $wpdb->get_results($wpdb->prepare("SELECT fileID, roleKey FROM ".$wpdb->prefix."media2category LEFT JOIN ".$wpdb->prefix."media2role USING (fileID) WHERE categoryID = '%d' GROUP BY fileID", $cat_id));
 
