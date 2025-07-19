@@ -3,15 +3,12 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description:
-Version: 1.0.0.11
+Version: 1.0.0.12
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://martinfors.se
 Text Domain: lang_media
 Domain Path: /lang
-
-Depends: Meta Box, MF Base
-GitHub Plugin URI: frostkom/mf_media
 */
 
 if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') && is_plugin_active("mf_base/index.php"))
