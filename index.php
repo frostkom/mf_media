@@ -3,12 +3,14 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description:
-Version: 1.0.0.12
+Version: 1.0.0.13
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://martinfors.se
 Text Domain: lang_media
 Domain Path: /lang
+
+Requires Plugins: meta-box
 */
 
 if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') && is_plugin_active("mf_base/index.php"))
@@ -73,8 +75,6 @@ if(!function_exists('is_plugin_active') || function_exists('is_plugin_active') &
 	function activate_media()
 	{
 		global $wpdb;
-
-		require_plugin("meta-box/meta-box.php", "Meta Box");
 
 		if(get_option('setting_media_activate_categories') == 'yes')
 		{
