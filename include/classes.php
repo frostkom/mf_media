@@ -424,11 +424,10 @@ class mf_media
 				'singular_name' => __("Type", 'lang_media'),
 				'menu_name' => __("Allowed Types", 'lang_media'),
 			),
-			'public' => false, // Previously true but changed to hide in sitemap.xml
+			'public' => false,
 			'show_ui' => true,
 			'show_in_menu' => false,
 			'show_in_nav_menus' => false,
-			'exclude_from_search' => true,
 			'supports' => array('title'),
 			'hierarchical' => false,
 			'has_archive' => false,
