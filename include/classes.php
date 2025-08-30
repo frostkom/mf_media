@@ -1571,20 +1571,6 @@ class mf_media
 		return $arr_used;
 	}
 
-	function init_base_admin($arr_views, $data = [])
-	{
-		if(!isset($data['init'])){	$data['init'] = false;}
-
-		if($data['init'] == true)
-		{
-			$plugin_include_url = plugin_dir_url(__FILE__);
-
-			mf_enqueue_style('style_media', $plugin_include_url."style.css");
-		}
-
-		return $arr_views;
-	}
-
 	function get_media_actions()
 	{
 		return array(
