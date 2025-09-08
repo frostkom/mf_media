@@ -198,7 +198,7 @@ class mf_media
 				$post_title = $r->post_title;
 				$post_title_count = $r->post_title_count;
 
-				$result_files = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." INNER JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND post_status != %s AND post_title = %s LIMIT 0, 5", '_wp_attachment_metadata', 'attachment', 'trash', $post_title));
+				$result_files = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." INNER JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND post_status != %s AND post_title = %s GROUP BY ID LIMIT 0, 5", '_wp_attachment_metadata', 'attachment', 'trash', $post_title));
 
 				$arr_attachment_metadata_temp = array(
 					'height' => 0,
@@ -260,7 +260,7 @@ class mf_media
 			#######################################
 			if(get_site_option('setting_media_activate_is_file_used') == 'yes')
 			{
-				$result = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." LEFT JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND (meta_value IS null OR meta_value < DATE_SUB(NOW(), INTERVAL 1 WEEK)) ORDER BY meta_value ASC LIMIT 0, 500", $this->meta_prefix.'used_updated', 'attachment'));
+				$result = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." LEFT JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND (meta_value IS null OR meta_value < DATE_SUB(NOW(), INTERVAL 1 WEEK)) GROUP BY ID ORDER BY meta_value ASC LIMIT 0, 500", $this->meta_prefix.'used_updated', 'attachment'));
 
 				foreach($result as $r)
 				{
