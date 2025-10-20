@@ -1,83 +1,80 @@
-@media all
+.attachments .thumbnail .fa
 {
-	.attachments .thumbnail .fa
+	position: absolute;
+	left: .2em;
+	text-shadow: 0 0 .3em #000;
+	top: .2em;
+	z-index: 10;
+}
+
+/* media-toolbar */
+.attachments-browser .media-toolbar
+{
+	height: auto;
+}
+
+.attachments-browser .attachments, .attachments-browser .uploader-inline
+{
+	top: 72px;
+}
+
+/* category fields */
+.compat-attachment-fields th
+{
+	padding-top: 1.3em;
+	vertical-align: top;
+}
+
+.compat-item .term-list
+{
+	background-color: #fff;
+	border: 1px solid #dfdfdf;
+	border-radius: .3em;
+	margin: 0 0 10px;
+	padding: 10px 10px 5px;
+}
+
+	.compat-item .term-list li
 	{
-		position: absolute;
-		left: .2em;
-		text-shadow: 0 0 .3em #000;
-		top: .2em;
-		z-index: 10;
+		line-height: 22px;
 	}
 
-	/* media-toolbar */
-	.attachments-browser .media-toolbar
-	{
-		height: auto;
-	}
-
-	.attachments-browser .attachments, .attachments-browser .uploader-inline
-	{
-		top: 72px;
-	}
-
-	/* category fields */
-	.compat-attachment-fields th
-	{
-		padding-top: 1.3em;
-		vertical-align: top;
-	}
-
-	.compat-item .term-list
-	{
-		background-color: #fff;
-		border: 1px solid #dfdfdf;
-		border-radius: .3em;
-		margin: 0 0 10px;
-		padding: 10px 10px 5px;
-	}
-
-		.compat-item .term-list li
+		.compat-item .term-list li input[type="checkbox"]
 		{
-			line-height: 22px;
+			margin: -4px 4px 0 0 !important;
+			width: auto;
 		}
 
-			.compat-item .term-list li input[type="checkbox"]
+			.compat-item .term-list li input[type=checkbox]:indeterminate:before
 			{
-				margin: -4px 4px 0 0 !important;
-				width: auto;
+				content: '\f147';
+				color: #CBCBCB;
+				display: inline-block;
+				float: left;
+				font: normal 21px/1 'dashicons';
+				margin: -3px 0 0 -4px;
+				speak: none;
+				vertical-align: middle;
+				width: 16px;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
 			}
 
-				.compat-item .term-list li input[type=checkbox]:indeterminate:before
-				{
-					content: '\f147';
-					color: #CBCBCB;
-					display: inline-block;
-					float: left;
-					font: normal 21px/1 'dashicons';
-					margin: -3px 0 0 -4px;
-					speak: none;
-					vertical-align: middle;
-					width: 16px;
-					-webkit-font-smoothing: antialiased;
-					-moz-osx-font-smoothing: grayscale;
-				}
-
-		.compat-item .term-list .children
-		{
-			margin: 5px 0 0 20px;
-		}
-
-	/* */
-	.actions .form_select.filter_attachment_category
+	.compat-item .term-list .children
 	{
-		display: inline-block;
-		margin-right: .5em;
+		margin: 5px 0 0 20px;
 	}
 
-	/* post.php -> Category List */
-	.compat-attachment-fields th
-	{
-		padding-top: 1.3em;
-		vertical-align: top;
-	}
+/* */
+.actions .form_select.filter_attachment_category
+{
+	display: inline-block;
+	margin-right: .5em;
+}
+
+/* post.php -> Category List */
+.compat-attachment-fields th
+{
+	padding-top: 1.3em;
+	vertical-align: top;
 }
