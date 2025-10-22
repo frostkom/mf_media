@@ -737,7 +737,7 @@ class mf_media
 				array(
 					'name' => __("Role", 'lang_media'),
 					'id' => $this->meta_prefix.'role',
-					'type' => 'select3',
+					'type' => 'select',
 					'options' => $arr_roles,
 					'multiple' => true,
 					'attributes' => array(
@@ -747,7 +747,7 @@ class mf_media
 				array(
 					'name' => __("Type", 'lang_media'),
 					'id' => $this->meta_prefix.'types',
-					'type' => 'select3',
+					'type' => 'select',
 					'options' => $arr_types,
 					'multiple' => true,
 					'attributes' => array(
