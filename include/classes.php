@@ -1959,7 +1959,14 @@ class mf_media
 
 					$out_categories .= $this->get_category_link($cat_id, $cat_array['name']);
 
-					$out_files .= "<table id='category_".$cat_id."' class='nav-target mf_media_category widefat striped".($this->default_tab == "category_".$cat_id ? "" : " hide")."'>
+					$data_temp = ['class' => ["nav-target", "mf_media_category"]];
+
+					if($this->default_tab != "category_".$cat_id)
+					{
+						$data_temp[] = "hide";
+					}
+
+					$out_files .= "<table id='category_".$cat_id."'".apply_filters('get_table_attr', "", $data_temp).">
 						<tbody>"
 							.$out_temp
 						."</tbody>
@@ -1976,29 +1983,24 @@ class mf_media
 					{
 						$out_categories .= $this->get_category_link($cat_id2, "- ".$cat_array2['name']);
 
-						$out_files .= "<table id='category_".$cat_id2."' class='nav-target mf_media_category widefat striped".($this->default_tab == "category_".$cat_id2 ? "" : " hide")."'>
+						$data_temp = ['class' => ["nav-target", "mf_media_category"]];
+
+						if($this->default_tab != "category_".$cat_id2)
+						{
+							$data_temp[] = "hide";
+						}
+
+						$out_files .= "<table id='category_".$cat_id2."'".apply_filters('get_table_attr', "", $data_temp).">
 							<tbody>"
 								.$out_temp
 							."</tbody>
 						</table>";
 					}
 
-					/*else
-					{
-						$out .= "Sub-Nope: ".$cat_array2['name']."<br>";
-					}*/
-
 					$i++;
 				}
-
-				/*else
-				{
-					$out .= "Nope: ".$cat_array['name']."<br>";
-				}*/
 			}
 		}
-
-		//$out .= var_export($this->categories, true);
 
 		if($out_categories != '' && $out_files != '')
 		{
@@ -2013,80 +2015,4 @@ class mf_media
 
 		return $out;
 	}
-
-	/*function show_categories()
-	{
-		$out = "";
-
-		if(count($this->categories) > 0)
-		{
-			$out .= "<h3 id='nav-tab-wrapper' class='nav-tab-wrapper'>";
-
-				$i = 0;
-
-				foreach($this->categories as $cat_id => $cat_array)
-				{
-					if($i == 0)
-					{
-						$this->default_tab = "category_".$cat_id;
-					}
-
-					$out .= $this->get_category_link($cat_id, $cat_array['name']);
-
-					foreach($cat_array['sub'] as $cat_id2 => $cat_array2)
-					{
-						$out .= $this->get_category_link($cat_id2, "- ".$cat_array2['name']);
-					}
-
-					$i++;
-				}
-
-			$out .= "</h3>";
-		}
-
-		else
-		{
-			$out .= "<em>".__("There are no categories to show here", 'lang_media')."</em>";
-		}
-
-		return $out;
-	}
-
-	function show_files()
-	{
-		$out = "";
-
-		if(count($this->categories) > 0)
-		{
-			foreach($this->categories as $cat_id => $cat_array)
-			{
-				$out_temp = $this->get_file_container($cat_id, $cat_array['name'], $cat_array['files']);
-
-				if($out_temp != '')
-				{
-					$out .= "<table id='category_".$cat_id."' class='nav-target mf_media_category widefat striped".($this->default_tab == "category_".$cat_id ? "" : " hide")."'>
-						<tbody>"
-							.$out_temp
-						."</tbody>
-					</table>";
-				}
-
-				foreach($cat_array['sub'] as $cat_id2 => $cat_array2)
-				{
-					$out_temp = $this->get_file_container($cat_id2, $cat_array2['name'], $cat_array2['files']);
-
-					if($out_temp != '')
-					{
-						$out .= "<table id='category_".$cat_id2."' class='nav-target mf_media_category widefat striped".($this->default_tab == "category_".$cat_id2 ? "" : " hide")."'>
-							<tbody>"
-								.$out_temp
-							."</tbody>
-						</table>";
-					}
-				}
-			}
-		}
-
-		return $out;
-	}*/
 }
