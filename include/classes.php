@@ -166,6 +166,8 @@ class mf_media
 
 			if($this->check_if_file_is_used_logged == false && $post_date < $post_date_limit)
 			{
+				do_action('load_font_awesome');
+
 				$post_title = get_the_title($post_id);
 
 				do_log(sprintf("%sThe file%s (%s) is not in use and is old (%s)", "<a href='".admin_url("upload.php?mode=list&s=".$post_title)."'>", "</a>", "<a href='".admin_url("post.php?post=".$post_id."&action=edit")."'>".($post_title != '' ? $post_title : "<em>".__("Unknown", 'lang_media')."</em>")." <i class='fa fa-wrench'></i></a>", $post_date));
@@ -476,6 +478,8 @@ class mf_media
 
 			else if($pagenow == 'admin.php' && check_var('page') == 'mf_media/list/index.php')
 			{
+				do_action('load_font_awesome');
+
 				$plugin_base_include_url = plugins_url()."/mf_base/include";
 
 				mf_enqueue_script('script_base_settings', $plugin_base_include_url."/script_settings.js", array(
@@ -812,6 +816,8 @@ class mf_media
 	{
 		global $post_type;
 
+		do_action('load_font_awesome');
+
 		switch($post_type)
 		{
 			case 'attachment':
@@ -1080,6 +1086,7 @@ class mf_media
 	{
 		if(get_option('setting_media_activate_categories') == 'yes')
 		{
+			do_action('load_font_awesome');
 ?>
 			<script type="text/html" id="tmpl-attachment">
 				<div class="attachment-preview js--select-attachment type-{{ data.type }} subtype-{{ data.subtype }} {{ data.orientation }}">
