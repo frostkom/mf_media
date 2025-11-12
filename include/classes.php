@@ -637,7 +637,7 @@ class mf_media
 		return $file;
 	}
 
-	function wp_generate_attachment_metadata($image_data) 
+	function wp_generate_attachment_metadata($image_data)
 	{
 		if(get_option('setting_media_resize_original_image', 'yes') == 'yes')
 		{
