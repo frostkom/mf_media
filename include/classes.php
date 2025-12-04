@@ -1554,7 +1554,7 @@ class mf_media
 
 		// Categories and roles
 		####################
-		if(does_table_exist($wpdb->prefix."media2category"))
+		if(apply_filters('does_table_exist', false, $wpdb->prefix."media2category"))
 		{
 			$result = $wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2category WHERE fileID = '%d'", $arr_used['id']));
 			$rows = $wpdb->num_rows;
@@ -1566,7 +1566,7 @@ class mf_media
 			}
 		}
 
-		if(does_table_exist($wpdb->prefix."media2role"))
+		if(apply_filters('does_table_exist', false, $wpdb->prefix."media2role"))
 		{
 			$result = $wpdb->get_results($wpdb->prepare("SELECT fileID FROM ".$wpdb->prefix."media2role WHERE fileID = '%d'", $arr_used['id']));
 			$rows = $wpdb->num_rows;
@@ -1748,7 +1748,7 @@ class mf_media
 			$cat_id = $r->term_id;
 			$cat_name = $r->name;
 
-			if($data['only_used'] == true && does_table_exist($wpdb->prefix."media2category"))
+			if($data['only_used'] == true && apply_filters('does_table_exist', false, $wpdb->prefix."media2category"))
 			{
 				$wpdb->get_results($wpdb->prepare("SELECT categoryID FROM ".$wpdb->prefix."media2category WHERE categoryID = '%d'", $cat_id));
 				$rows = $wpdb->num_rows;
@@ -1777,7 +1777,7 @@ class mf_media
 					$cat_id = $r->term_id;
 					$cat_name = $r->name;
 
-					if($data['only_used'] == true && does_table_exist($wpdb->prefix."media2category"))
+					if($data['only_used'] == true && apply_filters('does_table_exist', false, $wpdb->prefix."media2category"))
 					{
 						$wpdb->get_results($wpdb->prepare("SELECT categoryID FROM ".$wpdb->prefix."media2category WHERE categoryID = '%d'", $cat_id));
 						$rows = $wpdb->num_rows;
