@@ -520,11 +520,11 @@ class mf_media
 
 	function upload_mimes($existing_mimes = [])
 	{
-		global $wpdb;
+		global $wpdb, $obj_base;
 
 		$arr_types = $this->get_media_types(array('type' => 'mime'));
 
-		$result = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." WHERE post_type = %s AND post_status = %s", $this->post_type_allowed, 'publish'));
+		$result = $obj_base->cache_query($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." WHERE post_type = %s AND post_status = %s", $this->post_type_allowed, 'publish'));
 
 		foreach($result as $r)
 		{
