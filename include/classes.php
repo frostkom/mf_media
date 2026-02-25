@@ -279,6 +279,10 @@ class mf_media
 				delete_post_meta_by_key($this->meta_prefix.'used_updated');
 			}
 			#######################################
+
+			mf_uninstall_plugin(array(
+				'options' => array('setting_media_resize_original_image', 'setting_media_files2sync', 'option_sync_sites'),
+			));
 		}
 
 		$obj_cron->end();
@@ -353,14 +357,7 @@ class mf_media
 			$arr_settings['setting_media_display_categories_in_menu'] = __("Display Categories in Menu", 'lang_media');
 		}
 
-		$arr_settings['setting_media_resize_original_image'] = __("Resize Original Image", 'lang_media');
-
-		/*$option_sync_sites = get_option('option_sync_sites', []);
-
-		if(count($option_sync_sites) > 0)
-		{
-			$arr_settings['setting_media_files2sync'] = __("Files to Sync", 'lang_media');
-		}*/
+		//$arr_settings['setting_media_resize_original_image'] = __("Resize Original Image", 'lang_media');
 
 		show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
 	}
@@ -405,13 +402,13 @@ class mf_media
 		}
 	}
 
-	function setting_media_display_categories_in_menu_callback()
+	/*function setting_media_display_categories_in_menu_callback()
 	{
 		$setting_key = get_setting_key(__FUNCTION__);
 		$option = get_option($setting_key, 'no');
 
 		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
-	}
+	}*/
 
 	function setting_media_resize_original_image_callback()
 	{
@@ -420,19 +417,6 @@ class mf_media
 
 		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option, 'description' => __("This will remove the original image if it is larger than the largest resized size", 'lang_media')));
 	}
-
-	/*function setting_media_files2sync_callback()
-	{
-		global $wpdb;
-
-		$setting_key = get_setting_key(__FUNCTION__);
-		$option = get_option($setting_key);
-
-		$arr_data = [];
-		get_post_children(array('add_choose_here' => false, 'post_type' => 'attachment'), $arr_data);
-
-		echo show_select(array('data' => $arr_data, 'name' => $setting_key."[]", 'value' => $option, 'description' => __("These files will be downloaded and/or updated to child sites, if there are any", 'lang_media')));
-	}*/
 
 	function admin_init()
 	{
@@ -607,12 +591,6 @@ class mf_media
 				'icon' => "fas fa-bars",
 				'name' => __("Media", 'lang_media')." - ".__("Display Categories in Menu", 'lang_media'),
 			),
-			/*'setting_media_files2sync' => array(
-				'type' => 'posts',
-				'global' => false,
-				'icon' => "fas fa-sync",
-				'name' => __("Media", 'lang_media')." - ".__("Files to Sync", 'lang_media'),
-			),*/
 		);
 
 		return $arr_settings;
@@ -637,7 +615,7 @@ class mf_media
 		return $file;
 	}
 
-	function wp_generate_attachment_metadata($image_data)
+	/*function wp_generate_attachment_metadata($image_data)
 	{
 		if(get_option('setting_media_resize_original_image', 'yes') == 'yes')
 		{
@@ -690,11 +668,6 @@ class mf_media
 						copy($large_image_location, $uploaded_image_location);
 						//do_log("wp_generate_attachment_metadata() Copy: ".$large_image_location." -> ".$uploaded_image_location);
 					}
-
-					// Update image metadata and return them
-					/*$image_data['width'] = $image_data['sizes'][$image_size]['width'];
-					$image_data['height'] = $image_data['sizes'][$image_size]['height'];
-					unset($image_data['sizes'][$image_size]);*/
 				}
 
 				else
@@ -705,7 +678,7 @@ class mf_media
 		}
 
 		return $image_data;
-	}
+	}*/
 
 	function hidden_meta_boxes($hidden, $screen)
 	{
