@@ -1568,7 +1568,6 @@ class mf_media
 	{
 		global $obj_base;
 
-		//https://codex.wordpress.org/Function_Reference/get_allowed_mime_types
 		$font_name = __("Font", 'lang_media');
 		$image_name = __("Image", 'lang_media');
 		$audio_name = __("Audio", 'lang_media');
@@ -1593,7 +1592,6 @@ class mf_media
 			'gif' =>				array($image_name." (GIF)", "image/gif"),
 			'jpg|jpeg|jpe' =>		array($image_name." (JPEG)", "image/jpeg"),
 			'png' =>				array($image_name." (PNG)", "image/png"),
-			//'bmp' =>				array($image_name." (BMP)", "image/bmp"),
 			'tiff|tif' =>			array($image_name." (TIFF)", "image/tiff"),
 			'webp' =>				array($image_name." (WEBP)", "image/webp"),
 
@@ -1604,16 +1602,10 @@ class mf_media
 			'mp3|m4a|m4b' =>		array($audio_name." (MP3)", "audio/mpeg"),
 			'wav' =>				array($audio_name." (Wav)", "audio/wav"),
 			'ogg|oga' =>			array($audio_name." (OGG)", "audio/ogg"),
-			//'mid|midi' =>			array($audio_name." (Midi)", "audio/midi"),
 			'wma' =>				array($audio_name." (WMA)", "audio/x-ms-wma"),
-			//'ra|ram' =>			array($audio_name." (Real)", "audio/x-realaudio"),
 
-			//'asf|asx' =>			array($video_name." (ASF)", "video/x-ms-asf"),
 			'wmv' =>				array($video_name." (WMV)", "video/x-ms-wmv"),
-			//'wmx' =>				array($video_name." (WMX)", "video/x-ms-wmx"),
-			//'wm' =>				array($video_name." (WM)", "video/x-ms-wm"),
 			'avi' =>				array($video_name." (AVI)", "video/avi"),
-			//'divx' =>				array($video_name." (DivX)", "video/divx"),
 			'flv' =>				array($video_name." (FLV)", "video/x-flv"),
 			'mov|qt' =>				array($video_name." (QT)", "video/quicktime"),
 			'mpeg|mpg|mpe' =>		array($video_name." (MPEG)", "video/mpeg"),
@@ -1621,45 +1613,32 @@ class mf_media
 			//'ogv' =>				array($video_name." (OGG)", "video/ogg"),
 			//'webm' =>				array($video_name." (Webm)", "video/webm"),
 			'mkv' =>				array($video_name." (MKV)", "video/x-matroska"),
-			//'3gp|3gpp' =>			array($video_name." (3gp)", "video/3gpp"),
-			//'3g2|3gp2' =>			array($video_name." (3g2)", "video/3gpp2"),
 
 			'pdf' =>				array("PDF", "application/pdf"),
-			'tar' =>				array($compressed_name." (Tar)", "application/x-tar"),
-			'zip' =>				array($compressed_name." (Zip)", "application/zip"),
-			'gz|gzip' =>			array($compressed_name." (Gzip)", "application/x-gzip"),
-			'rar' =>				array($compressed_name." (Rar)", "application/rar"),
-			'7z' =>					array($compressed_name." (7z)", "application/x-7z-compressed"),
+			'tar' =>				array($compressed_name." (TAR)", "application/x-tar"),
+			'zip' =>				array($compressed_name." (ZIP)", "application/zip"),
+			'gz|gzip' =>			array($compressed_name." (GZIP)", "application/x-gzip"),
+			'rar' =>				array($compressed_name." (RAR)", "application/rar"),
+			'7z' =>					array($compressed_name." (7Z)", "application/x-7z-compressed"),
 
 			'psd' =>				array($image_name." (PSD)", "application/octet-stream"),
-			'doc' =>				array($document_name." (Word)", "application/msword"),
-			'docx' =>				array($document_name." (Word docx)", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
-			'odt' =>				array($document_name." (Open)", "application/vnd.oasis.opendocument.text"),
-			//'pot' =>				array($presentation_name." (PowerPoint - POT)", "application/vnd.ms-powerpoint"),
-			//'pps' =>				array($presentation_name." (PowerPoint - PPS)", "application/vnd.ms-powerpoint"),
-			'ppt' =>				array($presentation_name." (PowerPoint - PPT)", "application/vnd.ms-powerpoint"),
-			'pptx' =>				array($presentation_name." (PowerPoint - PPTX)", "application/vnd.openxmlformats-officedocument.presentationml.presentation"),
-			'odp' =>				array($presentation_name." (Open)", "application/vnd.oasis.opendocument.presentation"),
-			//'xla' =>				array($spreadsheet_name." (Excel - XLA)", "application/vnd.ms-excel"),
-			'xls' =>				array($spreadsheet_name." (Excel - XLS)", "application/vnd.ms-excel"),
-			//'xls' =>				array($spreadsheet_name." (Excel - XLS)", array("application/excel", "application/vnd.ms-excel", "application/x-excel", "application/x-msexcel")),
-			//'xlt' =>				array($spreadsheet_name." (Excel - XLT)", "application/vnd.ms-excel"),
-			//'xlw' =>				array($spreadsheet_name." (Excel - XLW)", "application/vnd.ms-excel"),
-			'xlsx' =>				array($spreadsheet_name." (Excel - XLSX)", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
-			'ods' =>				array($spreadsheet_name." (Open)", "application/vnd.oasis.opendocument.spreadsheet"),
+			'doc' =>				array($document_name." (DOC)", "application/msword"),
+			'docx' =>				array($document_name." (DOCX)", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
+			'odt' =>				array($document_name." (ODT)", "application/vnd.oasis.opendocument.text"),
+			'ppt' =>				array($presentation_name." (PPT)", "application/vnd.ms-powerpoint"),
+			'pptx' =>				array($presentation_name." (PPTX)", "application/vnd.openxmlformats-officedocument.presentationml.presentation"),
+			'odp' =>				array($presentation_name." (ODP)", "application/vnd.oasis.opendocument.presentation"),
+			'xls' =>				array($spreadsheet_name." (XLS)", "application/vnd.ms-excel"),
+			'xlsx' =>				array($spreadsheet_name." (XLSX)", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+			'ods' =>				array($spreadsheet_name." (ODS)", "application/vnd.oasis.opendocument.spreadsheet"),
 
-			//'txt|asc|c|cc|h|srt' => "Plain text", "text/plain
-			//'csv' => "CSV", "text/csv
-			//'tsv' => "", "text/tab-separated-values
-			//'rtf' => "", "application/rtf
-			//'ics' => "Calendar", "text/calendar
-			//'rtx' => "", "text/richtext
-			//'vtt' => "", "text/vtt
+			'cert|pem' =>			array("CERT", "application/x-pem-file"),
+			'key' =>				array("KEY", "application/x-private-key"),
 
-			//'dfxp' => "", "application/ttaf+xml
+			//'txt' => array(__("Plain text", 'lang_media'), "text/plain"),
+			//'csv' => array("CSV", "text/csv"),
+			//'ics' => array(__("Calendar", 'lang_media'), "text/calendar"),
 		);
-
-		/*'wax' => 'audio/x-ms-wax', 'mka' => 'audio/x-matroska', 'class' => 'application/java', 'xcf' => 'application/octet-stream', 'wri' => 'application/vnd.ms-write', 'mdb' => 'application/vnd.ms-access', 'mpp' => 'application/vnd.ms-project', 'docm' => 'application/vnd.ms-word.document.macroEnabled.12', 'dotx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.template', 'dotm' => 'application/vnd.ms-word.template.macroEnabled.12', 'xlsm' => 'application/vnd.ms-excel.sheet.macroEnabled.12', 'xlsb' => 'application/vnd.ms-excel.sheet.binary.macroEnabled.12', 'xltx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.template', 'xltm' => 'application/vnd.ms-excel.template.macroEnabled.12', 'xlam' => 'application/vnd.ms-excel.addin.macroEnabled.12', 'pptm' => 'application/vnd.ms-powerpoint.presentation.macroEnabled.12', 'ppsx' => 'application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'ppsm' => 'application/vnd.ms-powerpoint.slideshow.macroEnabled.12', 'potx' => 'application/vnd.openxmlformats-officedocument.presentationml.template', 'potm' => 'application/vnd.ms-powerpoint.template.macroEnabled.12', 'ppam' => 'application/vnd.ms-powerpoint.addin.macroEnabled.12', 'sldx' => 'application/vnd.openxmlformats-officedocument.presentationml.slide', 'sldm' => 'application/vnd.ms-powerpoint.slide.macroEnabled.12', 'onetoc|onetoc2|onetmp|onepkg' => 'application/onenote', 'oxps' => 'application/oxps', 'xps' => 'application/vnd.ms-xpsdocument', 'odg' => 'application/vnd.oasis.opendocument.graphics', 'odc' => 'application/vnd.oasis.opendocument.chart', 'odb' => 'application/vnd.oasis.opendocument.database', 'odf' => 'application/vnd.oasis.opendocument.formula', 'wp|wpd' => 'application/wordperfect', 'key' => 'application/vnd.apple.keynote', 'numbers' => 'application/vnd.apple.numbers', 'pages' => 'application/vnd.apple.pages', */
 
 		$arr_types = [];
 
