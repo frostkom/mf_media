@@ -86,7 +86,7 @@ class mf_media
 	{
 		if($this->check_if_file_is_used_start == false)
 		{
-			$this->check_if_file_is_used_start = date("Y-m-d H:i:s");
+			$this->check_if_file_is_used_start = current_time('mysql');
 		}
 
 		list($upload_path, $upload_url) = get_uploads_folder();
@@ -177,7 +177,7 @@ class mf_media
 		}
 
 		update_post_meta($post_id, $this->meta_prefix.'used_example', $arr_used['example']);
-		update_post_meta($post_id, $this->meta_prefix.'used_updated', date("Y-m-d H:i:s"));
+		update_post_meta($post_id, $this->meta_prefix.'used_updated', current_time('mysql'));
 
 		return $is_used;
 	}
