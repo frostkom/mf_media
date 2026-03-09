@@ -3,7 +3,7 @@
 Plugin Name: MF Media
 Plugin URI: https://github.com/frostkom/mf_media
 Description:
-Version: 1.0.1.16
+Version: 1.0.1.17
 Licence: GPLv2 or later
 Author: Martin Fors
 Author URI: https://martinfors.se

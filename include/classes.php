@@ -402,21 +402,21 @@ class mf_media
 		}
 	}
 
-	/*function setting_media_display_categories_in_menu_callback()
+	function setting_media_display_categories_in_menu_callback()
 	{
 		$setting_key = get_setting_key(__FUNCTION__);
 		$option = get_option($setting_key, 'no');
 
 		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
-	}*/
+	}
 
-	function setting_media_resize_original_image_callback()
+	/*function setting_media_resize_original_image_callback()
 	{
 		$setting_key = get_setting_key(__FUNCTION__);
 		$option = get_option($setting_key, 'yes');
 
 		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option, 'description' => __("This will remove the original image if it is larger than the largest resized size", 'lang_media')));
-	}
+	}*/
 
 	function admin_init()
 	{
