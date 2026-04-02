@@ -913,11 +913,14 @@ class mf_media
 				switch($column)
 				{
 					case 'action':
-						$arr_actions = $this->get_media_actions();
-
 						$post_meta = get_post_meta($post_id, $this->meta_prefix.$column, true);
 
-						echo $arr_actions[$post_meta];
+						if($post_meta != '')
+						{
+							$arr_actions = $this->get_media_actions();
+
+							echo $arr_actions[$post_meta];
+						}
 					break;
 
 					case 'role':
