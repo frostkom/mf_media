@@ -281,7 +281,7 @@ class mf_media
 			#######################################
 
 			mf_uninstall_plugin(array(
-				'options' => array('setting_media_resize_original_image', 'setting_media_files2sync', 'option_sync_sites'),
+				'options' => array('setting_media_resize_original_image', 'setting_media_files2sync', 'option_sync_sites', 'setting_media_sanitize_files'),
 			));
 		}
 
@@ -339,12 +339,7 @@ class mf_media
 		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
 
 		$arr_settings = [];
-
-		if(IS_SUPER_ADMIN)
-		{
-			$arr_settings['setting_media_sanitize_files'] = __("Sanitize Filenames", 'lang_media');
-		}
-
+		//$arr_settings['setting_media_sanitize_files'] = __("Sanitize Filenames", 'lang_media');
 		$arr_settings['setting_media_activate_categories'] = __("Activate Categories", 'lang_media');
 
 		if(IS_SUPER_ADMIN)
@@ -369,14 +364,14 @@ class mf_media
 		echo settings_header($setting_key, __("Media", 'lang_media'));
 	}
 
-	function setting_media_sanitize_files_callback()
+	/*function setting_media_sanitize_files_callback()
 	{
 		$setting_key = get_setting_key(__FUNCTION__);
 		settings_save_site_wide($setting_key);
 		$option = get_site_option($setting_key, get_option($setting_key, 'yes'));
 
 		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option, 'description' => __("This will remove special characters from file names and URLs", 'lang_media')));
-	}
+	}*/
 
 	function setting_media_activate_categories_callback()
 	{
@@ -567,12 +562,6 @@ class mf_media
 	function filter_sites_table_settings($arr_settings)
 	{
 		$arr_settings['settings_media'] = array(
-			/*'setting_media_sanitize_files' => array(
-				'type' => 'bool',
-				'global' => true,
-				'icon' => "fas fa-broom",
-				'name' => __("Media", 'lang_media')." - ".__("Sanitize Filenames", 'lang_media'),
-			),*/
 			'setting_media_activate_categories' => array(
 				'type' => 'bool',
 				'global' => false,
@@ -598,8 +587,8 @@ class mf_media
 
 	function wp_handle_upload_prefilter($file)
 	{
-		if(get_site_option('setting_media_sanitize_files') == 'yes')
-		{
+		/*if(get_site_option('setting_media_sanitize_files') == 'yes')
+		{*/
 			$file_suffix = get_file_suffix($file['name']);
 
 			$file['name'] = sanitize_title(preg_replace("/.".$file_suffix."$/", '', $file['name']));
@@ -610,7 +599,7 @@ class mf_media
 			}
 
 			$file['name'] .= ".".$file_suffix;
-		}
+		//}
 
 		return $file;
 	}
