@@ -45,11 +45,11 @@ class mf_media
 
 	function get_taxonomy($data)
 	{
-		global $wpdb;
+		global $wpdb, $obj_base;
 
 		if(!isset($data['parent'])){	$data['parent'] = 0;}
 
-		$result = $wpdb->get_results($wpdb->prepare("SELECT term_id, name FROM ".$wpdb->terms." INNER JOIN ".$wpdb->term_taxonomy." USING (term_id) WHERE taxonomy = %s AND parent = '%d' ORDER BY name ASC", $data['taxonomy'], $data['parent']));
+		$result = $obj_base->get_results($wpdb->prepare("SELECT term_id, name FROM ".$wpdb->terms." INNER JOIN ".$wpdb->term_taxonomy." USING (term_id) WHERE taxonomy = %s AND parent = '%d' ORDER BY name ASC", $data['taxonomy'], $data['parent']));
 
 		return $result;
 	}
@@ -84,11 +84,6 @@ class mf_media
 
 	function check_if_file_is_used($post_id)
 	{
-		if($this->check_if_file_is_used_start == false)
-		{
-			$this->check_if_file_is_used_start = current_time('mysql');
-		}
-
 		list($upload_path, $upload_url) = get_uploads_folder();
 
 		$is_used = false;
@@ -212,7 +207,6 @@ class mf_media
 				{
 					$post_id = $r->ID;
 
-					//$arr_attachment_metadata = get_post_meta($post_id, '_wp_attachment_metadata', true);
 					$arr_attachment_metadata = wp_get_attachment_metadata($post_id);
 
 					$arr_attachment_metadata['id'] = $post_id;
@@ -242,8 +236,6 @@ class mf_media
 						}
 					}
 
-					//do_log(sprintf("%d had the value %s", $post_id, str_replace(array("\n", "\r"), "", var_export($arr_attachment_metadata, true))));
-
 					if($arr_attachment_metadata['height'] == $arr_attachment_metadata_temp['height'] && $arr_attachment_metadata['width'] == $arr_attachment_metadata_temp['width'] && $arr_attachment_metadata['filesize'] == $arr_attachment_metadata_temp['filesize'])
 					{
 						do_log("<a href='".admin_url("upload.php?mode=list&s=".$post_title)."'>".sprintf("There were multiple files called %s with the same proportions %s and size %s", $post_title, $arr_attachment_metadata['height']."x".$arr_attachment_metadata['width'], size_format($arr_attachment_metadata['filesize']))."</a> (<a href='".admin_url("post.php?post=".$arr_attachment_metadata['id']."&action=edit")."'>#".$arr_attachment_metadata['id']."</a> & <a href='".admin_url("post.php?post=".$arr_attachment_metadata_temp['id']."&action=edit")."'>".$arr_attachment_metadata_temp['id']."</a>)", 'publish', false);
@@ -253,8 +245,6 @@ class mf_media
 
 					$arr_attachment_metadata_temp = $arr_attachment_metadata;
 				}
-
-				//do_log(sprintf("There are %d files called %s", $post_title_count, $post_title));
 			}
 			#######################################
 
@@ -262,7 +252,7 @@ class mf_media
 			#######################################
 			if(get_site_option('setting_media_activate_is_file_used') == 'yes')
 			{
-				$result = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." LEFT JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND (meta_value IS null OR meta_value < DATE_SUB(NOW(), INTERVAL 1 WEEK)) GROUP BY ID ORDER BY meta_value ASC LIMIT 0, 500", $this->meta_prefix.'used_updated', 'attachment'));
+				$result = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." LEFT JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND (meta_value IS null OR meta_value < DATE_SUB(NOW(), INTERVAL 1 WEEK)) GROUP BY ID ORDER BY meta_value ASC LIMIT 0, 20", $this->meta_prefix.'used_updated', 'attachment'));
 
 				foreach($result as $r)
 				{
@@ -817,18 +807,16 @@ class mf_media
 		return $columns;
 	}
 
-	function get_used_amount($id)
+	function get_used_amount($post_id)
 	{
-		$used_updated = get_post_meta($id, $this->meta_prefix.'used_updated', true);
+		$used_updated = get_post_meta($post_id, $this->meta_prefix.'used_updated', true);
 
-		if($used_updated < date("Y-m-d H:i:s", strtotime("-1 week")))
+		if($used_updated < date("Y-m-d H:i:s", strtotime(current_time('mysql')." -1 week")))
 		{
-			$this->check_if_file_is_used($id);
-
-			//$used_updated = get_post_meta($id, $this->meta_prefix.'used_updated', true);
+			$this->check_if_file_is_used($post_id);
 		}
 
-		return get_post_meta($id, $this->meta_prefix.'used_amount', true);
+		return get_post_meta($post_id, $this->meta_prefix.'used_amount', true);
 	}
 
 	function column_cell($column, $post_id)
@@ -872,14 +860,21 @@ class mf_media
 					break;
 
 					case 'used':
-						if($this->check_if_file_is_used_start < date("Y-m-d H:i:s", strtotime("-30 second")))
+						$used_amount = 0;
+
+						if($this->check_if_file_is_used_start == false)
+						{
+							$this->check_if_file_is_used_start = current_time('mysql');
+						}
+
+						if($this->check_if_file_is_used_start > date("Y-m-d H:i:s", strtotime(current_time('mysql')." -5 second")))
 						{
 							$used_amount = $this->get_used_amount($post_id);
 
 							echo "<i class='fa ".($used_amount > 0 ? "fa-check green" : "fa-times red")." fa-lg' title='".sprintf(__("Used in %d places", 'lang_media'), $used_amount)."'></i>";
 						}
 
-						if(isset($used_amount) && $used_amount > 0)
+						if($used_amount > 0)
 						{
 							$used_example = get_post_meta($post_id, $this->meta_prefix.'used_example', true);
 
@@ -1462,14 +1457,14 @@ class mf_media
 
 		// Custom header, background etc.
 		####################
-		$post = get_post($arr_used['id']);
+		/*$post = get_post($arr_used['id']);
 		$arr_media_states = get_media_states($post);
 
 		if(is_array($arr_media_states) && count($arr_media_states) > 0)
 		{
 			$arr_used['amount'] += count($arr_media_states);
 			$arr_used['example'] = "#meta_state:".implode("|", $arr_media_states);
-		}
+		}*/
 		####################
 
 		// Site meta
