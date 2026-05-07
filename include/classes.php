@@ -186,72 +186,10 @@ class mf_media
 
 		if($obj_cron->is_running == false)
 		{
-			/* Look for duplicates */
-			#######################################
-			$result = $wpdb->get_results($wpdb->prepare("SELECT post_title, COUNT(post_title) AS post_title_count FROM ".$wpdb->posts." INNER JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND post_status != %s AND post_title != '' GROUP BY post_title ORDER BY post_title_count DESC LIMIT 0, 1", '_wp_attachment_metadata', 'attachment', 'trash'));
-
-			foreach($result as $r)
-			{
-				$post_title = $r->post_title;
-				$post_title_count = $r->post_title_count;
-
-				$result_files = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." INNER JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND post_status != %s AND post_title = %s GROUP BY ID LIMIT 0, 5", '_wp_attachment_metadata', 'attachment', 'trash', $post_title));
-
-				$arr_attachment_metadata_temp = array(
-					'height' => 0,
-					'width' => 0,
-					'filesize' => 0,
-				);
-
-				foreach($result_files as $r)
-				{
-					$post_id = $r->ID;
-
-					$arr_attachment_metadata = wp_get_attachment_metadata($post_id);
-
-					$arr_attachment_metadata['id'] = $post_id;
-
-					if(!isset($arr_attachment_metadata['height']))
-					{
-						$arr_attachment_metadata['height'] = 0;
-					}
-
-					if(!isset($arr_attachment_metadata['width']))
-					{
-						$arr_attachment_metadata['width'] = 0;
-					}
-
-					if(!isset($arr_attachment_metadata['filesize']))
-					{
-						$file = get_attached_file($post_id);
-
-						if(file_exists($file))
-						{
-							$arr_attachment_metadata['filesize'] = filesize($file);
-						}
-
-						else
-						{
-							$arr_attachment_metadata['filesize'] = 0;
-						}
-					}
-
-					if($arr_attachment_metadata['height'] == $arr_attachment_metadata_temp['height'] && $arr_attachment_metadata['width'] == $arr_attachment_metadata_temp['width'] && $arr_attachment_metadata['filesize'] == $arr_attachment_metadata_temp['filesize'])
-					{
-						do_log("<a href='".admin_url("upload.php?mode=list&s=".$post_title)."'>".sprintf("There were multiple files called %s with the same proportions %s and size %s", $post_title, $arr_attachment_metadata['height']."x".$arr_attachment_metadata['width'], size_format($arr_attachment_metadata['filesize']))."</a> (<a href='".admin_url("post.php?post=".$arr_attachment_metadata['id']."&action=edit")."'>#".$arr_attachment_metadata['id']."</a> & <a href='".admin_url("post.php?post=".$arr_attachment_metadata_temp['id']."&action=edit")."'>".$arr_attachment_metadata_temp['id']."</a>)", 'publish', false);
-
-						break;
-					}
-
-					$arr_attachment_metadata_temp = $arr_attachment_metadata;
-				}
-			}
-			#######################################
-
-			/* Check which files are used */
-			#######################################
 			if(get_site_option('setting_media_activate_is_file_used') == 'yes')
 			{
+				/* Check which files are used */
+				#######################################
 				$result = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." LEFT JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND (meta_value IS null OR meta_value < DATE_SUB(NOW(), INTERVAL 1 WEEK)) GROUP BY ID ORDER BY meta_value ASC LIMIT 0, 20", $this->meta_prefix.'used_updated', 'attachment'));
 
 				foreach($result as $r)
@@ -260,6 +198,69 @@ class mf_media
 
 					$this->check_if_file_is_used($post_id);
 				}
+				#######################################
+
+				/* Look for duplicates */
+				#######################################
+				$result = $wpdb->get_results($wpdb->prepare("SELECT post_title, COUNT(post_title) AS post_title_count FROM ".$wpdb->posts." INNER JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND post_status != %s AND post_title != '' GROUP BY post_title ORDER BY post_title_count DESC LIMIT 0, 1", '_wp_attachment_metadata', 'attachment', 'trash'));
+
+				foreach($result as $r)
+				{
+					$post_title = $r->post_title;
+					$post_title_count = $r->post_title_count;
+
+					$result_files = $wpdb->get_results($wpdb->prepare("SELECT ID FROM ".$wpdb->posts." INNER JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND post_status != %s AND post_title = %s GROUP BY ID LIMIT 0, 5", '_wp_attachment_metadata', 'attachment', 'trash', $post_title));
+
+					$arr_attachment_metadata_temp = array(
+						'height' => 0,
+						'width' => 0,
+						'filesize' => 0,
+					);
+
+					foreach($result_files as $r)
+					{
+						$post_id = $r->ID;
+
+						$arr_attachment_metadata = wp_get_attachment_metadata($post_id);
+
+						$arr_attachment_metadata['id'] = $post_id;
+
+						if(!isset($arr_attachment_metadata['height']))
+						{
+							$arr_attachment_metadata['height'] = 0;
+						}
+
+						if(!isset($arr_attachment_metadata['width']))
+						{
+							$arr_attachment_metadata['width'] = 0;
+						}
+
+						if(!isset($arr_attachment_metadata['filesize']))
+						{
+							$file = get_attached_file($post_id);
+
+							if(file_exists($file))
+							{
+								$arr_attachment_metadata['filesize'] = filesize($file);
+							}
+
+							else
+							{
+								$arr_attachment_metadata['filesize'] = 0;
+							}
+						}
+
+						if($arr_attachment_metadata['height'] == $arr_attachment_metadata_temp['height'] && $arr_attachment_metadata['width'] == $arr_attachment_metadata_temp['width'] && $arr_attachment_metadata['filesize'] == $arr_attachment_metadata_temp['filesize'])
+						{
+							do_log("<a href='".admin_url("upload.php?mode=list&s=".$post_title)."'>".sprintf("There were multiple files called %s with the same proportions %s and size %s", $post_title, $arr_attachment_metadata['height']."x".$arr_attachment_metadata['width'], size_format($arr_attachment_metadata['filesize']))."</a> (<a href='".admin_url("post.php?post=".$arr_attachment_metadata['id']."&action=edit")."'>#".$arr_attachment_metadata['id']."</a> & <a href='".admin_url("post.php?post=".$arr_attachment_metadata_temp['id']."&action=edit")."'>".$arr_attachment_metadata_temp['id']."</a>)", 'publish', false);
+
+							break;
+						}
+
+						$arr_attachment_metadata_temp = $arr_attachment_metadata;
+					}
+				}
+				#######################################
 			}
 
 			else
@@ -268,7 +269,6 @@ class mf_media
 				delete_post_meta_by_key($this->meta_prefix.'used_example');
 				delete_post_meta_by_key($this->meta_prefix.'used_updated');
 			}
-			#######################################
 
 			mf_uninstall_plugin(array(
 				'options' => array('setting_media_resize_original_image', 'setting_media_files2sync', 'option_sync_sites', 'setting_media_sanitize_files'),
@@ -329,7 +329,6 @@ class mf_media
 		add_settings_section($options_area, "", array($this, $options_area."_callback"), BASE_OPTIONS_PAGE);
 
 		$arr_settings = [];
-		//$arr_settings['setting_media_sanitize_files'] = __("Sanitize Filenames", 'lang_media');
 		$arr_settings['setting_media_activate_categories'] = __("Activate Categories", 'lang_media');
 
 		if(IS_SUPER_ADMIN)
@@ -353,15 +352,6 @@ class mf_media
 
 		echo settings_header($setting_key, __("Media", 'lang_media'));
 	}
-
-	/*function setting_media_sanitize_files_callback()
-	{
-		$setting_key = get_setting_key(__FUNCTION__);
-		settings_save_site_wide($setting_key);
-		$option = get_site_option($setting_key, get_option($setting_key, 'yes'));
-
-		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option, 'description' => __("This will remove special characters from file names and URLs", 'lang_media')));
-	}*/
 
 	function setting_media_activate_categories_callback()
 	{
@@ -577,87 +567,19 @@ class mf_media
 
 	function wp_handle_upload_prefilter($file)
 	{
-		/*if(get_site_option('setting_media_sanitize_files') == 'yes')
-		{*/
-			$file_suffix = get_file_suffix($file['name']);
+		$file_suffix = get_file_suffix($file['name']);
 
-			$file['name'] = sanitize_title(preg_replace("/.".$file_suffix."$/", '', $file['name']));
+		$file['name'] = sanitize_title(preg_replace("/.".$file_suffix."$/", '', $file['name']));
 
-			if(strlen($file['name']) > 95)
-			{
-				$file['name'] = substr($file['name'], 0, 95);
-			}
+		if(strlen($file['name']) > 95)
+		{
+			$file['name'] = substr($file['name'], 0, 95);
+		}
 
-			$file['name'] .= ".".$file_suffix;
-		//}
+		$file['name'] .= ".".$file_suffix;
 
 		return $file;
 	}
-
-	/*function wp_generate_attachment_metadata($image_data)
-	{
-		if(get_option('setting_media_resize_original_image', 'yes') == 'yes')
-		{
-			if(isset($image_data['sizes']['2048x2048']))
-			{
-				$image_size = '2048x2048';
-			}
-
-			else
-			{
-				$image_size = 'large';
-			}
-
-			if(isset($image_data['sizes'][$image_size]))
-			{
-				$upload_dir = wp_upload_dir();
-
-				if(isset($image_data['original_image']))
-				{
-					$uploaded_image_location = $upload_dir['path']."/".$image_data['original_image'];
-					$large_image_location = $upload_dir['path']."/".$image_data['sizes'][$image_size]['file'];
-
-					if(file_exists($uploaded_image_location))
-					{
-						// Delete the uploaded image
-						unlink($uploaded_image_location);
-
-						// Copy the large image
-						copy($large_image_location, $uploaded_image_location);
-
-						// Update image metadata and return them
-						$image_data['width'] = $image_data['sizes'][$image_size]['width'];
-						$image_data['height'] = $image_data['sizes'][$image_size]['height'];
-						unset($image_data['sizes'][$image_size]);
-					}
-				}
-
-				else if(isset($image_data['file']))
-				{
-					$uploaded_image_location = $upload_dir['path']."/".$image_data['file'];
-					$large_image_location = $upload_dir['path']."/".$image_data['sizes'][$image_size]['file'];
-
-					if(file_exists($uploaded_image_location))
-					{
-						// Delete the uploaded image
-						unlink($uploaded_image_location);
-						//do_log("wp_generate_attachment_metadata() Delete: ".$uploaded_image_location);
-
-						// Copy the large image
-						copy($large_image_location, $uploaded_image_location);
-						//do_log("wp_generate_attachment_metadata() Copy: ".$large_image_location." -> ".$uploaded_image_location);
-					}
-				}
-
-				else
-				{
-					do_log("wp_generate_attachment_metadata() Error: No Original Image (".var_export($image_data, true).")");
-				}
-			}
-		}
-
-		return $image_data;
-	}*/
 
 	function hidden_meta_boxes($hidden, $screen)
 	{
