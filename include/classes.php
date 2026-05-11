@@ -202,7 +202,7 @@ class mf_media
 
 				/* Look for duplicates */
 				#######################################
-				$result = $wpdb->get_results($wpdb->prepare("SELECT post_title, COUNT(post_title) AS post_title_count FROM ".$wpdb->posts." INNER JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND post_status != %s AND post_title != '' GROUP BY post_title ORDER BY post_title_count DESC LIMIT 0, 1", '_wp_attachment_metadata', 'attachment', 'trash'));
+				/*$result = $wpdb->get_results($wpdb->prepare("SELECT post_title, COUNT(post_title) AS post_title_count FROM ".$wpdb->posts." INNER JOIN ".$wpdb->postmeta." ON ".$wpdb->posts.".ID = ".$wpdb->postmeta.".post_id AND meta_key = %s WHERE post_type = %s AND post_status != %s AND post_title != '' GROUP BY post_title ORDER BY post_title_count DESC LIMIT 0, 1", '_wp_attachment_metadata', 'attachment', 'trash'));
 
 				foreach($result as $r)
 				{
@@ -259,7 +259,7 @@ class mf_media
 
 						$arr_attachment_metadata_temp = $arr_attachment_metadata;
 					}
-				}
+				}*/
 				#######################################
 			}
 
@@ -341,8 +341,6 @@ class mf_media
 			$arr_settings['setting_media_display_categories_in_menu'] = __("Display Categories in Menu", 'lang_media');
 		}
 
-		//$arr_settings['setting_media_resize_original_image'] = __("Resize Original Image", 'lang_media');
-
 		show_settings_fields(array('area' => $options_area, 'object' => $this, 'settings' => $arr_settings));
 	}
 
@@ -384,14 +382,6 @@ class mf_media
 
 		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option));
 	}
-
-	/*function setting_media_resize_original_image_callback()
-	{
-		$setting_key = get_setting_key(__FUNCTION__);
-		$option = get_option($setting_key, 'yes');
-
-		echo show_select(array('data' => get_yes_no_for_select(), 'name' => $setting_key, 'value' => $option, 'description' => __("This will remove the original image if it is larger than the largest resized size", 'lang_media')));
-	}*/
 
 	function admin_init()
 	{
