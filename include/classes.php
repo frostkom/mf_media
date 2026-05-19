@@ -451,19 +451,15 @@ class mf_media
 			$menu_title = __("Files", 'lang_media');
 
 			add_menu_page($menu_title, $menu_title, $menu_capability, $menu_start, '', 'dashicons-admin-media', 11);
-
-			if(IS_EDITOR)
-			{
-				$menu_title = __("Settings", 'lang_media');
-				add_submenu_page($menu_start, $menu_title, $menu_title, $menu_capability, admin_url("options-general.php?page=settings_mf_base#settings_media"));
-			}
 		}
 
 		if(IS_ADMINISTRATOR)
 		{
 			$menu_title = __("Allowed Types", 'lang_media');
-
 			add_submenu_page("upload.php", $menu_title, $menu_title, $menu_capability, "edit.php?post_type=".$this->post_type_allowed);
+
+			$menu_title = __("Settings", 'lang_media');
+			add_submenu_page($menu_start, $menu_title, $menu_title, $menu_capability, admin_url("options-general.php?page=settings_mf_base#settings_media"));
 		}
 	}
 
