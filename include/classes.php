@@ -1493,6 +1493,7 @@ class mf_media
 			'css' =>				array("CSS", "text/css"),
 			'js' =>					array("Javascript", "application/javascript"),
 			'htm|html' =>			array("HTML", "text/html"),
+			'json' =>				array("JSON", "application/json"),
 
 			'mp3|m4a|m4b' =>		array($audio_name." (MP3)", "audio/mpeg"),
 			'wav' =>				array($audio_name." (Wav)", "audio/wav"),
